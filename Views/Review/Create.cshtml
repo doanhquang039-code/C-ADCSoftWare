@@ -1,0 +1,41 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model WEBDULICH.Models.Review
+@{
+    ViewData["Title"] = "Viết đánh giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center mb-4">Viết đánh giá tour</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="TourId" class="form-label">Chọn tour</label>
+        <select asp-for="TourId" asp-items="ViewBag.Tours" class="form-select"></select>
+        <span asp-validation-for="TourId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Rating" class="form-label">Đánh giá (1-5 sao)</label>
+        <select asp-for="Rating" class="form-select">
+            <option value="">-- Chọn sao --</option>
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
+        </select>
+        <span asp-validation-for="Rating" class="text-danger"></span>
+    </div>
+
+
+    <div class="mb-3">
+        <label asp-for="Comment" class="form-label">Nội dung đánh giá</label>
+        <textarea asp-for="Comment" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Comment" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Gửi đánh giá</button>
+</form>

@@ -1,0 +1,127 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Đặt tour";
+    var tour = ViewBag.Tour as WEBDULICH.Models.Tour;
+}
+
+<div class="booking-bg py-5">
+    <div class="container">
+        <div class="card shadow-lg booking-card mx-auto">
+            <div class="row g-0">
+                <!-- Cột ảnh tour -->
+                <div class="col-md-5 image-side">
+                    <img src="~/ImageTour/@tour.Image" class="img-fluid tour-img" alt="@tour.Name">
+                </div>
+
+                <!-- Cột thông tin và form -->
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <h3 class="card-title text-primary fw-bold mb-3">@tour.Name</h3>
+                        <p class="text-muted">@tour.Description</p>
+
+                        <ul class="list-unstyled mb-3 tour-info">
+                            <li><i class="bi bi-cash-coin"></i> Giá: <strong>@tour.Price</strong> $</li>
+                            <li><i class="bi bi-clock"></i> Thời gian: <strong>@tour.Duration</strong> ngày</li>
+                            <li><i class="bi bi-people"></i> Còn lại: <strong>@tour.Quantity</strong> người</li>
+                            <li><i class="bi bi-geo-alt"></i> Địa điểm: <strong>@tour.Destination?.Name</strong></li>
+                        </ul>
+
+                        <hr />
+                        <form method="post" asp-action="CreateTour" id="paymentForm">
+                            <input type="hidden" name="tourId" value="@tour.Id" />
+                            <input type="hidden" name="redirectToPayment" id="redirectToPayment" value="false" />
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Số lượng người</label>
+                                <input type="number" name="quantity" class="form-control" min="1" max="@tour.Quantity" required />
+                            </div>
+                           
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Phương thức thanh toán</label>
+                                <select name="paymentMethod" class="form-select" required>
+                                    <option value="">-- Chọn phương thức --</option>
+                                    <option value="Tiền mặt (Thanh toán sau khi đi tour)">Tiền mặt (Thanh toán sau khi đi tour)</option>
+                                    <option value="Chuyển khoản">Chuyển khoản</option>
+                                    <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold btn-hover">✈️ Xác nhận đặt tour</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Background mờ đẹp */
+    .booking-bg {
+        background: linear-gradient(to right, #e0f7fa, #fff);
+        min-height: 100vh;
+    }
+
+    .booking-card {
+        max-width: 900px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #fff;
+        border: none;
+        transition: transform 0.3s ease;
+    }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+    .tour-img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .image-side:hover .tour-img {
+        transform: scale(1.05);
+    }
+
+    .tour-info li {
+        font-size: 0.95rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .tour-info i {
+        color: #0d6efd;
+        margin-right: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        box-shadow: none;
+        transition: border-color 0.3s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 5px rgba(13, 110, 253, 0.2);
+        }
+
+    .btn-primary {
+        border-radius: 12px;
+        background-color: #0d6efd;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-hover:hover {
+        background-color: #0b5ed7;
+        transform: scale(1.02);
+        box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+    }
+</style>

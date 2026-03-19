@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\bin",
+    "\\Controllers",
+    "\\Helpers",
+    "\\Migrations",
+    "\\Models",
+    "\\Properties"
+  ],
+  "SelectedNode": "\\Controllers\\ApplicationDbConrtext.cs",
+  "PreviewInSolutionExplorer": false
+}

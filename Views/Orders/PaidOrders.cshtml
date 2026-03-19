@@ -1,0 +1,72 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using WEBDULICH.Models
+@model List<Orders>
+
+@{
+    ViewData["Title"] = "Danh sách đơn đã thanh toán";
+}
+
+<h2 class="text-center mb-4">✅ Đơn hàng đã thanh toán</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        Hiện tại chưa có đơn hàng nào đã thanh toán.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-light text-center">
+            <tr>
+                <th>#</th>
+                <th>Loại</th>
+                <th>Tên Tour / Hotel</th>
+                <th>Người đặt (Email)</th>
+                <th>Ngày đặt</th>
+                <th>Ngày đi</th>
+                <th>Thanh toán</th>
+                <th>Xác nhận gửi đến</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var order = Model[i];
+                <tr>
+                    <td class="text-center">@(i + 1)</td>
+                    <td class="text-center">
+                        @if (order.Tour != null)
+                        {
+                            <span class="badge bg-info">Tour</span>
+                        }
+                        else if (order.Hotel != null)
+                        {
+                            <span class="badge bg-success">Hotel</span>
+                        }
+                    </td>
+                    <td>
+                        @if (order.Tour != null)
+                        {
+                            @order.Tour.Name
+                        }
+                        else if (order.Hotel != null)
+                        {
+                            @order.Hotel.Name
+                        }
+                    </td>
+                    <td>@order.User?.Email</td>
+                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                    <td>@(order.DepartureDate?.ToString("dd/MM/yyyy") ?? "Chưa chọn")</td>
+                    <td>@order.PaymentMethod</td>
+                    <td>@order.ConfirmedEmail</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

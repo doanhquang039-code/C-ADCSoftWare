@@ -1,0 +1,166 @@
+﻿@model WEBDULICH.Models.User
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="register-container shadow-lg">
+    <h2 class="register-title">📝 Đăng ký tài khoản</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="form-floating mb-3">
+            <input asp-for="Name" class="form-control" placeholder="Họ tên" />
+            <label asp-for="Name">Họ tên</label>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Email" class="form-control" placeholder="Email" />
+            <label asp-for="Email">Email</label>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu" />
+            <label asp-for="Password">Mật khẩu</label>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input asp-for="Age" type="number" class="form-control" min="0" max="100" placeholder="Tuổi" />
+            <label asp-for="Age">Tuổi</label>
+            <span asp-validation-for="Age" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Gender" class="form-label">Giới tính</label>
+            <select asp-for="Gender" class="form-select">
+                <option value="">-- Chọn giới tính --</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-register w-100 py-2">🎉 Đăng ký ngay</button>
+    </form>
+
+    <div class="mt-4 text-center">
+        <span>Đã có tài khoản?</span> <a asp-action="Login" class="text-decoration-none fw-bold text-primary">Đăng nhập</a>
+    </div>
+    <div class="mt-4 text-center">
+        <span>Hoặc đăng ký bằng:</span>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a href="https://www.facebook.com/login" class="social-icon facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://accounts.google.com/signin" class="social-icon google" target="_blank"><i class="bi bi-google"></i></a>
+            <a href="https://www.instagram.com/accounts/login" class="social-icon instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a href="https://zalo.me" class="social-icon zalo" target="_blank"><i class="bi bi-chat-dots-fill"></i></a>
+            <a href="https://github.com/login" class="social-icon github" target="_blank"><i class="bi bi-github"></i></a>
+        </div>
+    </div>
+
+
+</div>
+
+<style>
+    body {
+        background: linear-gradient(to right, #74ebd5, #acb6e5);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .social-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .social-icon.facebook {
+            background-color: #3b5998;
+        }
+
+        .social-icon.google {
+            background-color: #ea4335;
+        }
+
+        .social-icon.instagram {
+            background-color: #e1306c;
+        }
+
+        .social-icon.zalo {
+            background-color: #0084ff;
+        }
+
+        .social-icon.github {
+            background-color: #333;
+        }
+
+        .social-icon:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+    .register-container {
+        max-width: 550px;
+        margin: 60px auto;
+        padding: 40px 30px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .register-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #0077b6;
+    }
+
+    
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 1px solid #ced4da;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0077b6;
+            box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25);
+        }
+
+    .btn-register {
+        background-color: #0077b6;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        .btn-register:hover {
+            background-color: #005f8d;
+            transform: translateY(-2px);
+        }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+
+   
+</style>
+

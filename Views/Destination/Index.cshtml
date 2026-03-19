@@ -1,0 +1,192 @@
+﻿
+@model IEnumerable<WEBDULICH.Models.Destination>
+@{
+    ViewData["Title"] = "Địa điểm du lịch";
+    var search = ViewBag.Search as string ?? "";
+}
+
+<h2 class="text-center mb-4 text-primary">🌍 Địa điểm du lịch nổi bật</h2>
+
+<div class="text-end mb-4">
+    <a asp-action="Create" class="btn btn-success">➕ Thêm địa điểm</a>
+</div>
+<form asp-action="SearchByRegion" method="get" class="d-flex mb-4">
+    <select name="region" class="form-select me-2" style="width: 220px;">
+        <option value="">-- Chọn miền --</option>
+        <option value="Northern VietNam">Miền Bắc</option>
+        <option value="Central Vietnam">Miền Trung</option>
+        <option value="Southern Vietnam">Miền Nam</option>
+    </select>
+    <button type="submit" class="btn btn-success">🔍 Tìm kiếm</button>
+</form>
+
+
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var d in Model)
+    {
+        <div class="col">
+            <div class="card destination-card shadow border-0 h-100">
+                <div class="image-container">
+                    <img src="~/ImageDestination/@d.Image" class="card-img-top" alt="@d.Name">
+                    <div class="overlay">
+                        <h5>@d.Name</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">@d.Description</p>
+                    <p><strong>📍 Vị trí:</strong> @d.Location</p>
+                    <p><strong>🏷️ Danh mục:</strong> @d.Category?.Name</p>
+                    <p>
+                        <a onclick="openMap('@d.Location')" style="color: blue; text-decoration: none; font-size: 18px; cursor: pointer;">
+                            🗺️ Xem đường đi
+                        </a>
+                    </p>
+
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <a asp-action="Edit" asp-route-id="@d.Id" class="btn btn-outline-warning btn-sm">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@d.Id" class="btn btn-outline-danger btn-sm"
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Styles {
+    <style>
+        body {
+            background: linear-gradient(to right, #f0fdf4, #ffffff);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        h2 {
+            color: #009688;
+            font-weight: bold;
+        }
+
+        .destination-card {
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .destination-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            }
+
+        .image-container {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+            .image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s ease;
+            }
+
+        .destination-card:hover .image-container img {
+            transform: scale(1.08);
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
+            color: #fff;
+            padding: 12px 15px;
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+            .card-body p {
+                margin-bottom: 8px;
+                font-size: 0.95rem;
+                color: #444;
+            }
+
+        .card-footer {
+            background-color: transparent;
+            border-top: 1px solid #eee;
+            padding: 12px 16px;
+        }
+
+        .btn-sm {
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .btn-outline-warning {
+            color: #f0ad4e;
+            border-color: #f0ad4e;
+        }
+
+            .btn-outline-warning:hover {
+                background-color: #f0ad4e;
+                color: white;
+            }
+
+        .btn-outline-danger {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+
+            .btn-outline-danger:hover {
+                background-color: #dc3545;
+                color: white;
+            }
+
+        /* Form & Filter */
+        select.form-select {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 0.95rem;
+        }
+
+        .btn-success {
+            background-color: #26a69a;
+            border-color: #26a69a;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+            .btn-success:hover {
+                background-color: #1d867b;
+                border-color: #1d867b;
+            }
+
+        a[onclick] {
+            color: #0d6efd;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+            a[onclick]:hover {
+                color: #0a58ca;
+                text-decoration: underline;
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function openMap(location) {
+            const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+}

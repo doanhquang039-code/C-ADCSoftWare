@@ -1,0 +1,148 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="login-container shadow-lg">
+    <h2 class="login-title">🔐 Đăng nhập tài khoản</h2>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger text-center">@ViewBag.Error</div>
+    }
+
+    <form method="post">
+        <div class="form-floating mb-3">
+            <input type="email" name="email" class="form-control" id="emailInput" placeholder="name@example.com" required />
+            <label for="emailInput">Email</label>
+        </div>
+
+        <div class="form-floating mb-4">
+            <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Mật khẩu" required />
+            <label for="passwordInput">Mật khẩu</label>
+        </div>
+
+        <button type="submit" class="btn btn-login w-100 py-2">🚪 Đăng nhập</button>
+    </form>
+
+    <div class="mt-4 text-center">
+        <span>Chưa có tài khoản?</span> <a asp-action="Create" class="text-decoration-none fw-bold text-primary">Đăng ký ngay</a>
+    </div>
+    <div class="mt-4 text-center">
+        <span>Hoặc đăng ký bằng:</span>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a href="https://www.facebook.com/login" class="social-icon facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="https://accounts.google.com/signin" class="social-icon google" target="_blank"><i class="bi bi-google"></i></a>
+            <a href="https://www.instagram.com/accounts/login" class="social-icon instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a href="https://zalo.me" class="social-icon zalo" target="_blank"><i class="bi bi-chat-dots-fill"></i></a>
+            <a href="https://github.com/login" class="social-icon github" target="_blank"><i class="bi bi-github"></i></a>
+        </div>
+    </div>
+
+
+</div>
+
+<style>
+    body {
+        background: linear-gradient(to right, #74ebd5, #9face6);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .social-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .social-icon.facebook {
+            background-color: #3b5998;
+        }
+
+        .social-icon.google {
+            background-color: #ea4335;
+        }
+
+        .social-icon.instagram {
+            background-color: #e1306c;
+        }
+
+        .social-icon.zalo {
+            background-color: #0084ff;
+        }
+
+        .social-icon.github {
+            background-color: #333;
+        }
+
+        .social-icon:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+    .login-container {
+        max-width: 450px;
+        margin: 80px auto;
+        padding: 35px 30px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.6s ease;
+    }
+
+    .login-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #3a0ca3;
+    }
+
+    .form-floating > label {
+        color: #495057;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #3a0ca3;
+            box-shadow: 0 0 0 0.15rem rgba(58, 12, 163, 0.25);
+        }
+
+    .btn-login {
+        background-color: #3a0ca3;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-login:hover {
+            background-color: #2a007d;
+            transform: translateY(-2px);
+        }
+
+    .alert {
+        font-size: 14px;
+        border-radius: 10px;
+    }
+
+   
+</style>

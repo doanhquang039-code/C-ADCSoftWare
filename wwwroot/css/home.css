@@ -1,0 +1,67 @@
+﻿@keyframes slideShow {
+    0% {
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    33% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.banner {
+    position: relative;
+    width: 100%;
+    max-width: 1840px; 
+    height: auto;
+    aspect-ratio: 24/9; 
+    margin: 0 auto;
+    overflow: hidden;
+    background-color: #1a8c8c;
+}
+
+
+.banner-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.banner-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 5s ease-in-out;
+}
+
+
+    .banner-img:nth-child(1) {
+        animation: slideShow 12s infinite 0s;
+    }
+
+    .banner-img:nth-child(2) {
+        animation: slideShow 12s infinite 3s;
+    }
+
+    .banner-img:nth-child(3) {
+        animation: slideShow 12s infinite 6s;
+    }
+
+    .banner-img:nth-child(4) {
+        animation: slideShow 12s infinite 9s;
+    }
+
+/* Gộp thêm các class khác bạn đã viết ở <style> trong <head> nếu muốn */

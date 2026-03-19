@@ -1,0 +1,271 @@
+﻿@model List<WEBDULICH.Models.Tour>
+
+
+
+<h2 class="text-center mb-4">Danh sách Tour</h2>
+<div class="text-end mb-4">
+    <a asp-action="Create" class="btn btn-success">
+        ➕ Thêm tour mới 
+    </a>
+</div>
+
+<div class="row">
+    <!-- Bộ lọc bên trái -->
+    <!-- Bên trái - Bộ lọc -->
+    <div class="col-md-3 mb-4">
+        <div class="filter-box">
+            <h5><i class="fa-solid fa-filter"></i> Bộ lọc Tour</h5>
+            <form method="get" asp-action="Filter">
+                <input type="text" name="keyword" class="form-control" placeholder="Tên tour..." value="@ViewBag.Keyword" />
+                <input type="number" name="minPrice" class="form-control" placeholder="Giá thấp nhất" min="0" value="@ViewBag.MinPrice" />
+                <input type="number" name="maxPrice" class="form-control" placeholder="Giá cao nhất" min="0" value="@ViewBag.MaxPrice" />
+                <input type="number" name="duration" class="form-control" placeholder="Số ngày" min="1" max="30" value="@ViewBag.Duration" />
+
+                <button type="submit" class="btn btn-primary w-100 mb-2">Lọc Tour</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">Xóa lọc</a>
+            </form>
+        </div>
+
+        <div class="filter-box mt-4">
+            <h5><i class="fa-solid fa-sort"></i> Sắp xếp</h5>
+            <form method="get" asp-action="Demo1">
+                <select name="sortOrder" class="form-select">
+                    <option value="">-- Sắp xếp mặc định --</option>
+                    <option value="price_asc" selected="@(ViewBag.SortOrder == "price_asc")">Giá tăng dần</option>
+                    <option value="price_desc" selected="@(ViewBag.SortOrder == "price_desc")">Giá giảm dần</option>
+                    <option value="quantity_asc" selected="@(ViewBag.SortOrder == "quantity_asc")">Số lượng tăng dần</option>
+                    <option value="quantity_desc" selected="@(ViewBag.SortOrder == "quantity_desc")">Số lượng giảm dần</option>
+                </select>
+                <div class="col-md-4">
+                    <select name="destinationId" class="form-select">
+                        <option value="">-- Tất cả địa điểm --</option>
+                        @if (ViewBag.Destinations != null)
+                        {
+                            foreach (var d in ViewBag.Destinations)
+                            {
+                                <option value="@d.Id"
+                                        selected="@(ViewBag.DestinationId != null && d.Id == (int)ViewBag.DestinationId ? "selected" : "")">
+                                    @d.Name
+                                </option>
+                            }
+                        }
+                    </select>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-2">Sắp xếp</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
+            </form>
+        </div>
+    </div>
+
+    
+
+    <div class="col-md-9">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var t in Model)
+            {
+                <div class="col">
+                    <div class="card tour-card h-100 shadow-sm">
+                        <img src="~/ImageTour/@t.Image" class="card-img-top tour-image" />
+
+                        <div class="card-body">
+                            <h5 class="card-title text-primary fw-bold">@t.Name</h5>
+                            <p class="card-text text-muted">@t.Description</p>
+
+                            <ul class="list-unstyled tour-info">
+                                <li><i class="bi bi-cash-coin"></i> <strong>Giá:</strong> @t.Price $/Người </li>
+                                <li><i class="bi bi-clock"></i> <strong>Thời gian:</strong> @t.Duration ngày</li>
+                                <li><i class="bi bi-people"></i> <strong>Còn lại:</strong> @t.Quantity người</li>
+                                <li><i class="bi bi-geo-alt"></i> <strong>Địa điểm:</strong> @t.Destination?.Name</li>
+                            </ul>
+                        </div>
+                        <a class="btn btn-success btn-sm" asp-controller="Orders" asp-action="FormTour" asp-route-tourId="@t.Id">
+                            Đặt Tour
+                        </a>
+
+
+                        <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
+                            <a class="btn btn-sm btn-outline-primary rounded-pill" asp-action="Edit" asp-route-id="@t.Id">
+                                ✏️ Sửa
+                            </a>
+                            <a class="btn btn-sm btn-outline-danger rounded-pill" asp-action="Delete" asp-route-id="@t.Id"
+                               onclick="return confirm('Xóa tour này?')">
+                                🗑️ Xóa
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <style>
+        body {
+            background: #f3f6fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+    .filter-box {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e0e0e0;
+        margin-bottom: 30px;
+    }
+
+        .filter-box h5 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0d6efd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .filter-box .form-control,
+        .filter-box .form-select {
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            height: 42px;
+        }
+
+        .filter-box .btn {
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.3s all ease;
+        }
+
+        .filter-box .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+
+            .filter-box .btn-primary:hover {
+                background-color: #0b5ed7;
+            }
+
+        .filter-box .btn-outline-secondary {
+            color: #6c757d;
+            border-color: #ced4da;
+        }
+
+            .filter-box .btn-outline-secondary:hover {
+                background-color: #f1f1f1;
+            }
+
+      
+        .tour-card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f4f4f4);
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+
+            .tour-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            }
+
+        .tour-image {
+            height: 190px;
+            object-fit: cover;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .tour-card:hover .tour-image {
+            transform: scale(1.03);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: #004085;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+
+        .tour-info li {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .tour-info i {
+            color: #0d6efd;
+            margin-right: 6px;
+        }
+
+        /* =================== FILTER =================== */
+        .card.p-3.shadow-sm {
+            border-radius: 18px;
+            background-color: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+        }
+
+            .card.p-3.shadow-sm h5 {
+                color: #0d6efd;
+                font-weight: bold;
+            }
+
+            .card.p-3.shadow-sm input,
+            .card.p-3.shadow-sm select {
+                border-radius: 12px;
+                border: 1px solid #ced4da;
+                background-color: #fdfdfd;
+            }
+
+            .card.p-3.shadow-sm button,
+            .card.p-3.shadow-sm a {
+                font-weight: 600;
+                border-radius: 20px;
+                transition: all 0.25s ease;
+            }
+
+                .card.p-3.shadow-sm button:hover,
+                .card.p-3.shadow-sm a:hover {
+                    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+                }
+
+        /* =================== BUTTONS =================== */
+        .btn-success,
+        .btn-outline-primary,
+        .btn-outline-danger {
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .btn-success:hover {
+                background-color: #198754;
+            }
+
+            .btn-outline-primary:hover {
+                background-color: #0d6efd;
+                color: #fff;
+            }
+
+            .btn-outline-danger:hover {
+                background-color: #dc3545;
+                color: #fff;
+            }
+
+        .btn-primary,
+        .btn-secondary {
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+    </style>

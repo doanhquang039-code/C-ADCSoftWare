@@ -1,0 +1,50 @@
+﻿@model WEBDULICH.Models.Tour
+
+@{
+    ViewBag.Title = "Thêm tour";
+}
+
+<h2>Thêm tour mới</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Ảnh đại diện</label>
+        <input type="file" name="imageFile" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Duration" class="form-label"></label>
+        <input asp-for="Duration" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Quantity" class="form-label"></label>
+        <input asp-for="Quantity" class="form-control" />
+    </div>
+
+    <select name="DestinationName" class="form-select">
+        <option value="">-- Chọn địa điểm --</option>
+        @foreach (var name in ViewBag.DestinationNames as List<string>)
+        {
+            <option value="@name">@name</option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-success">Lưu</button>
+</form>

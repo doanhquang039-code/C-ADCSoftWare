@@ -1,0 +1,62 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model WEBDULICH.Models.Hotel
+
+@{
+    ViewBag.Title = "Thêm Khách sạn";
+}
+
+<h2 class="text-center text-primary mb-4">🛎️ Thêm khách sạn mới</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4 shadow-sm border-0 rounded-4 bg-light">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label fw-bold">Tên khách sạn</label>
+                    <input asp-for="Name" class="form-control rounded-3" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Address" class="form-label fw-bold">Địa chỉ</label>
+                    <input asp-for="Address" class="form-control rounded-3" />
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label fw-bold">Giá</label>
+                    <input asp-for="Price" class="form-control rounded-3" />
+                    <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Rating" class="form-label fw-bold">Đánh giá (sao)</label>
+                    <input asp-for="Rating" class="form-control rounded-3" />
+                    <span asp-validation-for="Rating" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ảnh đại diện</label>
+                    <input type="file" name="imageFile" class="form-control rounded-3" />
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="TourId" class="form-label fw-bold">Tour liên kết</label>
+                    <select asp-for="TourId" class="form-select rounded-3" asp-items="ViewBag.Tours">
+                        <option value="">-- Chọn tour --</option>
+                    </select>
+                    <span asp-validation-for="TourId" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 rounded-pill">
+                    ✅ Lưu khách sạn
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+

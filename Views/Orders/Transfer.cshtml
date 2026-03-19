@@ -1,0 +1,52 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using WEBDULICH.Models
+@model Orders;
+
+@{
+    ViewData["Title"] = "Chuyển khoản đơn hàng";
+}
+
+<div class="container mt-5" style="max-width: 700px;">
+    <h3 class="text-primary mb-4">💳 Thanh toán chuyển khoản</h3>
+
+    <div class="card shadow p-4">
+        <h5>Thông tin đơn hàng</h5>
+        <ul class="list-unstyled">
+            <li><strong>Mã đơn:</strong> @Model.Id</li>
+            <li><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy")</li>
+            <li><strong>Tổng tiền:</strong> <span class="text-danger">@Model.TotalPrice $</span></li>
+            @if (Model.Tour != null)
+            {
+                <li><strong>Tour:</strong> @Model.Tour.Name</li>
+                <li><strong>Thời gian tour:</strong> @Model.Tour.Duration ngày</li>
+                <img src="~/ImageTour/@Model.Tour.Image" class="img-fluid mb-3" style="max-height: 400px;" />
+            }
+            else if (Model.Hotel != null)
+            {
+                <li><strong>Khách sạn:</strong> @Model.Hotel.Name</li>
+                <li><strong>Số sao:</strong> @Model.Hotel.Rating ⭐</li>
+                <img src="~/ImageHotel/@Model.Hotel.Image" class="img-fluid mb-3" style="max-height: 400px;" />
+            }
+        </ul>
+
+        <hr />
+        <h5>📅 Vui lòng chọn ngày đi</h5>
+        <form asp-action="ConfirmTransfer" method="post">
+            <input type="hidden" name="orderId" value="@Model.Id" />
+
+            <div class="mb-3">
+                <label for="departureDate" class="form-label">Ngày bắt đầu đi:</label>
+                <input type="date" class="form-control" name="departureDate" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Email để nhận xác nhận:</label>
+                <input type="email" name="email" class="form-control" required  />
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">✅ Tôi đã chuyển khoản</button>
+        </form>
+    </div>
+</div>

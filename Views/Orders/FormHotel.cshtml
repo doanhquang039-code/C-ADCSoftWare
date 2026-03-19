@@ -1,0 +1,126 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Đặt khách sạn";
+    var hotel = ViewBag.Hotel as WEBDULICH.Models.Hotel;
+}
+
+<div class="booking-bg py-5">
+    <div class="container">
+        <div class="card shadow-lg booking-card mx-auto">
+            <div class="row g-0">
+                <!-- Ảnh khách sạn -->
+                <div class="col-md-5 image-side">
+                    <img src="~/ImageHotel/@hotel.Image" class="img-fluid hotel-img" alt="@hotel.Name">
+                </div>
+
+                <!-- Thông tin và form đặt -->
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <h3 class="card-title text-success fw-bold mb-3">@hotel.Name</h3>
+                        <p class="text-muted">@hotel.Address</p>
+
+                        <ul class="list-unstyled mb-3 hotel-info">
+                            <li><i class="bi bi-cash-coin"></i> Giá: <strong>@hotel.Price</strong> $ / đêm</li>
+                            <li><i class="bi bi-star-fill text-warning"></i> Số sao: <strong>@hotel.Rating</strong></li>
+                            <li><i class="bi bi-house-door"></i> Phòng trống: <strong>@hotel.Quantity</strong></li>
+                            <li><i class="bi bi-geo-alt"></i> Tour liên kết: <strong>@hotel.Tour?.Name</strong></li>
+                        </ul>
+
+                        <hr />
+
+                        <form method="post" asp-action="CreateHotel">
+                            <input type="hidden" name="hotelId" value="@hotel.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Số lượng phòng</label>
+                                <input type="number" name="quantity" class="form-control" min="1" max="@hotel.Quantity" required />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Phương thức thanh toán</label>
+                                <select name="paymentMethod" class="form-select" required>
+                                    <option value="">-- Chọn phương thức --</option>
+                                    <option value="Tiền mặt(Thanh toán sau khi đi ở lại qua đêm)">Tiền mặt (Thanh toán sau khi đi ở lại qua đêm)</option>
+                                    <option value="Chuyển khoản">Chuyển khoản</option>
+                                    <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                                </select>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100 py-2 fw-bold btn-hover">🏨 Xác nhận đặt phòng</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .booking-bg {
+        background: linear-gradient(to right, #fdfcfb, #e2d1c3);
+        min-height: 100vh;
+    }
+
+    .booking-card {
+        max-width: 900px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #fff;
+        border: none;
+        transition: transform 0.3s ease;
+    }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+    .hotel-img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .image-side:hover .hotel-img {
+        transform: scale(1.05);
+    }
+
+    .hotel-info li {
+        font-size: 0.95rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .hotel-info i {
+        color: #198754;
+        margin-right: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        box-shadow: none;
+        transition: border-color 0.3s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 5px rgba(25, 135, 84, 0.2);
+        }
+
+    .btn-success {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-hover:hover {
+        background-color: #157347;
+        transform: scale(1.02);
+        box-shadow: 0 6px 15px rgba(25, 135, 84, 0.3);
+    }
+</style>

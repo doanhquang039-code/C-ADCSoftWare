@@ -1,0 +1,64 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<WEBDULICH.Models.Review>
+
+@{
+    ViewData["Title"] = "Danh sách đánh giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center mb-4">Danh sách đánh giá</h2>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-primary text-center">
+        <tr>
+            
+            <th>Người dùng</th>
+            <th>Tour</th>
+            <th>Đánh giá (sao)</th>
+            <th>Nội dung</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+              
+                <td>@item.User?.Name</td>
+                <td>@(item.Tour?.Name ?? "Không có tour")</td>
+
+                <td>@item.Rating</td>
+                <td>
+                    @if (int.Parse(item.Rating) >= 3)
+                    {
+                        <span class="text-success">👍 Hài lòng</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">😐 Bình thường</span>
+                    }
+                </td>
+                <td>
+
+                <a class="btn btn-sm btn-outline-primary rounded-pill" asp-action="Edit" asp-route-id="@item.Id">
+                    ✏️ Sửa
+                </a>
+
+                </td>
+                <td>
+
+                <a class="btn btn-sm btn-outline-danger rounded-pill" asp-action="Delete" asp-route-id="@item.Id"
+                   onclick="return confirm('Xóa review này?')">
+                    🗑️ Xóa
+                </a>
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
