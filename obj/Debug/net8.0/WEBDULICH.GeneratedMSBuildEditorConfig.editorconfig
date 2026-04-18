@@ -17,133 +17,133 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = WEBDULICH
 build_property.RootNamespace = WEBDULICH
-build_property.ProjectDir = D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH\
+build_property.ProjectDir = C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\5fccbf7b1626b813\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH
+build_property.MSBuildProjectDirectory = C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\5fccbf7b1626b813
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Create.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Category/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Edit.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Category/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Index.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Category/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Create.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Destination/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVzdGluYXRpb25cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Edit.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Destination/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVzdGluYXRpb25cRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Index.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Destination/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVzdGluYXRpb25cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Home/Index.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Home/Privacy.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Create.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Hotel/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG90ZWxcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Edit.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Hotel/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG90ZWxcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Index.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Hotel/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG90ZWxcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/FormHotel.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Orders/FormHotel.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEZvcm1Ib3RlbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/FormTour.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Orders/FormTour.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEZvcm1Ub3VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/MyOrders.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Orders/MyOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXE15T3JkZXJzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/PaidOrders.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Orders/PaidOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXFBhaWRPcmRlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/Transfer.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Orders/Transfer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXFRyYW5zZmVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Review/Create.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Review/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV2aWV3XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Review/Index.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Review/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV2aWV3XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/Error.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Create.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Tour/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91clxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Edit.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Tour/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91clxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Index.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Tour/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91clxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Create.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/User/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Details.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/User/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Edit.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/User/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Login.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/User/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/_ViewImports.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/_ViewStart.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/_Layout.cshtml]
+[C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/5fccbf7b1626b813/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-ixnggsf2vr

@@ -1,125 +1,117 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
 
 namespace WEBDULICH.Controllers
 {
-
     public class HotelController : Controller
     {
-        private readonly ApplicationDbContext db3;
+        private readonly ApplicationDbContext db;
+        private readonly IImageStorageService imageStorageService;
 
-        public HotelController(ApplicationDbContext db3)
+        public HotelController(ApplicationDbContext db, IImageStorageService imageStorageService)
         {
-            this.db3 = db3;
+            this.db = db;
+            this.imageStorageService = imageStorageService;
         }
 
         public IActionResult Index()
         {
-            var list = db3.Hotels.Include(h => h.Tour).ToList();
+            var list = db.Hotels.Include(h => h.Tour).ToList();
             return View(list);
         }
 
-
+        [AdminOnly]
         public IActionResult Create()
         {
-            ViewBag.Tours = new SelectList(db3.Tours, "Id", "Name");
+            PopulateTours();
             return View();
         }
 
-
         [HttpPost]
-        public IActionResult Create(Hotel h, IFormFile imageFile)
+        [AdminOnly]
+        public async Task<IActionResult> Create(Hotel hotel, IFormFile? imageFile)
         {
-            if (imageFile != null && imageFile.Length > 0)
+            if (!ModelState.IsValid)
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageHotel");
-
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-
-                var filePath = Path.Combine(path, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    imageFile.CopyTo(stream);
-                }
-
-                h.Image = fileName;
+                PopulateTours(hotel.TourId);
+                return View(hotel);
             }
 
-            if (ModelState.IsValid)
-            {
-                ViewBag.Tours = new SelectList(db3.Tours, "Id", "Name");
-                return View(h);
-            }
-
-            db3.Hotels.Add(h);
-            db3.SaveChanges();
-            return RedirectToAction("Index");
+            hotel.Image = await imageStorageService.SaveAsync(imageFile, "ImageHotel") ?? string.Empty;
+            db.Hotels.Add(hotel);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
+        [AdminOnly]
         public IActionResult Edit(int id)
         {
-            var h = db3.Hotels.Find(id);
-            if (h == null) return NotFound();
+            var hotel = db.Hotels.Find(id);
+            if (hotel == null)
+            {
+                return NotFound();
+            }
 
-            ViewBag.Tours = new SelectList(db3.Tours, "Id", "Name", h.TourId);
-            return View(h);
+            PopulateTours(hotel.TourId);
+            return View(hotel);
         }
 
         [HttpPost]
-        public IActionResult Edit(Hotel h, IFormFile imageFile)
+        [AdminOnly]
+        public async Task<IActionResult> Edit(Hotel hotel, IFormFile? imageFile)
         {
-            if (imageFile != null && imageFile.Length > 0)
+            if (!ModelState.IsValid)
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageHotel");
+                PopulateTours(hotel.TourId);
+                return View(hotel);
+            }
 
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
+            var existingHotel = db.Hotels.AsNoTracking().FirstOrDefault(x => x.Id == hotel.Id);
+            if (existingHotel == null)
+            {
+                return NotFound();
+            }
 
-                var filePath = Path.Combine(path, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    imageFile.CopyTo(stream);
-                }
-
-                h.Image = fileName;
+            var newImage = await imageStorageService.SaveAsync(imageFile, "ImageHotel");
+            if (!string.IsNullOrWhiteSpace(newImage))
+            {
+                imageStorageService.Delete("ImageHotel", existingHotel.Image);
+                hotel.Image = newImage;
             }
             else
             {
-                var old = db3.Hotels.AsNoTracking().FirstOrDefault(x => x.Id == h.Id);
-                h.Image = old?.Image;
+                hotel.Image = existingHotel.Image;
             }
 
-            if (ModelState.IsValid)
-            {
-                ViewBag.Tours = new SelectList(db3.Tours, "Id", "Name", h.TourId);
-                return View(h);
-            }
-
-            db3.Hotels.Update(h);
-            db3.SaveChanges();
-            return RedirectToAction("Index");
+            db.Hotels.Update(hotel);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
+        [AdminOnly]
         public IActionResult Delete(int id)
         {
-            var h = db3.Hotels.Find(id);
-            if (h == null) return NotFound();
+            var hotel = db.Hotels.Find(id);
+            if (hotel == null)
+            {
+                return NotFound();
+            }
 
-            db3.Hotels.Remove(h);
-            db3.SaveChanges();
-            return RedirectToAction("Index");
+            imageStorageService.Delete("ImageHotel", hotel.Image);
+            db.Hotels.Remove(hotel);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
+
         public IActionResult Filter(string keyword, decimal? minPrice, decimal? maxPrice, int? rating)
         {
-            var hotels = db3.Hotels.Include(h => h.Tour).AsQueryable();
+            var hotels = db.Hotels.Include(h => h.Tour).AsQueryable();
 
-            if (!string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
                 hotels = hotels.Where(h => h.Name.Contains(keyword));
             }
@@ -136,7 +128,7 @@ namespace WEBDULICH.Controllers
 
             if (rating.HasValue)
             {
-                hotels = hotels.Where(h => h.Rating == rating.Value); 
+                hotels = hotels.Where(h => h.Rating == rating.Value);
             }
 
             ViewBag.KeyWord = keyword;
@@ -146,37 +138,33 @@ namespace WEBDULICH.Controllers
 
             return View("Index", hotels.ToList());
         }
-        public IActionResult Demo1(string sortOrder ,string address1)
+
+        public IActionResult Demo1(string sortOrder, string address1)
         {
-            var hotels = db3.Hotels.AsQueryable();
+            var hotels = db.Hotels.AsQueryable();
             ViewBag.SortOrder = sortOrder;
-            ViewBag.Address= address1;
-            if (!string.IsNullOrEmpty(address1))
+            ViewBag.Address = address1;
+
+            if (!string.IsNullOrWhiteSpace(address1))
             {
                 hotels = hotels.Where(h => h.Address.Contains(address1));
             }
-            switch (sortOrder)
+
+            hotels = sortOrder switch
             {
-                case "price_asc":
-                    hotels = hotels.OrderBy(t => t.Price);
-                    break;
-                case "price_desc":
-                    hotels = hotels.OrderByDescending(t => t.Price);
-                    break;
-                case "quantity_asc":
-                    hotels = hotels.OrderBy(t => t.Quantity);
-                    break;
-                case "quantity_desc":
-                    hotels = hotels.OrderByDescending(t => t.Quantity);
-                    break;
-                default:
-                    hotels = hotels.OrderBy(t => t.Id);
-                    break;
-            }
+                "price_asc" => hotels.OrderBy(t => t.Price),
+                "price_desc" => hotels.OrderByDescending(t => t.Price),
+                "quantity_asc" => hotels.OrderBy(t => t.Quantity),
+                "quantity_desc" => hotels.OrderByDescending(t => t.Quantity),
+                _ => hotels.OrderBy(t => t.Id)
+            };
 
             return View("Index", hotels.ToList());
         }
-       
 
+        private void PopulateTours(int? selectedTourId = null)
+        {
+            ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", selectedTourId);
+        }
     }
 }

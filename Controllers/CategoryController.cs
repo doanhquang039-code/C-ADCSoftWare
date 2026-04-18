@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
 
 namespace WEBDULICH.Controllers
 {
+    [AdminOnly]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext db;
@@ -25,45 +27,62 @@ namespace WEBDULICH.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category c)
+        public IActionResult Create(Category category)
         {
-            var isExists = db.Categories.Any(cl => cl.Name.ToLower() == c.Name.ToLower());
+            var normalizedName = category.Name?.Trim().ToLower();
+            var isExists = !string.IsNullOrWhiteSpace(normalizedName)
+                && db.Categories.Any(c => c.Name.ToLower() == normalizedName);
 
-            if (isExists == true)
+            if (isExists)
             {
-                ModelState.AddModelError("Name", "Tên lớp đã tồn tại!");
+                ModelState.AddModelError("Name", "Tên danh mục đã tồn tại!");
             }
+
             if (!ModelState.IsValid)
             {
-                db.Categories.Add(c);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return View(category);
             }
 
-            return View(c);
+            db.Categories.Add(category);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int id)
         {
-            var c = db.Categories.Find(id);
-            return View(c);
+            var category = db.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
         }
 
         [HttpPost]
-        public IActionResult Edit(Category c)
+        public IActionResult Edit(Category category)
         {
-            db.Categories.Update(c);
+            if (!ModelState.IsValid)
+            {
+                return View(category);
+            }
+
+            db.Categories.Update(category);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int id)
         {
-            var c = db.Categories.Find(id);
-            db.Categories.Remove(c);
+            var category = db.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            db.Categories.Remove(category);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
-

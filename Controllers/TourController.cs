@@ -1,133 +1,125 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WEBDULICH.Controllers
 {
     public class TourController : Controller
     {
-        private readonly ApplicationDbContext db1;
-        public TourController(ApplicationDbContext db1)
+        private readonly ApplicationDbContext db;
+        private readonly IImageStorageService imageStorageService;
+
+        public TourController(ApplicationDbContext db, IImageStorageService imageStorageService)
         {
-            this.db1 = db1;
+            this.db = db;
+            this.imageStorageService = imageStorageService;
         }
 
         public IActionResult Index()
         {
-            var list = db1.Tours.Include(t => t.Destination)
-                               .Include(t => t.Orders)
-                               .Include(t => t.Reviews)
-                               .Include(t => t.Hotels).ToList();
+            var list = db.Tours.Include(t => t.Destination)
+                .Include(t => t.Orders)
+                .Include(t => t.Reviews)
+                .Include(t => t.Hotels)
+                .ToList();
             return View(list);
         }
+
+        [AdminOnly]
         public IActionResult Create()
         {
-       
-            ViewBag.DestinationNames = db1.Destinations.Select(d => d.Name).ToList();
-
+            PopulateDestinations();
             return View();
         }
-        [HttpPost]
-        public IActionResult Create(Tour t, IFormFile imageFile)
-        {
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageTour");
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-                var filePath = Path.Combine(folderPath, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    imageFile.CopyTo(stream);
 
-                }
-                t.Image = fileName;
-            }
-            if (ModelState.IsValid)
+        [HttpPost]
+        [AdminOnly]
+        public async Task<IActionResult> Create(Tour tour, IFormFile? imageFile)
+        {
+            if (!ModelState.IsValid)
             {
-                ViewBag.Destinations = new SelectList(db1.Destinations, "Id", "Name", t.DestinationId);
-                    return View(t);
+                PopulateDestinations(tour.DestinationId);
+                return View(tour);
             }
-            db1.Tours.Add(t);
-            db1.SaveChanges();
-            return RedirectToAction("Index");
+
+            tour.Image = await imageStorageService.SaveAsync(imageFile, "ImageTour") ?? string.Empty;
+            db.Tours.Add(tour);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
+
+        [AdminOnly]
         public IActionResult Edit(int id)
         {
-            var t = db1.Tours.Find(id);
-            if (t == null)
-
-                return NotFound();
-            ViewBag.Destinations = new SelectList(db1.Destinations, "Id", "Name", t.DestinationId);
-
-            return View(t);
-        }
-        [HttpPost]
-        public IActionResult Edit(Tour t, IFormFile imageFile, string OldImage)
-        {
-            if (imageFile != null && imageFile.Length > 0)
+            var tour = db.Tours.Find(id);
+            if (tour == null)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageTour");
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-                var filePath = Path.Combine(folderPath, fileName);
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    imageFile.CopyTo(stream);
-                }
+                return NotFound();
+            }
 
-                t.Image = fileName;
+            PopulateDestinations(tour.DestinationId);
+            return View(tour);
+        }
 
-                // Xóa ảnh cũ nếu muốn
-                var oldPath = Path.Combine(folderPath, OldImage ?? "");
-                if (System.IO.File.Exists(oldPath))
-                {
-                    System.IO.File.Delete(oldPath);
-                }
+        [HttpPost]
+        [AdminOnly]
+        public async Task<IActionResult> Edit(Tour tour, IFormFile? imageFile, string? oldImage)
+        {
+            if (!ModelState.IsValid)
+            {
+                PopulateDestinations(tour.DestinationId);
+                return View(tour);
+            }
+
+            var existingTour = db.Tours.AsNoTracking().FirstOrDefault(x => x.Id == tour.Id);
+            if (existingTour == null)
+            {
+                return NotFound();
+            }
+
+            var newImage = await imageStorageService.SaveAsync(imageFile, "ImageTour");
+            if (!string.IsNullOrWhiteSpace(newImage))
+            {
+                imageStorageService.Delete("ImageTour", oldImage ?? existingTour.Image);
+                tour.Image = newImage;
             }
             else
             {
-                t.Image = OldImage; // giữ ảnh cũ
+                tour.Image = oldImage ?? existingTour.Image;
             }
 
-            if (ModelState.IsValid)
-            {
-                ViewBag.Destinations = new SelectList(db1.Destinations, "Id", "Name", t.DestinationId);
-                return View(t);
-            }
-
-            db1.Tours.Update(t);
-            db1.SaveChanges();
-            return RedirectToAction("Index");
+            db.Tours.Update(tour);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
-
+        [AdminOnly]
         public IActionResult Delete(int id)
         {
-            var abc = db1.Tours.Find(id);
-            db1.Tours.Remove(abc);
-            db1.SaveChanges();
-            return RedirectToAction("Index");
+            var tour = db.Tours.Find(id);
+            if (tour == null)
+            {
+                return NotFound();
+            }
+
+            imageStorageService.Delete("ImageTour", tour.Image);
+            db.Tours.Remove(tour);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
+
         public IActionResult Filter(string keyword, decimal? minPrice, decimal? maxPrice, int? duration)
         {
-            var tours = db1.Tours.Include(t => t.Destination).AsQueryable();
+            var tours = db.Tours.Include(t => t.Destination).AsQueryable();
 
-            if (!string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
                 tours = tours.Where(t => t.Name.Contains(keyword));
             }
-            // nếu em chuyển thể 
+
             if (minPrice.HasValue)
             {
                 tours = tours.Where(t => t.Price >= minPrice.Value);
@@ -153,40 +145,32 @@ namespace WEBDULICH.Controllers
 
         public IActionResult Demo1(string sortOrder, int? destinationId)
         {
-            var tours = db1.Tours.AsQueryable();
+            var tours = db.Tours.AsQueryable();
 
             ViewBag.SortOrder = sortOrder;
             ViewBag.DestinationId = destinationId;
-            ViewBag.Destinations = db1.Destinations.ToList(); 
+            ViewBag.Destinations = db.Destinations.ToList();
 
             if (destinationId.HasValue)
             {
                 tours = tours.Where(t => t.DestinationId == destinationId.Value);
             }
 
-            switch (sortOrder)
+            tours = sortOrder switch
             {
-                case "price_asc":
-                    tours = tours.OrderBy(t => t.Price);
-                    break;
-                case "price_desc":
-                    tours = tours.OrderByDescending(t => t.Price);
-                    break;
-                case "quantity_asc":
-                    tours = tours.OrderBy(t => t.Quantity);
-                    break;
-                case "quantity_desc":
-                    tours = tours.OrderByDescending(t => t.Quantity);
-                    break;
-                default:
-                    tours = tours.OrderBy(t => t.Id);
-                    break;
-            }
+                "price_asc" => tours.OrderBy(t => t.Price),
+                "price_desc" => tours.OrderByDescending(t => t.Price),
+                "quantity_asc" => tours.OrderBy(t => t.Quantity),
+                "quantity_desc" => tours.OrderByDescending(t => t.Quantity),
+                _ => tours.OrderBy(t => t.Id)
+            };
 
             return View("Index", tours.ToList());
         }
 
-       
-
+        private void PopulateDestinations(int? selectedDestinationId = null)
+        {
+            ViewBag.Destinations = new SelectList(db.Destinations, "Id", "Name", selectedDestinationId);
+        }
     }
 }

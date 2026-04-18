@@ -4,6 +4,10 @@
 @{
     ViewData["Title"] = "Đặt tour";
     var tour = ViewBag.Tour as WEBDULICH.Models.Tour;
+    if (tour == null)
+    {
+        return;
+    }
 }
 
 <div class="booking-bg py-5">

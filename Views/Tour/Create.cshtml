@@ -38,13 +38,19 @@
         <input asp-for="Quantity" class="form-control" />
     </div>
 
-    <select name="DestinationName" class="form-select">
-        <option value="">-- Chọn địa điểm --</option>
-        @foreach (var name in ViewBag.DestinationNames as List<string>)
-        {
-            <option value="@name">@name</option>
-        }
-    </select>
+    <div class="mb-3">
+        <label asp-for="DestinationId" class="form-label">Địa điểm</label>
+        <select asp-for="DestinationId" asp-items="ViewBag.Destinations" class="form-select">
+            <option value="">-- Chọn địa điểm --</option>
+        </select>
+        <span asp-validation-for="DestinationId" class="text-danger"></span>
+    </div>
 
     <button type="submit" class="btn btn-success">Lưu</button>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

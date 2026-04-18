@@ -1,82 +1,89 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
-using WEBDULICH.Helpers;
 
 namespace WEBDULICH.Controllers
 {
     public class ReviewController : Controller
     {
         private readonly ApplicationDbContext db;
+        private readonly ICurrentUserService currentUserService;
 
-        public ReviewController(ApplicationDbContext context)
+        public ReviewController(ApplicationDbContext context, ICurrentUserService currentUserService)
         {
             db = context;
+            this.currentUserService = currentUserService;
         }
 
         public IActionResult Index()
         {
             var reviews = db.Reviews
-                 .Include(r => r.User)
-                 .Include(r => r.Tour)
-                 .ToList();
+                .Include(r => r.User)
+                .Include(r => r.Tour)
+                .ToList();
             return View(reviews);
-
         }
 
+        [AuthenticatedOnly]
         public IActionResult Create()
         {
-            var user = HttpContext.Session.GetObject<User>("userLogin");
-            if (user == null)
-                return RedirectToAction("Login", "User");
-
             ViewBag.Tours = new SelectList(db.Tours, "Id", "Name");
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Review r)
+        [AuthenticatedOnly]
+        public IActionResult Create(Review review)
         {
-            if (ModelState.IsValid)
+            var currentUser = currentUserService.GetCurrentUser();
+            if (currentUser == null)
             {
-                ViewBag.Users = new SelectList(db.Users, "Id", "Name", r.UserId);
-                ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", r.TourId);
-                return View(r);
+                return RedirectToAction("Login", "User");
             }
 
-            if (string.IsNullOrEmpty(r.Rating))
+            if (string.IsNullOrWhiteSpace(review.Rating))
             {
                 ModelState.AddModelError("Rating", "Vui lòng chọn số sao.");
-                ViewBag.Users = new SelectList(db.Users, "Id", "Name", r.UserId);
-                ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", r.TourId);
-                return View(r);
-            }
-            if (r.ReviewDate == DateTime.MinValue)  
-            {
-                r.ReviewDate = DateTime.Now;
             }
 
-            db.Reviews.Add(r);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", review.TourId);
+                return View(review);
+            }
+
+            review.UserId = currentUser.Id;
+            if (review.ReviewDate == DateTime.MinValue)
+            {
+                review.ReviewDate = DateTime.Now;
+            }
+
+            db.Reviews.Add(review);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-
+        [AuthenticatedOnly]
         public IActionResult Edit(int id)
         {
             var review = db.Reviews.Find(id);
-            if (review == null) return NotFound();
+            if (review == null)
+            {
+                return NotFound();
+            }
 
             ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", review.TourId);
             return View(review);
         }
 
         [HttpPost]
+        [AuthenticatedOnly]
         public IActionResult Edit(Review review)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", review.TourId);
                 return View(review);
@@ -84,18 +91,21 @@ namespace WEBDULICH.Controllers
 
             db.Reviews.Update(review);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
+        [AuthenticatedOnly]
         public IActionResult Delete(int id)
         {
             var review = db.Reviews.Find(id);
-            if (review == null) return NotFound();
+            if (review == null)
+            {
+                return NotFound();
+            }
 
             db.Reviews.Remove(review);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
-

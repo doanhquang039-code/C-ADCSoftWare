@@ -1,87 +1,117 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
 
 namespace WEBDULICH.Controllers
 {
+    [AdminOnly]
     public class PaymentController : Controller
     {
-        private readonly ApplicationDbContext demo1;
+        private readonly ApplicationDbContext db;
 
-        public PaymentController(ApplicationDbContext demo1)
+        public PaymentController(ApplicationDbContext db)
         {
-            this.demo1 = demo1;
+            this.db = db;
         }
+
         public IActionResult Index()
         {
-            var list = demo1.Payments.Include(p => p.Orders).ToList();
+            var list = db.Payments.Include(p => p.Orders).ToList();
             return View(list);
         }
+
         public IActionResult Create()
         {
-            ViewBag.Orders = new SelectList(demo1.Orders, "Id", "Name");
+            PopulateOrders();
             return View();
         }
+
         [HttpPost]
-        public IActionResult Create(Payment p)
+        public IActionResult Create(Payment payment)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                ViewBag.Orders = new SelectList(demo1.Orders, "Id", "Name", p.OrdersId);
-                return View(p);
+                PopulateOrders(payment.OrdersId);
+                return View(payment);
             }
-            demo1.Payments.Add(p);
-            demo1.SaveChanges();
-            return RedirectToAction("Index");
+
+            db.Payments.Add(payment);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
+
         public IActionResult Edit(int id)
         {
-            var p = demo1.Payments.Find(id);
-            if (p == null) return NotFound();
-            ViewBag.Payments = new SelectList(demo1.Orders, "Id", "Name", p.OrdersId);
-            return View(p);
-        }
-        [HttpPost]
-        public IActionResult Edit(Payment p)
-        {
-            if (ModelState.IsValid)
+            var payment = db.Payments.Find(id);
+            if (payment == null)
             {
-                ViewBag.Orders = new SelectList(demo1.Orders, "Id", "Name", p.OrdersId);
-                return View(p);
+                return NotFound();
             }
-            demo1.Payments.Update(p);
-            demo1.SaveChanges();
-            return RedirectToAction("Index");
+
+            PopulateOrders(payment.OrdersId);
+            return View(payment);
         }
+
+        [HttpPost]
+        public IActionResult Edit(Payment payment)
+        {
+            if (!ModelState.IsValid)
+            {
+                PopulateOrders(payment.OrdersId);
+                return View(payment);
+            }
+
+            db.Payments.Update(payment);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
+
         public IActionResult Delete(int id)
         {
-            var p = demo1.Payments.Find(id);
-                if(p== null) return NotFound();
-                demo1.Payments.Remove(p);
-            demo1.SaveChanges();
-            return RedirectToAction("Index");
+            var payment = db.Payments.Find(id);
+            if (payment == null)
+            {
+                return NotFound();
+            }
+
+            db.Payments.Remove(payment);
+            db.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
+
         public IActionResult OnlinePayment(int orderId)
         {
-            var order = demo1.Orders.Include(o => o.User).Include(o => o.Tour).FirstOrDefault(o => o.Id == orderId);
-            if (order == null) return NotFound();
+            var order = db.Orders.Include(o => o.User).Include(o => o.Tour).FirstOrDefault(o => o.Id == orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
             return View(order);
         }
 
         [HttpPost]
         public IActionResult ConfirmPayment(int orderId, string email)
         {
-            var order = demo1.Orders.FirstOrDefault(o => o.Id == orderId);
-            if (order == null) return NotFound();
+            var order = db.Orders.FirstOrDefault(o => o.Id == orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
 
             order.Status = "Đã thanh toán";
-            demo1.SaveChanges();
-
+            db.SaveChanges();
 
             TempData["Success"] = "Thanh toán thành công!";
             return RedirectToAction("MyOrders", "Orders");
+        }
+
+        private void PopulateOrders(int? selectedOrderId = null)
+        {
+            ViewBag.Orders = new SelectList(db.Orders, "Id", "Id", selectedOrderId);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WEBDULICH.Models;
 using WEBDULICH.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<AdminAccessOptions>(
+    builder.Configuration.GetSection(AdminAccessOptions.SectionName));
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

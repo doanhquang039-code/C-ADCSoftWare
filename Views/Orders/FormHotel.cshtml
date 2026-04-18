@@ -6,6 +6,10 @@
 @{
     ViewData["Title"] = "Đặt khách sạn";
     var hotel = ViewBag.Hotel as WEBDULICH.Models.Hotel;
+    if (hotel == null)
+    {
+        return;
+    }
 }
 
 <div class="booking-bg py-5">
