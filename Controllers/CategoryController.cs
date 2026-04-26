@@ -8,17 +8,17 @@ namespace WEBDULICH.Controllers
     [AdminOnly]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext db;
+        private readonly ICategoryService categoryService;
 
-        public CategoryController(ApplicationDbContext db)
+        public CategoryController(ICategoryService categoryService)
         {
-            this.db = db;
+            this.categoryService = categoryService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? keyword, string? sortBy, string? sortDir, int page = 1, int pageSize = 10)
         {
-            var categories = db.Categories.ToList();
-            return View(categories);
+            var result = await categoryService.GetPagedAsync(keyword, sortBy, sortDir, page, pageSize);
+            return View(result);
         }
 
         public IActionResult Create()
@@ -27,61 +27,46 @@ namespace WEBDULICH.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create(Category category)
         {
-            var normalizedName = category.Name?.Trim().ToLower();
-            var isExists = !string.IsNullOrWhiteSpace(normalizedName)
-                && db.Categories.Any(c => c.Name.ToLower() == normalizedName);
-
-            if (isExists)
-            {
-                ModelState.AddModelError("Name", "Tên danh mục đã tồn tại!");
-            }
-
             if (!ModelState.IsValid)
             {
                 return View(category);
             }
 
-            db.Categories.Add(category);
-            db.SaveChanges();
+            var success = await categoryService.CreateAsync(category);
+            if (!success)
+            {
+                ModelState.AddModelError("Name", "Tên danh mục đã tồn tại!");
+                return View(category);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var category = db.Categories.Find(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            var category = await categoryService.GetByIdAsync(id);
+            if (category == null) return NotFound();
 
             return View(category);
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> Edit(Category category)
         {
             if (!ModelState.IsValid)
             {
                 return View(category);
             }
 
-            db.Categories.Update(category);
-            db.SaveChanges();
+            await categoryService.UpdateAsync(category);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var category = db.Categories.Find(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            db.Categories.Remove(category);
-            db.SaveChanges();
+            await categoryService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

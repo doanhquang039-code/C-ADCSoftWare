@@ -28,13 +28,35 @@ namespace WEBDULICH.Services
         public bool IsAdmin()
         {
             var user = GetCurrentUser();
-            if (user?.Email == null)
-            {
-                return false;
-            }
+            if (user == null) return false;
 
-            return adminAccessOptions.Emails.Any(email =>
-                string.Equals(email, user.Email, StringComparison.OrdinalIgnoreCase));
+            // Ưu tiên check Role từ database
+            if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            // Fallback: check email từ config (cho lần setup đầu tiên)
+            if (user.Email != null && adminAccessOptions.Emails.Any(email =>
+                string.Equals(email, user.Email, StringComparison.OrdinalIgnoreCase)))
+                return true;
+
+            return false;
+        }
+
+        public bool IsStaff()
+        {
+            var user = GetCurrentUser();
+            return user != null && string.Equals(user.Role, "Staff", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool IsStaffOrAdmin()
+        {
+            return IsAdmin() || IsStaff();
+        }
+
+        public bool HasRole(string role)
+        {
+            var user = GetCurrentUser();
+            return user != null && string.Equals(user.Role, role, StringComparison.OrdinalIgnoreCase);
         }
 
         public void SignIn(User user)

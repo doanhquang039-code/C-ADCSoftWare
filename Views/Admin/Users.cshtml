@@ -1,0 +1,182 @@
+@model WEBDULICH.Models.PagedResult<WEBDULICH.Models.User>
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people"></i> Quản lý người dùng</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Search & Filter -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" asp-action="Users" class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" name="keyword" value="@Model.Keyword" class="form-control"
+                               placeholder="Tìm theo tên hoặc email..." />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select name="role" class="form-select">
+                        <option value="">-- Tất cả Role --</option>
+                        <option value="Admin" selected="@(Model.Filters.GetValueOrDefault("role") == "Admin")">Admin</option>
+                        <option value="Staff" selected="@(Model.Filters.GetValueOrDefault("role") == "Staff")">Staff</option>
+                        <option value="User" selected="@(Model.Filters.GetValueOrDefault("role") == "User")">User</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="isActive" class="form-select">
+                        <option value="">-- Trạng thái --</option>
+                        <option value="true" selected="@(Model.Filters.GetValueOrDefault("isActive") == "True")">Hoạt động</option>
+                        <option value="false" selected="@(Model.Filters.GetValueOrDefault("isActive") == "False")">Đã khóa</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sortBy" class="form-select">
+                        <option value="">-- Sắp xếp --</option>
+                        <option value="name" selected="@(Model.SortBy == "name")">Tên</option>
+                        <option value="email" selected="@(Model.SortBy == "email")">Email</option>
+                        <option value="role" selected="@(Model.SortBy == "role")">Quyền</option>
+                        <option value="created" selected="@(Model.SortBy == "created")">Ngày tạo</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex gap-2">
+                        <select name="sortDir" class="form-select">
+                            <option value="asc" selected="@(Model.SortDir == "asc")">Tăng</option>
+                            <option value="desc" selected="@(Model.SortDir == "desc")">Giảm</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên</th>
+                            <th>Email</th>
+                            <th>Giới tính</th>
+                            <th>Tuổi</th>
+                            <th>Quyền</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Items)
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td><strong>@user.Name</strong></td>
+                                <td>@user.Email</td>
+                                <td>@user.Gender</td>
+                                <td>@user.Age</td>
+                                <td>
+                                    <form method="post" asp-action="ChangeRole" class="d-inline">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <select name="newRole" class="form-select form-select-sm d-inline-block" style="width:auto;"
+                                                onchange="this.form.submit()">
+                                            <option value="Admin" selected="@(user.Role == "Admin")">Admin</option>
+                                            <option value="Staff" selected="@(user.Role == "Staff")">Staff</option>
+                                            <option value="User" selected="@(user.Role == "User")">User</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Đã khóa</span>
+                                    }
+                                </td>
+                                <td>@user.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <form method="post" asp-action="ToggleActive" class="d-inline">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        @if (user.IsActive)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    title="Khóa tài khoản" onclick="return confirm('Bạn có chắc muốn khóa tài khoản này?')">
+                                                <i class="bi bi-lock"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-outline-success"
+                                                    title="Mở khóa tài khoản">
+                                                <i class="bi bi-unlock"></i>
+                                            </button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Users"
+                       asp-route-keyword="@Model.Keyword" asp-route-role="@Model.Filters.GetValueOrDefault("role")"
+                       asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                       asp-route-page="@(Model.Page - 1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Users"
+                           asp-route-keyword="@Model.Keyword" asp-route-role="@Model.Filters.GetValueOrDefault("role")"
+                           asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                           asp-route-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Users"
+                       asp-route-keyword="@Model.Keyword" asp-route-role="@Model.Filters.GetValueOrDefault("role")"
+                       asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                       asp-route-page="@(Model.Page + 1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+            <p class="text-center text-muted small">
+                Hiển thị @Model.Items.Count / @Model.TotalCount người dùng
+            </p>
+        </nav>
+    }
+</div>

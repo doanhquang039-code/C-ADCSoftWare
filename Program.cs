@@ -10,8 +10,21 @@ builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<AdminAccessOptions>(
     builder.Configuration.GetSection(AdminAccessOptions.SectionName));
+
+// Core services
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
+
+// Business services
+builder.Services.AddScoped<ITourService, TourService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

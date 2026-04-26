@@ -1,0 +1,166 @@
+@model WEBDULICH.Services.DashboardStats
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+        <a asp-action="Users" class="btn btn-outline-primary">
+            <i class="bi bi-people"></i> Quản lý người dùng
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title opacity-75">Người dùng</h6>
+                            <h2 class="mb-0">@Model.TotalUsers</h2>
+                        </div>
+                        <div class="fs-1 opacity-50"><i class="bi bi-people-fill"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title opacity-75">Tour</h6>
+                            <h2 class="mb-0">@Model.TotalTours</h2>
+                        </div>
+                        <div class="fs-1 opacity-50"><i class="bi bi-compass"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title opacity-75">Khách sạn</h6>
+                            <h2 class="mb-0">@Model.TotalHotels</h2>
+                        </div>
+                        <div class="fs-1 opacity-50"><i class="bi bi-building"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title opacity-75">Điểm đến</h6>
+                            <h2 class="mb-0">@Model.TotalDestinations</h2>
+                        </div>
+                        <div class="fs-1 opacity-50"><i class="bi bi-geo-alt-fill"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6 class="text-muted">Tổng đơn hàng</h6>
+                    <h3 class="text-primary">@Model.TotalOrders</h3>
+                    <small class="text-success">
+                        <i class="bi bi-check-circle"></i> @Model.PaidOrders đã thanh toán
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6 class="text-muted">Doanh thu</h6>
+                    <h3 class="text-success">@Model.TotalRevenue.ToString("N0") VND</h3>
+                    <small class="text-muted">Từ đơn đã thanh toán</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h6 class="text-muted">Đánh giá</h6>
+                    <h3 class="text-info">@Model.TotalReviews</h3>
+                    <small class="text-muted">Tổng số review</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 g-3">
+        <div class="col-md-4">
+            <a asp-controller="Tour" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-compass fs-1 text-success"></i>
+                        <h6 class="mt-2">Quản lý Tour</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Hotel" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-building fs-1 text-info"></i>
+                        <h6 class="mt-2">Quản lý Khách sạn</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Category" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-tags fs-1 text-warning"></i>
+                        <h6 class="mt-2">Quản lý Danh mục</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Destination" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-geo-alt fs-1 text-danger"></i>
+                        <h6 class="mt-2">Quản lý Điểm đến</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Orders" asp-action="PaidOrders" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-cart-check fs-1 text-primary"></i>
+                        <h6 class="mt-2">Đơn đã thanh toán</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Payment" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-credit-card fs-1 text-secondary"></i>
+                        <h6 class="mt-2">Quản lý Thanh toán</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

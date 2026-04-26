@@ -1,8 +1,6 @@
-﻿
-@model IEnumerable<WEBDULICH.Models.Destination>
+@model WEBDULICH.Models.PagedResult<WEBDULICH.Models.Destination>
 @{
     ViewData["Title"] = "Địa điểm du lịch";
-    var search = ViewBag.Search as string ?? "";
 }
 
 <h2 class="text-center mb-4 text-primary">🌍 Địa điểm du lịch nổi bật</h2>
@@ -10,21 +8,59 @@
 <div class="text-end mb-4">
     <a asp-action="Create" class="btn btn-success">➕ Thêm địa điểm</a>
 </div>
-<form asp-action="SearchByRegion" method="get" class="d-flex mb-4">
-    <select name="region" class="form-select me-2" style="width: 220px;">
-        <option value="">-- Chọn miền --</option>
-        <option value="Northern VietNam">Miền Bắc</option>
-        <option value="Central Vietnam">Miền Trung</option>
-        <option value="Southern Vietnam">Miền Nam</option>
-    </select>
-    <button type="submit" class="btn btn-success">🔍 Tìm kiếm</button>
-</form>
 
+<!-- Search & Filter -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên, mô tả..."
+                       value="@Model.Keyword" />
+            </div>
+            <div class="col-md-2">
+                <select name="categoryId" class="form-select">
+                    <option value="">-- Danh mục --</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var c in (List<WEBDULICH.Models.Category>)ViewBag.Categories)
+                        {
+                            <option value="@c.Id"
+                                    selected="@(Model.Filters.GetValueOrDefault("categoryId") == c.Id.ToString())">
+                                @c.Name
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="location" class="form-control" placeholder="Vị trí..."
+                       value="@Model.Filters.GetValueOrDefault("location")" />
+            </div>
+            <div class="col-md-2">
+                <select name="sortBy" class="form-select">
+                    <option value="">-- Sắp xếp --</option>
+                    <option value="name" selected="@(Model.SortBy == "name")">Tên</option>
+                    <option value="location" selected="@(Model.SortBy == "location")">Vị trí</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <select name="sortDir" class="form-select">
+                    <option value="asc" selected="@(Model.SortDir == "asc")">↑</option>
+                    <option value="desc" selected="@(Model.SortDir == "desc")">↓</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">🔍</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
 
-
+<p class="text-muted">Tìm thấy <strong>@Model.TotalCount</strong> điểm đến</p>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    @foreach (var d in Model)
+    @foreach (var d in Model.Items)
     {
         <div class="col">
             <div class="card destination-card shadow border-0 h-100">
@@ -43,7 +79,6 @@
                             🗺️ Xem đường đi
                         </a>
                     </p>
-
                 </div>
                 <div class="card-footer bg-white d-flex justify-content-between">
                     <a asp-action="Edit" asp-route-id="@d.Id" class="btn btn-outline-warning btn-sm">Sửa</a>
@@ -55,130 +90,51 @@
     }
 </div>
 
+<!-- Pagination -->
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a class="page-link" asp-action="Index"
+                   asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.Filters.GetValueOrDefault("categoryId")"
+                   asp-route-location="@Model.Filters.GetValueOrDefault("location")"
+                   asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                   asp-route-page="@(Model.Page - 1)"><i class="bi bi-chevron-left"></i></a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.Filters.GetValueOrDefault("categoryId")"
+                       asp-route-location="@Model.Filters.GetValueOrDefault("location")"
+                       asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                       asp-route-page="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a class="page-link" asp-action="Index"
+                   asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.Filters.GetValueOrDefault("categoryId")"
+                   asp-route-location="@Model.Filters.GetValueOrDefault("location")"
+                   asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                   asp-route-page="@(Model.Page + 1)"><i class="bi bi-chevron-right"></i></a>
+            </li>
+        </ul>
+        <p class="text-center text-muted small">Trang @Model.Page / @Model.TotalPages</p>
+    </nav>
+}
 
 @section Styles {
     <style>
-        body {
-            background: linear-gradient(to right, #f0fdf4, #ffffff);
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        h2 {
-            color: #009688;
-            font-weight: bold;
-        }
-
-        .destination-card {
-            border-radius: 16px;
-            overflow: hidden;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-            .destination-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            }
-
-        .image-container {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-        }
-
-            .image-container img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.4s ease;
-            }
-
-        .destination-card:hover .image-container img {
-            transform: scale(1.08);
-        }
-
-        .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
-            color: #fff;
-            padding: 12px 15px;
-            font-size: 1.1rem;
-        }
-
-        .card-body {
-            padding: 16px;
-        }
-
-            .card-body p {
-                margin-bottom: 8px;
-                font-size: 0.95rem;
-                color: #444;
-            }
-
-        .card-footer {
-            background-color: transparent;
-            border-top: 1px solid #eee;
-            padding: 12px 16px;
-        }
-
-        .btn-sm {
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        .btn-outline-warning {
-            color: #f0ad4e;
-            border-color: #f0ad4e;
-        }
-
-            .btn-outline-warning:hover {
-                background-color: #f0ad4e;
-                color: white;
-            }
-
-        .btn-outline-danger {
-            color: #dc3545;
-            border-color: #dc3545;
-        }
-
-            .btn-outline-danger:hover {
-                background-color: #dc3545;
-                color: white;
-            }
-
-        /* Form & Filter */
-        select.form-select {
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 0.95rem;
-        }
-
-        .btn-success {
-            background-color: #26a69a;
-            border-color: #26a69a;
-            font-weight: 600;
-            border-radius: 20px;
-        }
-
-            .btn-success:hover {
-                background-color: #1d867b;
-                border-color: #1d867b;
-            }
-
-        a[onclick] {
-            color: #0d6efd;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-            a[onclick]:hover {
-                color: #0a58ca;
-                text-decoration: underline;
-            }
+        body { background: linear-gradient(to right, #f0fdf4, #ffffff); font-family: 'Segoe UI', sans-serif; }
+        h2 { color: #009688; font-weight: bold; }
+        .destination-card { border-radius: 16px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
+        .destination-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .image-container { position: relative; height: 200px; overflow: hidden; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .destination-card:hover .image-container img { transform: scale(1.08); }
+        .overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.55), transparent); color: #fff; padding: 12px 15px; }
+        .btn-sm { border-radius: 20px; font-weight: 500; }
     </style>
 }
 

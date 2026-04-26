@@ -5,12 +5,12 @@ using WEBDULICH.Services;
 
 public class UserController : Controller
 {
-    private readonly ApplicationDbContext db;
+    private readonly IUserService userService;
     private readonly ICurrentUserService currentUserService;
 
-    public UserController(ApplicationDbContext context, ICurrentUserService currentUserService)
+    public UserController(IUserService userService, ICurrentUserService currentUserService)
     {
-        db = context;
+        this.userService = userService;
         this.currentUserService = currentUserService;
     }
 
@@ -20,20 +20,20 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(User user)
+    public async Task<IActionResult> Create(User user)
     {
-        if (db.Users.Any(u => u.Email == user.Email))
-        {
-            ModelState.AddModelError("Email", "Email đã được sử dụng!");
-        }
-
         if (!ModelState.IsValid)
         {
             return View(user);
         }
 
-        db.Users.Add(user);
-        db.SaveChanges();
+        var success = await userService.RegisterAsync(user);
+        if (!success)
+        {
+            ModelState.AddModelError("Email", "Email đã được sử dụng!");
+            return View(user);
+        }
+
         return RedirectToAction(nameof(Login));
     }
 
@@ -50,12 +50,12 @@ public class UserController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(string email, string password)
+    public async Task<IActionResult> Login(string email, string password)
     {
-        var user = db.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+        var user = await userService.AuthenticateAsync(email, password);
         if (user == null)
         {
-            ViewBag.Error = "Email hoặc mật khẩu không đúng!";
+            ViewBag.Error = "Email hoặc mật khẩu không đúng, hoặc tài khoản đã bị khóa!";
             return View();
         }
 
@@ -64,60 +64,44 @@ public class UserController : Controller
     }
 
     [AuthenticatedOnly]
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var user = db.Users.Find(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
+        var user = await userService.GetByIdAsync(id);
+        if (user == null) return NotFound();
 
         return View(user);
     }
 
     [HttpPost]
     [AuthenticatedOnly]
-    public IActionResult Edit(User user)
+    public async Task<IActionResult> Edit(User user)
     {
         if (!ModelState.IsValid)
         {
             return View(user);
         }
 
-        var existingUser = db.Users.Find(user.Id);
-        if (existingUser == null)
+        await userService.UpdateAsync(user);
+
+        // Re-fetch user from DB and re-sign in to update session
+        var updatedUser = await userService.GetByIdAsync(user.Id);
+        if (updatedUser != null)
         {
-            return NotFound();
+            currentUserService.SignIn(updatedUser);
         }
 
-        existingUser.Name = user.Name;
-        existingUser.Email = user.Email;
-        existingUser.Password = user.Password;
-        existingUser.Gender = user.Gender;
-        existingUser.Age = user.Age;
-
-        db.Users.Update(existingUser);
-        db.SaveChanges();
-
-        currentUserService.SignIn(existingUser);
         return RedirectToAction("Index", "Home");
     }
 
     [AuthenticatedOnly]
-    public IActionResult Details(int? id)
+    public async Task<IActionResult> Details(int? id)
     {
         var currentUser = currentUserService.GetCurrentUser();
         var targetId = id ?? currentUser?.Id;
-        if (targetId == null)
-        {
-            return RedirectToAction(nameof(Login));
-        }
+        if (targetId == null) return RedirectToAction(nameof(Login));
 
-        var user = db.Users.Find(targetId.Value);
-        if (user == null)
-        {
-            return NotFound();
-        }
+        var user = await userService.GetByIdAsync(targetId.Value);
+        if (user == null) return NotFound();
 
         return View(user);
     }

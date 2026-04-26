@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
     "",
+    "\\.github",
     "\\bin",
     "\\Controllers",
     "\\Helpers",
@@ -8,6 +9,6 @@
     "\\Models",
     "\\Properties"
   ],
-  "SelectedNode": "\\Controllers\\ApplicationDbConrtext.cs",
+  "SelectedNode": "\\Models\\EmailHelper.cs",
   "PreviewInSolutionExplorer": false
 }

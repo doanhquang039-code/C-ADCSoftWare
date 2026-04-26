@@ -1,14 +1,6 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model List<WEBDULICH.Models.Hotel>
-
-
+@model WEBDULICH.Models.PagedResult<WEBDULICH.Models.Hotel>
 
 <h2 class="text-center mb-4 text-primary">🏨 Danh sách Khách sạn</h2>
-<!-- Bộ lọc bên trái -->
 <div class="text-end mb-4">
     <a asp-action="Create" class="btn btn-success">
         ➕ Thêm khách sạn mới
@@ -19,47 +11,56 @@
     <!-- Cột bộ lọc bên trái -->
     <div class="col-lg-3 mb-4">
         <div class="filter-box">
-            <h5><i class="fa-solid fa-magnifying-glass"></i> Bộ lọc Hotel</h5>
-            <input class="form-control" name="name" placeholder="Tên hotel..." />
-            <input class="form-control" name="minPrice" placeholder="Giá thấp nhất" />
-            <input class="form-control" name="maxPrice" placeholder="Giá cao nhất" />
-            <input class="form-control" name="star" placeholder="Số sao" />
-            <button class="btn btn-primary w-100 mb-2">Lọc Hotel</button>
-            <button class="btn btn-outline-secondary w-100">Xóa lọc</button>
-        </div>
+            <h5><i class="bi bi-funnel"></i> Tìm kiếm & Lọc</h5>
+            <form method="get" asp-action="Index">
+                <input class="form-control" name="keyword" placeholder="Tên hotel..."
+                       value="@Model.Keyword" />
+                <input class="form-control" name="address" placeholder="Địa chỉ..."
+                       value="@Model.Filters.GetValueOrDefault("address")" />
+                <input class="form-control" name="minPrice" placeholder="Giá thấp nhất" type="number" min="0"
+                       value="@Model.Filters.GetValueOrDefault("minPrice")" />
+                <input class="form-control" name="maxPrice" placeholder="Giá cao nhất" type="number" min="0"
+                       value="@Model.Filters.GetValueOrDefault("maxPrice")" />
+                <input class="form-control" name="rating" placeholder="Số sao" type="number" min="1" max="5"
+                       value="@Model.Filters.GetValueOrDefault("rating")" />
 
-        <div class="filter-box">
-            <h5><i class="fa-solid fa-sort"></i> Sắp xếp-Tìm kiếm </h5>
-            <form method="get" asp-action="Demo1">
-                <input name="address1" class="form-control" placeholder="Nhập địa chỉ..." value="@ViewBag.Address" />
-                <select name="sortOrder" class="form-select">
-                    <option value="">-- Chọn tiêu chí --</option>
-                    <option value="price_asc">Giá tăng dần</option>
-                    <option value="price_desc">Giá giảm dần</option>
-                    <option value="quantity_asc">Số lượng tăng dần</option>
-                    <option value="quantity_desc">Số lượng giảm dần</option>
+                <hr />
+                <label class="form-label fw-bold"><i class="bi bi-sort-alpha-down"></i> Sắp xếp</label>
+                <select name="sortBy" class="form-select">
+                    <option value="">-- Mặc định --</option>
+                    <option value="name" selected="@(Model.SortBy == "name")">Tên</option>
+                    <option value="price" selected="@(Model.SortBy == "price")">Giá</option>
+                    <option value="rating" selected="@(Model.SortBy == "rating")">Số sao</option>
+                    <option value="quantity" selected="@(Model.SortBy == "quantity")">Số phòng</option>
                 </select>
-                <button type="submit" class="btn btn-primary w-100 mt-2">Sắp xếp</button>
-                <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
+                <select name="sortDir" class="form-select">
+                    <option value="asc" selected="@(Model.SortDir == "asc")">Tăng dần</option>
+                    <option value="desc" selected="@(Model.SortDir == "desc")">Giảm dần</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary w-100 mb-2">🔍 Tìm kiếm</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">Xóa lọc</a>
             </form>
         </div>
     </div>
 
     <!-- Cột danh sách hotel bên phải -->
     <div class="col-lg-9">
+        <p class="text-muted mb-3">Tìm thấy <strong>@Model.TotalCount</strong> khách sạn</p>
+
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var h in Model)
+            @foreach (var h in Model.Items)
             {
                 <div class="col">
                     <div class="card hotel-card h-100 shadow-sm">
                         <img src="~/ImageHotel/@h.Image" class="card-img-top hotel-image" />
 
                         <div class="card-body">
-                            <h5 class="card-title text-primary fw-bold"> Hotel: @h.Name </h5>
+                            <h5 class="card-title text-primary fw-bold">Hotel: @h.Name</h5>
                             <p class="card-text text-muted">@h.Address</p>
 
                             <ul class="list-unstyled hotel-info">
-                                <li><i class="bi bi-cash-coin"></i> <strong>Giá:</strong> @h.Price $ / 1đêm </li>
+                                <li><i class="bi bi-cash-coin"></i> <strong>Giá:</strong> @h.Price $ / 1đêm</li>
                                 <li><i class="bi bi-star-fill text-warning"></i> <strong>Số sao:</strong> @h.Rating</li>
                                 <li><i class="bi bi-house-door"></i> <strong>Phòng trống:</strong> @h.Quantity Phòng</li>
                                 <li><i class="bi bi-geo-alt"></i> <strong>Tour:</strong> @h.Tour?.Name</li>
@@ -80,163 +81,50 @@
                 </div>
             }
         </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-keyword="@Model.Keyword" asp-route-address="@Model.Filters.GetValueOrDefault("address")"
+                           asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                           asp-route-page="@(Model.Page - 1)"><i class="bi bi-chevron-left"></i></a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                               asp-route-keyword="@Model.Keyword" asp-route-address="@Model.Filters.GetValueOrDefault("address")"
+                               asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                               asp-route-page="@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-keyword="@Model.Keyword" asp-route-address="@Model.Filters.GetValueOrDefault("address")"
+                           asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                           asp-route-page="@(Model.Page + 1)"><i class="bi bi-chevron-right"></i></a>
+                    </li>
+                </ul>
+                <p class="text-center text-muted small">Trang @Model.Page / @Model.TotalPages</p>
+            </nav>
+        }
     </div>
 </div>
 
 <style>
-    .filter-box {
-        background: #fff;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-        margin-bottom: 30px;
-        max-width: 300px;
-    }
-
-        .filter-box h5 {
-            font-size: 20px;
-            color: #007bff;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-
-        .filter-box .form-control,
-        .filter-box .form-select {
-            border-radius: 12px;
-            height: 45px;
-            font-size: 15px;
-            margin-bottom: 10px;
-        }
-
-        .filter-box .btn-primary {
-            background-color: #ff6a00;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-        }
-
-        .filter-box .btn-outline-secondary {
-            border-radius: 25px;
-            font-weight: 600;
-            color: #333;
-        }
-
-            .filter-box .btn-outline-secondary:hover {
-                background-color: #ddd;
-            }
-
-    body {
-        background: linear-gradient(to left, #fffde7, #e0f2f1);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    h2 {
-        color: #00796b;
-        font-weight: bold;
-    }
-    .tour-card {
-        border-radius: 16px;
-        overflow: hidden;
-        background: #ffffff;
-        border: 1px solid #ddd;
-        transition: all 0.3s ease-in-out;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-        .tour-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-        }
-
-    .sort-form {
-        background: #f5f8fa;
-        padding: 15px 20px;
-        border-radius: 12px;
-        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
-        max-width: 600px;
-        margin: auto;
-    }
-
-        .sort-form .form-select {
-            height: 45px;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        .sort-form .btn {
-            height: 45px;
-            font-size: 16px;
-            font-weight: 500;
-            border-radius: 8px;
-        }
-
-        .sort-form .btn-primary {
-            background-color: #ff6a00; /* màu cam đậm */
-            border: none;
-        }
-
-            .sort-form .btn-primary:hover {
-                background-color: #e65c00;
-            }
-
-        .sort-form .btn-outline-secondary:hover {
-            background-color: #adb5bd;
-            color: white;
-        }
-
-    .tour-image {
-        height: 200px;
-        object-fit: cover;
-        border-top-left-radius: 16px;
-        border-top-right-radius: 16px;
-        transition: transform 0.3s ease;
-    }
-
-    .tour-card:hover .tour-image {
-        transform: scale(1.05);
-    }
-
-    .card-title {
-        font-size: 1.2rem;
-        color: #00695c;
-        font-weight: bold;
-    }
-
-    .card-text {
-        font-size: 0.95rem;
-        color: #555;
-    }
-
-    .tour-info li {
-        font-size: 0.9rem;
-        margin-bottom: 6px;
-        color: #333;
-    }
-
-    .tour-info i {
-        color: #ff6f00;
-        margin-right: 6px;
-    }
-
-    .card-footer {
-        background-color: transparent;
-        border-top: none;
-        padding-top: 0;
-    }
-
-    /* =================== FILTER =================== */
-    .card.filter-card {
-        border-radius: 18px;
-        background-color: #ffffff;
-        padding: 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        border: 1px solid #dfe3e6;
-    }
-
-    
-
-    
+    .filter-box { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); margin-bottom: 30px; }
+    .filter-box h5 { font-size: 18px; color: #007bff; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+    .filter-box .form-control, .filter-box .form-select { border-radius: 12px; height: 42px; font-size: 15px; margin-bottom: 10px; }
+    .filter-box .btn { border-radius: 25px; font-weight: 600; }
+    body { background: linear-gradient(to left, #fffde7, #e0f2f1); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .hotel-card { border-radius: 16px; overflow: hidden; transition: all 0.3s ease; border: 1px solid #ddd; }
+    .hotel-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+    .hotel-image { height: 200px; object-fit: cover; transition: transform 0.3s ease; }
+    .hotel-card:hover .hotel-image { transform: scale(1.05); }
+    .hotel-info li { font-size: 0.9rem; margin-bottom: 6px; color: #333; }
+    .hotel-info i { color: #ff6f00; margin-right: 6px; }
 </style>

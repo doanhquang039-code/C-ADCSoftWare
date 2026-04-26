@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
@@ -9,29 +8,29 @@ namespace WEBDULICH.Controllers
 {
     public class TourController : Controller
     {
-        private readonly ApplicationDbContext db;
-        private readonly IImageStorageService imageStorageService;
+        private readonly ITourService tourService;
+        private readonly IDestinationService destinationService;
 
-        public TourController(ApplicationDbContext db, IImageStorageService imageStorageService)
+        public TourController(ITourService tourService, IDestinationService destinationService)
         {
-            this.db = db;
-            this.imageStorageService = imageStorageService;
+            this.tourService = tourService;
+            this.destinationService = destinationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? keyword, decimal? minPrice, decimal? maxPrice,
+            int? duration, int? destinationId, string? sortBy, string? sortDir, int page = 1, int pageSize = 10)
         {
-            var list = db.Tours.Include(t => t.Destination)
-                .Include(t => t.Orders)
-                .Include(t => t.Reviews)
-                .Include(t => t.Hotels)
-                .ToList();
-            return View(list);
+            var result = await tourService.GetPagedAsync(keyword, minPrice, maxPrice,
+                duration, destinationId, sortBy, sortDir, page, pageSize);
+
+            ViewBag.Destinations = await destinationService.GetAllAsync();
+            return View(result);
         }
 
         [AdminOnly]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            PopulateDestinations();
+            await PopulateDestinations();
             return View();
         }
 
@@ -41,26 +40,21 @@ namespace WEBDULICH.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateDestinations(tour.DestinationId);
+                await PopulateDestinations(tour.DestinationId);
                 return View(tour);
             }
 
-            tour.Image = await imageStorageService.SaveAsync(imageFile, "ImageTour") ?? string.Empty;
-            db.Tours.Add(tour);
-            db.SaveChanges();
+            await tourService.CreateAsync(tour, imageFile);
             return RedirectToAction(nameof(Index));
         }
 
         [AdminOnly]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var tour = db.Tours.Find(id);
-            if (tour == null)
-            {
-                return NotFound();
-            }
+            var tour = await tourService.GetByIdAsync(id);
+            if (tour == null) return NotFound();
 
-            PopulateDestinations(tour.DestinationId);
+            await PopulateDestinations(tour.DestinationId);
             return View(tour);
         }
 
@@ -70,107 +64,25 @@ namespace WEBDULICH.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateDestinations(tour.DestinationId);
+                await PopulateDestinations(tour.DestinationId);
                 return View(tour);
             }
 
-            var existingTour = db.Tours.AsNoTracking().FirstOrDefault(x => x.Id == tour.Id);
-            if (existingTour == null)
-            {
-                return NotFound();
-            }
-
-            var newImage = await imageStorageService.SaveAsync(imageFile, "ImageTour");
-            if (!string.IsNullOrWhiteSpace(newImage))
-            {
-                imageStorageService.Delete("ImageTour", oldImage ?? existingTour.Image);
-                tour.Image = newImage;
-            }
-            else
-            {
-                tour.Image = oldImage ?? existingTour.Image;
-            }
-
-            db.Tours.Update(tour);
-            db.SaveChanges();
+            await tourService.UpdateAsync(tour, imageFile, oldImage);
             return RedirectToAction(nameof(Index));
         }
 
         [AdminOnly]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var tour = db.Tours.Find(id);
-            if (tour == null)
-            {
-                return NotFound();
-            }
-
-            imageStorageService.Delete("ImageTour", tour.Image);
-            db.Tours.Remove(tour);
-            db.SaveChanges();
+            await tourService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Filter(string keyword, decimal? minPrice, decimal? maxPrice, int? duration)
+        private async Task PopulateDestinations(int? selectedDestinationId = null)
         {
-            var tours = db.Tours.Include(t => t.Destination).AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(keyword))
-            {
-                tours = tours.Where(t => t.Name.Contains(keyword));
-            }
-
-            if (minPrice.HasValue)
-            {
-                tours = tours.Where(t => t.Price >= minPrice.Value);
-            }
-
-            if (maxPrice.HasValue)
-            {
-                tours = tours.Where(t => t.Price <= maxPrice.Value);
-            }
-
-            if (duration.HasValue)
-            {
-                tours = tours.Where(t => t.Duration == duration.Value);
-            }
-
-            ViewBag.Keyword = keyword;
-            ViewBag.MinPrice = minPrice;
-            ViewBag.MaxPrice = maxPrice;
-            ViewBag.Duration = duration;
-
-            return View("Index", tours.ToList());
-        }
-
-        public IActionResult Demo1(string sortOrder, int? destinationId)
-        {
-            var tours = db.Tours.AsQueryable();
-
-            ViewBag.SortOrder = sortOrder;
-            ViewBag.DestinationId = destinationId;
-            ViewBag.Destinations = db.Destinations.ToList();
-
-            if (destinationId.HasValue)
-            {
-                tours = tours.Where(t => t.DestinationId == destinationId.Value);
-            }
-
-            tours = sortOrder switch
-            {
-                "price_asc" => tours.OrderBy(t => t.Price),
-                "price_desc" => tours.OrderByDescending(t => t.Price),
-                "quantity_asc" => tours.OrderBy(t => t.Quantity),
-                "quantity_desc" => tours.OrderByDescending(t => t.Quantity),
-                _ => tours.OrderBy(t => t.Id)
-            };
-
-            return View("Index", tours.ToList());
-        }
-
-        private void PopulateDestinations(int? selectedDestinationId = null)
-        {
-            ViewBag.Destinations = new SelectList(db.Destinations, "Id", "Name", selectedDestinationId);
+            var destinations = await destinationService.GetAllAsync();
+            ViewBag.Destinations = new SelectList(destinations, "Id", "Name", selectedDestinationId);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 // ánh xạ cơ sở dữ liệu 
 namespace WEBDULICH.Services
@@ -27,6 +27,15 @@ namespace WEBDULICH.Services
             modelBuilder.Entity<Orders>().ToTable("Orders");
             modelBuilder.Entity<Review>().ToTable("Review");
             modelBuilder.Entity<Payment>().ToTable("Payment");
+
+            // Default values for User
+            modelBuilder.Entity<User>()
+                .Property(u => u.Role)
+                .HasDefaultValue("User");
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.IsActive)
+                .HasDefaultValue(true);
 
             base.OnModelCreating(modelBuilder);
         }

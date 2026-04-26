@@ -10,17 +10,20 @@ namespace WEBDULICH.Controllers
     [AdminOnly]
     public class PaymentController : Controller
     {
+        private readonly IPaymentService paymentService;
         private readonly ApplicationDbContext db;
 
-        public PaymentController(ApplicationDbContext db)
+        public PaymentController(IPaymentService paymentService, ApplicationDbContext db)
         {
+            this.paymentService = paymentService;
             this.db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? keyword, string? paymentStatus,
+            string? sortBy, string? sortDir, int page = 1, int pageSize = 10)
         {
-            var list = db.Payments.Include(p => p.Orders).ToList();
-            return View(list);
+            var result = await paymentService.GetPagedAsync(keyword, paymentStatus, sortBy, sortDir, page, pageSize);
+            return View(result);
         }
 
         public IActionResult Create()
@@ -30,7 +33,7 @@ namespace WEBDULICH.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Payment payment)
+        public async Task<IActionResult> Create(Payment payment)
         {
             if (!ModelState.IsValid)
             {
@@ -38,25 +41,21 @@ namespace WEBDULICH.Controllers
                 return View(payment);
             }
 
-            db.Payments.Add(payment);
-            db.SaveChanges();
+            await paymentService.CreateAsync(payment);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var payment = db.Payments.Find(id);
-            if (payment == null)
-            {
-                return NotFound();
-            }
+            var payment = await paymentService.GetByIdAsync(id);
+            if (payment == null) return NotFound();
 
             PopulateOrders(payment.OrdersId);
             return View(payment);
         }
 
         [HttpPost]
-        public IActionResult Edit(Payment payment)
+        public async Task<IActionResult> Edit(Payment payment)
         {
             if (!ModelState.IsValid)
             {
@@ -64,46 +63,29 @@ namespace WEBDULICH.Controllers
                 return View(payment);
             }
 
-            db.Payments.Update(payment);
-            db.SaveChanges();
+            await paymentService.UpdateAsync(payment);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var payment = db.Payments.Find(id);
-            if (payment == null)
-            {
-                return NotFound();
-            }
-
-            db.Payments.Remove(payment);
-            db.SaveChanges();
+            await paymentService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult OnlinePayment(int orderId)
         {
             var order = db.Orders.Include(o => o.User).Include(o => o.Tour).FirstOrDefault(o => o.Id == orderId);
-            if (order == null)
-            {
-                return NotFound();
-            }
+            if (order == null) return NotFound();
 
             return View(order);
         }
 
         [HttpPost]
-        public IActionResult ConfirmPayment(int orderId, string email)
+        public async Task<IActionResult> ConfirmPayment(int orderId, string email)
         {
-            var order = db.Orders.FirstOrDefault(o => o.Id == orderId);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            order.Status = "Đã thanh toán";
-            db.SaveChanges();
+            var success = await paymentService.ConfirmPaymentAsync(orderId);
+            if (!success) return NotFound();
 
             TempData["Success"] = "Thanh toán thành công!";
             return RedirectToAction("MyOrders", "Orders");

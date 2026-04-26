@@ -1,69 +1,65 @@
-﻿@model List<WEBDULICH.Models.Tour>
-
-
+@model WEBDULICH.Models.PagedResult<WEBDULICH.Models.Tour>
 
 <h2 class="text-center mb-4">Danh sách Tour</h2>
 <div class="text-end mb-4">
     <a asp-action="Create" class="btn btn-success">
-        ➕ Thêm tour mới 
+        ➕ Thêm tour mới
     </a>
 </div>
 
 <div class="row">
     <!-- Bộ lọc bên trái -->
-    <!-- Bên trái - Bộ lọc -->
     <div class="col-md-3 mb-4">
         <div class="filter-box">
-            <h5><i class="fa-solid fa-filter"></i> Bộ lọc Tour</h5>
-            <form method="get" asp-action="Filter">
-                <input type="text" name="keyword" class="form-control" placeholder="Tên tour..." value="@ViewBag.Keyword" />
-                <input type="number" name="minPrice" class="form-control" placeholder="Giá thấp nhất" min="0" value="@ViewBag.MinPrice" />
-                <input type="number" name="maxPrice" class="form-control" placeholder="Giá cao nhất" min="0" value="@ViewBag.MaxPrice" />
-                <input type="number" name="duration" class="form-control" placeholder="Số ngày" min="1" max="30" value="@ViewBag.Duration" />
-
-                <button type="submit" class="btn btn-primary w-100 mb-2">Lọc Tour</button>
-                <a asp-action="Index" class="btn btn-outline-secondary w-100">Xóa lọc</a>
-            </form>
-        </div>
-
-        <div class="filter-box mt-4">
-            <h5><i class="fa-solid fa-sort"></i> Sắp xếp</h5>
-            <form method="get" asp-action="Demo1">
-                <select name="sortOrder" class="form-select">
-                    <option value="">-- Sắp xếp mặc định --</option>
-                    <option value="price_asc" selected="@(ViewBag.SortOrder == "price_asc")">Giá tăng dần</option>
-                    <option value="price_desc" selected="@(ViewBag.SortOrder == "price_desc")">Giá giảm dần</option>
-                    <option value="quantity_asc" selected="@(ViewBag.SortOrder == "quantity_asc")">Số lượng tăng dần</option>
-                    <option value="quantity_desc" selected="@(ViewBag.SortOrder == "quantity_desc")">Số lượng giảm dần</option>
-                </select>
-                <div class="col-md-4">
-                    <select name="destinationId" class="form-select">
-                        <option value="">-- Tất cả địa điểm --</option>
-                        @if (ViewBag.Destinations != null)
+            <h5><i class="bi bi-funnel"></i> Tìm kiếm & Lọc</h5>
+            <form method="get" asp-action="Index">
+                <input type="text" name="keyword" class="form-control" placeholder="Tên tour..."
+                       value="@Model.Keyword" />
+                <input type="number" name="minPrice" class="form-control" placeholder="Giá thấp nhất" min="0"
+                       value="@Model.Filters.GetValueOrDefault("minPrice")" />
+                <input type="number" name="maxPrice" class="form-control" placeholder="Giá cao nhất" min="0"
+                       value="@Model.Filters.GetValueOrDefault("maxPrice")" />
+                <input type="number" name="duration" class="form-control" placeholder="Số ngày" min="1" max="30"
+                       value="@Model.Filters.GetValueOrDefault("duration")" />
+                <select name="destinationId" class="form-select">
+                    <option value="">-- Tất cả điểm đến --</option>
+                    @if (ViewBag.Destinations != null)
+                    {
+                        foreach (var d in (List<WEBDULICH.Models.Destination>)ViewBag.Destinations)
                         {
-                            foreach (var d in ViewBag.Destinations)
-                            {
-                                <option value="@d.Id"
-                                        selected="@(ViewBag.DestinationId != null && d.Id == (int)ViewBag.DestinationId ? "selected" : "")">
-                                    @d.Name
-                                </option>
-                            }
+                            <option value="@d.Id"
+                                    selected="@(Model.Filters.GetValueOrDefault("destinationId") == d.Id.ToString())">
+                                @d.Name
+                            </option>
                         }
-                    </select>
+                    }
+                </select>
 
-                </div>
+                <hr />
+                <label class="form-label fw-bold"><i class="bi bi-sort-alpha-down"></i> Sắp xếp</label>
+                <select name="sortBy" class="form-select">
+                    <option value="">-- Mặc định --</option>
+                    <option value="name" selected="@(Model.SortBy == "name")">Tên</option>
+                    <option value="price" selected="@(Model.SortBy == "price")">Giá</option>
+                    <option value="duration" selected="@(Model.SortBy == "duration")">Thời gian</option>
+                    <option value="quantity" selected="@(Model.SortBy == "quantity")">Số lượng</option>
+                </select>
+                <select name="sortDir" class="form-select">
+                    <option value="asc" selected="@(Model.SortDir == "asc")">Tăng dần</option>
+                    <option value="desc" selected="@(Model.SortDir == "desc")">Giảm dần</option>
+                </select>
 
-                <button type="submit" class="btn btn-primary w-100 mt-2">Sắp xếp</button>
-                <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
+                <button type="submit" class="btn btn-primary w-100 mb-2">🔍 Tìm kiếm</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100">Xóa lọc</a>
             </form>
         </div>
     </div>
 
-    
-
     <div class="col-md-9">
+        <p class="text-muted mb-3">Tìm thấy <strong>@Model.TotalCount</strong> tour</p>
+
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var t in Model)
+            @foreach (var t in Model.Items)
             {
                 <div class="col">
                     <div class="card tour-card h-100 shadow-sm">
@@ -74,7 +70,7 @@
                             <p class="card-text text-muted">@t.Description</p>
 
                             <ul class="list-unstyled tour-info">
-                                <li><i class="bi bi-cash-coin"></i> <strong>Giá:</strong> @t.Price $/Người </li>
+                                <li><i class="bi bi-cash-coin"></i> <strong>Giá:</strong> @t.Price $/Người</li>
                                 <li><i class="bi bi-clock"></i> <strong>Thời gian:</strong> @t.Duration ngày</li>
                                 <li><i class="bi bi-people"></i> <strong>Còn lại:</strong> @t.Quantity người</li>
                                 <li><i class="bi bi-geo-alt"></i> <strong>Địa điểm:</strong> @t.Destination?.Name</li>
@@ -83,7 +79,6 @@
                         <a class="btn btn-success btn-sm" asp-controller="Orders" asp-action="FormTour" asp-route-tourId="@t.Id">
                             Đặt Tour
                         </a>
-
 
                         <div class="card-footer bg-transparent border-0 d-flex justify-content-between">
                             <a class="btn btn-sm btn-outline-primary rounded-pill" asp-action="Edit" asp-route-id="@t.Id">
@@ -98,66 +93,115 @@
                 </div>
             }
         </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-keyword="@Model.Keyword"
+                           asp-route-minPrice="@Model.Filters.GetValueOrDefault("minPrice")"
+                           asp-route-maxPrice="@Model.Filters.GetValueOrDefault("maxPrice")"
+                           asp-route-duration="@Model.Filters.GetValueOrDefault("duration")"
+                           asp-route-destinationId="@Model.Filters.GetValueOrDefault("destinationId")"
+                           asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                           asp-route-page="@(Model.Page - 1)">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" asp-action="Index"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-minPrice="@Model.Filters.GetValueOrDefault("minPrice")"
+                               asp-route-maxPrice="@Model.Filters.GetValueOrDefault("maxPrice")"
+                               asp-route-duration="@Model.Filters.GetValueOrDefault("duration")"
+                               asp-route-destinationId="@Model.Filters.GetValueOrDefault("destinationId")"
+                               asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                               asp-route-page="@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-keyword="@Model.Keyword"
+                           asp-route-minPrice="@Model.Filters.GetValueOrDefault("minPrice")"
+                           asp-route-maxPrice="@Model.Filters.GetValueOrDefault("maxPrice")"
+                           asp-route-duration="@Model.Filters.GetValueOrDefault("duration")"
+                           asp-route-destinationId="@Model.Filters.GetValueOrDefault("destinationId")"
+                           asp-route-sortBy="@Model.SortBy" asp-route-sortDir="@Model.SortDir"
+                           asp-route-page="@(Model.Page + 1)">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+                <p class="text-center text-muted small">
+                    Trang @Model.Page / @Model.TotalPages — Hiển thị @Model.Items.Count / @Model.TotalCount tour
+                </p>
+            </nav>
+        }
     </div>
+
     <style>
         body {
             background: #f3f6fb;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-    .filter-box {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e0e0e0;
-        margin-bottom: 30px;
-    }
-
-        .filter-box h5 {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0d6efd;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
+        .filter-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 30px;
         }
 
-        .filter-box .form-control,
-        .filter-box .form-select {
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 15px;
-            height: 42px;
-        }
-
-        .filter-box .btn {
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 15px;
-            transition: 0.3s all ease;
-        }
-
-        .filter-box .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-        }
-
-            .filter-box .btn-primary:hover {
-                background-color: #0b5ed7;
+            .filter-box h5 {
+                font-size: 18px;
+                font-weight: bold;
+                color: #0d6efd;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 15px;
             }
 
-        .filter-box .btn-outline-secondary {
-            color: #6c757d;
-            border-color: #ced4da;
-        }
-
-            .filter-box .btn-outline-secondary:hover {
-                background-color: #f1f1f1;
+            .filter-box .form-control,
+            .filter-box .form-select {
+                border-radius: 12px;
+                margin-bottom: 12px;
+                font-size: 15px;
+                height: 42px;
             }
 
-      
+            .filter-box .btn {
+                border-radius: 25px;
+                font-weight: 600;
+                font-size: 15px;
+                transition: 0.3s all ease;
+            }
+
+            .filter-box .btn-primary {
+                background-color: #0d6efd;
+                border: none;
+            }
+
+                .filter-box .btn-primary:hover {
+                    background-color: #0b5ed7;
+                }
+
+            .filter-box .btn-outline-secondary {
+                color: #6c757d;
+                border-color: #ced4da;
+            }
+
+                .filter-box .btn-outline-secondary:hover {
+                    background-color: #f1f1f1;
+                }
+
         .tour-card {
             border-radius: 16px;
             overflow: hidden;
@@ -205,39 +249,6 @@
             margin-right: 6px;
         }
 
-        /* =================== FILTER =================== */
-        .card.p-3.shadow-sm {
-            border-radius: 18px;
-            background-color: #ffffff;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
-        }
-
-            .card.p-3.shadow-sm h5 {
-                color: #0d6efd;
-                font-weight: bold;
-            }
-
-            .card.p-3.shadow-sm input,
-            .card.p-3.shadow-sm select {
-                border-radius: 12px;
-                border: 1px solid #ced4da;
-                background-color: #fdfdfd;
-            }
-
-            .card.p-3.shadow-sm button,
-            .card.p-3.shadow-sm a {
-                font-weight: 600;
-                border-radius: 20px;
-                transition: all 0.25s ease;
-            }
-
-                .card.p-3.shadow-sm button:hover,
-                .card.p-3.shadow-sm a:hover {
-                    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
-                }
-
-        /* =================== BUTTONS =================== */
         .btn-success,
         .btn-outline-primary,
         .btn-outline-danger {
@@ -267,5 +278,5 @@
             border-radius: 30px;
             font-weight: 600;
         }
-
     </style>
+</div>

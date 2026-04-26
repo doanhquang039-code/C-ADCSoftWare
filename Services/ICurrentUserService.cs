@@ -7,6 +7,9 @@ namespace WEBDULICH.Services
         User? GetCurrentUser();
         bool IsAuthenticated();
         bool IsAdmin();
+        bool IsStaff();
+        bool IsStaffOrAdmin();
+        bool HasRole(string role);
         void SignIn(User user);
         void SignOut();
     }

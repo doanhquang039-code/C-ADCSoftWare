@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
@@ -9,28 +8,29 @@ namespace WEBDULICH.Controllers
 {
     public class DestinationController : Controller
     {
-        private readonly ApplicationDbContext db;
-        private readonly IImageStorageService imageStorageService;
+        private readonly IDestinationService destinationService;
+        private readonly ICategoryService categoryService;
 
-        public DestinationController(ApplicationDbContext db, IImageStorageService imageStorageService)
+        public DestinationController(IDestinationService destinationService, ICategoryService categoryService)
         {
-            this.db = db;
-            this.imageStorageService = imageStorageService;
+            this.destinationService = destinationService;
+            this.categoryService = categoryService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? keyword, int? categoryId, string? location,
+            string? sortBy, string? sortDir, int page = 1, int pageSize = 10)
         {
-            var list = db.Destinations
-                .Include(d => d.Category)
-                .Include(d => d.Tours)
-                .ToList();
-            return View(list);
+            var result = await destinationService.GetPagedAsync(keyword, categoryId, location,
+                sortBy, sortDir, page, pageSize);
+
+            ViewBag.Categories = await categoryService.GetAllAsync();
+            return View(result);
         }
 
         [AdminOnly]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            PopulateCategories();
+            await PopulateCategories();
             return View();
         }
 
@@ -40,26 +40,21 @@ namespace WEBDULICH.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateCategories(destination.CategoryId);
+                await PopulateCategories(destination.CategoryId);
                 return View(destination);
             }
 
-            destination.Image = await imageStorageService.SaveAsync(imageFile, "ImageDestination") ?? string.Empty;
-            db.Destinations.Add(destination);
-            db.SaveChanges();
+            await destinationService.CreateAsync(destination, imageFile);
             return RedirectToAction(nameof(Index));
         }
 
         [AdminOnly]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var destination = db.Destinations.Find(id);
-            if (destination == null)
-            {
-                return NotFound();
-            }
+            var destination = await destinationService.GetByIdAsync(id);
+            if (destination == null) return NotFound();
 
-            PopulateCategories(destination.CategoryId);
+            await PopulateCategories(destination.CategoryId);
             return View(destination);
         }
 
@@ -69,79 +64,33 @@ namespace WEBDULICH.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateCategories(destination.CategoryId);
+                await PopulateCategories(destination.CategoryId);
                 return View(destination);
             }
 
-            var existingDestination = db.Destinations.AsNoTracking().FirstOrDefault(x => x.Id == destination.Id);
-            if (existingDestination == null)
-            {
-                return NotFound();
-            }
-
-            var newImage = await imageStorageService.SaveAsync(imageFile, "ImageDestination");
-            if (!string.IsNullOrWhiteSpace(newImage))
-            {
-                imageStorageService.Delete("ImageDestination", existingDestination.Image);
-                destination.Image = newImage;
-            }
-            else
-            {
-                destination.Image = existingDestination.Image;
-            }
-
-            db.Destinations.Update(destination);
-            db.SaveChanges();
+            await destinationService.UpdateAsync(destination, imageFile);
             return RedirectToAction(nameof(Index));
         }
 
         [AdminOnly]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var destination = db.Destinations.Find(id);
-            if (destination == null)
-            {
-                return NotFound();
-            }
-
-            imageStorageService.Delete("ImageDestination", destination.Image);
-            db.Destinations.Remove(destination);
-            db.SaveChanges();
+            await destinationService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var destination = db.Destinations
-                .Include(d => d.Category)
-                .Include(d => d.Tours)
-                .FirstOrDefault(x => x.Id == id);
-            if (destination == null)
-            {
-                return NotFound();
-            }
+            var destination = await destinationService.GetByIdAsync(id);
+            if (destination == null) return NotFound();
 
             return View(destination);
         }
 
-        public IActionResult SearchByRegion(string region)
+        private async Task PopulateCategories(int? selectedCategoryId = null)
         {
-            var query = db.Destinations
-                .Include(d => d.Category)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(region))
-            {
-                query = query.Where(d => d.Category != null && d.Category.Name == region);
-            }
-
-            ViewBag.SelectedRegion = region;
-            return View("Index", query.ToList());
-        }
-
-        private void PopulateCategories(int? selectedCategoryId = null)
-        {
-            ViewBag.Categories = new SelectList(db.Categories, "Id", "Name", selectedCategoryId);
+            var categories = await categoryService.GetAllAsync();
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", selectedCategoryId);
         }
     }
 }

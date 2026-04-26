@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Helpers;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
@@ -9,40 +8,41 @@ namespace WEBDULICH.Controllers
 {
     public class ReviewController : Controller
     {
-        private readonly ApplicationDbContext db;
+        private readonly IReviewService reviewService;
+        private readonly ITourService tourService;
         private readonly ICurrentUserService currentUserService;
 
-        public ReviewController(ApplicationDbContext context, ICurrentUserService currentUserService)
+        public ReviewController(IReviewService reviewService, ITourService tourService, ICurrentUserService currentUserService)
         {
-            db = context;
+            this.reviewService = reviewService;
+            this.tourService = tourService;
             this.currentUserService = currentUserService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? keyword, int? tourId, string? rating,
+            string? sortBy, string? sortDir, int page = 1, int pageSize = 10)
         {
-            var reviews = db.Reviews
-                .Include(r => r.User)
-                .Include(r => r.Tour)
-                .ToList();
-            return View(reviews);
+            var result = await reviewService.GetPagedAsync(keyword, tourId, rating,
+                sortBy, sortDir, page, pageSize);
+
+            ViewBag.Tours = await tourService.GetAllAsync();
+            return View(result);
         }
 
         [AuthenticatedOnly]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Tours = new SelectList(db.Tours, "Id", "Name");
+            var tours = await tourService.GetAllAsync();
+            ViewBag.Tours = new SelectList(tours, "Id", "Name");
             return View();
         }
 
         [HttpPost]
         [AuthenticatedOnly]
-        public IActionResult Create(Review review)
+        public async Task<IActionResult> Create(Review review)
         {
             var currentUser = currentUserService.GetCurrentUser();
-            if (currentUser == null)
-            {
-                return RedirectToAction("Login", "User");
-            }
+            if (currentUser == null) return RedirectToAction("Login", "User");
 
             if (string.IsNullOrWhiteSpace(review.Rating))
             {
@@ -51,60 +51,46 @@ namespace WEBDULICH.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", review.TourId);
+                var tours = await tourService.GetAllAsync();
+                ViewBag.Tours = new SelectList(tours, "Id", "Name", review.TourId);
                 return View(review);
             }
 
             review.UserId = currentUser.Id;
-            if (review.ReviewDate == DateTime.MinValue)
-            {
-                review.ReviewDate = DateTime.Now;
-            }
-
-            db.Reviews.Add(review);
-            db.SaveChanges();
+            await reviewService.CreateAsync(review);
             return RedirectToAction(nameof(Index));
         }
 
         [AuthenticatedOnly]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var review = db.Reviews.Find(id);
-            if (review == null)
-            {
-                return NotFound();
-            }
+            var review = await reviewService.GetByIdAsync(id);
+            if (review == null) return NotFound();
 
-            ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", review.TourId);
+            var tours = await tourService.GetAllAsync();
+            ViewBag.Tours = new SelectList(tours, "Id", "Name", review.TourId);
             return View(review);
         }
 
         [HttpPost]
         [AuthenticatedOnly]
-        public IActionResult Edit(Review review)
+        public async Task<IActionResult> Edit(Review review)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Tours = new SelectList(db.Tours, "Id", "Name", review.TourId);
+                var tours = await tourService.GetAllAsync();
+                ViewBag.Tours = new SelectList(tours, "Id", "Name", review.TourId);
                 return View(review);
             }
 
-            db.Reviews.Update(review);
-            db.SaveChanges();
+            await reviewService.UpdateAsync(review);
             return RedirectToAction(nameof(Index));
         }
 
         [AuthenticatedOnly]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var review = db.Reviews.Find(id);
-            if (review == null)
-            {
-                return NotFound();
-            }
-
-            db.Reviews.Remove(review);
-            db.SaveChanges();
+            await reviewService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

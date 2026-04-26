@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace WEBDULICH.Models
 {
@@ -17,8 +17,17 @@ namespace WEBDULICH.Models
 
         public string Password { get; set; }
 
+        /// <summary>
+        /// "Admin" | "Staff" | "User"
+        /// </summary>
+        public string Role { get; set; } = "User";
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public bool IsActive { get; set; } = true;
+
         public ICollection<Orders> Orders { get; set; }
         public ICollection<Review> Reviews { get; set; }
     }
-
 }
+
