@@ -1,0 +1,241 @@
+@model WEBDULICH.Models.LoyaltyStats
+@{
+    ViewData["Title"] = "Loyalty Program Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-award"></i> Loyalty Program Dashboard</h2>
+        <div class="btn-group">
+            <a asp-action="MyAccount" class="btn btn-primary">
+                <i class="bi bi-person-circle"></i> My Account
+            </a>
+            <a asp-action="Rewards" class="btn btn-outline-primary">
+                <i class="bi bi-gift"></i> Rewards
+            </a>
+            <a asp-action="ManageRewards" class="btn btn-outline-secondary">
+                <i class="bi bi-gear"></i> Manage
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-gradient-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill fs-1 mb-2"></i>
+                    <h3>@Model.TotalMembers</h3>
+                    <p class="mb-0">Total Members</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-gradient-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-check-fill fs-1 mb-2"></i>
+                    <h3>@Model.ActiveMembers</h3>
+                    <p class="mb-0">Active Members</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-gradient-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-star-fill fs-1 mb-2"></i>
+                    <h3>@Model.TotalPointsIssued.ToString("N0")</h3>
+                    <p class="mb-0">Points Issued</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-gradient-warning text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-gift-fill fs-1 mb-2"></i>
+                    <h3>@Model.TotalRedemptions</h3>
+                    <p class="mb-0">Redemptions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Tier Distribution -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-trophy"></i> Membership Tiers</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="tierChart" height="150"></canvas>
+                    
+                    <div class="mt-3">
+                        @foreach (var tier in Model.TierDistribution)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="tier-badge tier-@tier.TierName.ToLower() me-2"></div>
+                                    <span>@tier.TierName</span>
+                                </div>
+                                <div>
+                                    <span class="fw-bold">@tier.MemberCount</span>
+                                    <small class="text-muted">(@tier.Percentage.ToString("F1")%)</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Rewards -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-star"></i> Popular Rewards</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PopularRewards.Any())
+                    {
+                        @foreach (var reward in Model.PopularRewards)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <strong>@reward.RewardName</strong>
+                                    <br><small class="text-muted">@reward.PointsCost points</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">@reward.RedemptionCount redeemed</span>
+                                </div>
+                            </div>
+                            <div class="progress mb-3" style="height: 5px;">
+                                <div class="progress-bar" style="width: @((double)reward.RedemptionCount / Model.PopularRewards.Max(r => r.RedemptionCount) * 100)%"></div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">No rewards redeemed yet</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Benefits -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Loyalty Program Benefits</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="tier-badge tier-bronze mb-3 mx-auto"></div>
+                                <h6>Bronze</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✓ 1x Points on bookings</li>
+                                    <li>✓ Basic rewards</li>
+                                    <li>✓ Email support</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="tier-badge tier-silver mb-3 mx-auto"></div>
+                                <h6>Silver</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✓ 1.2x Points on bookings</li>
+                                    <li>✓ 5% discount</li>
+                                    <li>✓ Priority support</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="tier-badge tier-gold mb-3 mx-auto"></div>
+                                <h6>Gold</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✓ 1.5x Points on bookings</li>
+                                    <li>✓ 10% discount</li>
+                                    <li>✓ Free upgrades</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="tier-badge tier-platinum mb-3 mx-auto"></div>
+                                <h6>Platinum</h6>
+                                <ul class="list-unstyled small">
+                                    <li>✓ 2x Points on bookings</li>
+                                    <li>✓ 15% discount</li>
+                                    <li>✓ VIP treatment</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .tier-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .tier-bronze { background: linear-gradient(45deg, #cd7f32, #b8860b); }
+        .tier-silver { background: linear-gradient(45deg, #c0c0c0, #a8a8a8); }
+        .tier-gold { background: linear-gradient(45deg, #ffd700, #ffb347); }
+        .tier-platinum { background: linear-gradient(45deg, #e5e4e2, #b8b8b8); }
+        
+        .bg-gradient-primary { background: linear-gradient(45deg, #007bff, #0056b3); }
+        .bg-gradient-success { background: linear-gradient(45deg, #28a745, #1e7e34); }
+        .bg-gradient-info { background: linear-gradient(45deg, #17a2b8, #117a8b); }
+        .bg-gradient-warning { background: linear-gradient(45deg, #ffc107, #e0a800); }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Tier Distribution Chart
+        const tierCtx = document.getElementById('tierChart').getContext('2d');
+        new Chart(tierCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.TierDistribution.Select(t => $"'{t.TierName}'")))],
+                datasets: [{
+                    data: [@string.Join(",", Model.TierDistribution.Select(t => t.MemberCount))],
+                    backgroundColor: [
+                        '#cd7f32', // Bronze
+                        '#c0c0c0', // Silver  
+                        '#ffd700', // Gold
+                        '#e5e4e2'  // Platinum
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+}

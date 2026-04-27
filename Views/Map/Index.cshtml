@@ -1,0 +1,411 @@
+@{
+    ViewData["Title"] = "Interactive Map";
+}
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light border-end" style="height: 100vh; overflow-y: auto;">
+            <div class="p-3">
+                <h4><i class="bi bi-map"></i> Interactive Map</h4>
+                
+                <!-- Search -->
+                <div class="mb-3">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search locations...">
+                        <button class="btn btn-outline-primary" id="searchBtn">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="mb-3">
+                    <label class="form-label">Location Type</label>
+                    <select id="locationTypeFilter" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="Tour">Tours</option>
+                        <option value="Hotel">Hotels</option>
+                        <option value="Attraction">Attractions</option>
+                        <option value="Restaurant">Restaurants</option>
+                    </select>
+                </div>
+
+                <!-- Radius Filter -->
+                <div class="mb-3">
+                    <label class="form-label">Search Radius: <span id="radiusValue">10</span> km</label>
+                    <input type="range" id="radiusSlider" class="form-range" min="1" max="50" value="10">
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mb-3">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-success btn-sm" id="findMyLocation">
+                            <i class="bi bi-geo-alt"></i> Find My Location
+                        </button>
+                        <a asp-action="Tours" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-compass"></i> View Tours
+                        </a>
+                        <a asp-action="Hotels" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-building"></i> View Hotels
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div id="searchResults">
+                    <h6>Search Results</h6>
+                    <div id="resultsList" class="list-group">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Route Planning -->
+                <div class="mt-4">
+                    <h6><i class="bi bi-signpost-2"></i> Route Planning</h6>
+                    <div class="mb-2">
+                        <input type="text" id="startLocation" class="form-control form-control-sm" placeholder="Start location">
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" id="endLocation" class="form-control form-control-sm" placeholder="End location">
+                    </div>
+                    <div class="mb-2">
+                        <select id="travelMode" class="form-select form-select-sm">
+                            <option value="driving">Driving</option>
+                            <option value="walking">Walking</option>
+                            <option value="transit">Transit</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100" id="calculateRoute">
+                        <i class="bi bi-arrow-right"></i> Calculate Route
+                    </button>
+                    <div id="routeInfo" class="mt-2 small text-muted"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="col-md-9">
+            <div id="map" style="height: 100vh;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Location Details Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationModalTitle">Location Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="locationModalBody">
+                <!-- Location details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="getDirections">Get Directions</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        let map;
+        let markers = [];
+        let userLocation = null;
+        let routeLayer = null;
+
+        // Initialize map
+        function initMap() {
+            // Default to Hanoi, Vietnam
+            map = L.map('map').setView([21.0285, 105.8542], 13);
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Try to get user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    userLocation = [position.coords.latitude, position.coords.longitude];
+                    map.setView(userLocation, 15);
+                    
+                    L.marker(userLocation)
+                        .addTo(map)
+                        .bindPopup('Your Location')
+                        .openPopup();
+                });
+            }
+
+            // Load initial locations
+            loadLocations();
+        }
+
+        // Load locations
+        async function loadLocations(searchParams = {}) {
+            try {
+                const response = await fetch('/Map/Search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(searchParams)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    displayLocations(result.data.locations);
+                    updateResultsList(result.data.locations);
+                }
+            } catch (error) {
+                console.error('Error loading locations:', error);
+            }
+        }
+
+        // Display locations on map
+        function displayLocations(locations) {
+            // Clear existing markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+
+            locations.forEach(location => {
+                const icon = getLocationIcon(location.locationType);
+                const marker = L.marker([location.latitude, location.longitude], { icon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <div class="text-center">
+                            <h6>${location.name}</h6>
+                            <p class="small">${location.address || ''}</p>
+                            <button class="btn btn-sm btn-primary" onclick="showLocationDetails(${location.id})">
+                                View Details
+                            </button>
+                        </div>
+                    `);
+
+                markers.push(marker);
+            });
+        }
+
+        // Get icon for location type
+        function getLocationIcon(type) {
+            const iconColors = {
+                'Tour': 'green',
+                'Hotel': 'blue',
+                'Attraction': 'red',
+                'Restaurant': 'orange'
+            };
+
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: ${iconColors[type] || 'gray'}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+        }
+
+        // Update results list
+        function updateResultsList(locations) {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+            locations.forEach(location => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item list-group-item-action';
+                item.innerHTML = `
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">${location.name}</h6>
+                        <small class="text-muted">${location.locationType}</small>
+                    </div>
+                    <p class="mb-1 small">${location.address || ''}</p>
+                    <small class="text-muted">${location.description || ''}</small>
+                `;
+                
+                item.addEventListener('click', () => {
+                    map.setView([location.latitude, location.longitude], 16);
+                    showLocationDetails(location.id);
+                });
+
+                resultsList.appendChild(item);
+            });
+        }
+
+        // Show location details
+        async function showLocationDetails(locationId) {
+            try {
+                const response = await fetch(`/Map/GetLocation?id=${locationId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const location = result.data;
+                    document.getElementById('locationModalTitle').textContent = location.name;
+                    document.getElementById('locationModalBody').innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                ${location.image ? `<img src="${location.image}" class="img-fluid rounded mb-3" alt="${location.name}">` : ''}
+                                <h6>Address</h6>
+                                <p>${location.address || 'Not specified'}</p>
+                                
+                                <h6>Type</h6>
+                                <span class="badge bg-primary">${location.locationType}</span>
+                                
+                                ${location.rating > 0 ? `
+                                <h6 class="mt-3">Rating</h6>
+                                <div>
+                                    ${'★'.repeat(Math.floor(location.rating))}${'☆'.repeat(5 - Math.floor(location.rating))}
+                                    <span class="text-muted">(${location.rating}/5)</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Description</h6>
+                                <p>${location.description || 'No description available'}</p>
+                                
+                                ${location.contactInfo ? `
+                                <h6>Contact</h6>
+                                <p>${location.contactInfo}</p>
+                                ` : ''}
+                                
+                                ${location.openingHours ? `
+                                <h6>Opening Hours</h6>
+                                <p>${location.openingHours}</p>
+                                ` : ''}
+                                
+                                ${location.website ? `
+                                <h6>Website</h6>
+                                <p><a href="${location.website}" target="_blank">${location.website}</a></p>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Store location for directions
+                    document.getElementById('getDirections').onclick = () => {
+                        if (userLocation) {
+                            calculateRoute(userLocation, [location.latitude, location.longitude]);
+                        } else {
+                            alert('Please allow location access to get directions');
+                        }
+                    };
+                    
+                    new bootstrap.Modal(document.getElementById('locationModal')).show();
+                }
+            } catch (error) {
+                console.error('Error loading location details:', error);
+            }
+        }
+
+        // Calculate route
+        async function calculateRoute(start, end) {
+            try {
+                const routeRequest = {
+                    startLatitude: start[0],
+                    startLongitude: start[1],
+                    endLatitude: end[0],
+                    endLongitude: end[1],
+                    travelMode: document.getElementById('travelMode').value
+                };
+
+                const response = await fetch('/Map/GetRoute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(routeRequest)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    const route = result.data;
+                    
+                    // Remove existing route
+                    if (routeLayer) {
+                        map.removeLayer(routeLayer);
+                    }
+                    
+                    // Add new route
+                    routeLayer = L.polyline([start, end], { color: 'red', weight: 4 }).addTo(map);
+                    map.fitBounds(routeLayer.getBounds());
+                    
+                    // Update route info
+                    document.getElementById('routeInfo').innerHTML = `
+                        <strong>Distance:</strong> ${route.distanceKm.toFixed(1)} km<br>
+                        <strong>Duration:</strong> ${route.durationMinutes} minutes
+                    `;
+                }
+            } catch (error) {
+                console.error('Error calculating route:', error);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+
+            // Search functionality
+            document.getElementById('searchBtn').addEventListener('click', performSearch);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // Filter changes
+            document.getElementById('locationTypeFilter').addEventListener('change', performSearch);
+            
+            // Radius slider
+            document.getElementById('radiusSlider').addEventListener('input', function() {
+                document.getElementById('radiusValue').textContent = this.value;
+                performSearch();
+            });
+
+            // Find my location
+            document.getElementById('findMyLocation').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        userLocation = [position.coords.latitude, position.coords.longitude];
+                        map.setView(userLocation, 15);
+                        
+                        L.marker(userLocation)
+                            .addTo(map)
+                            .bindPopup('Your Location')
+                            .openPopup();
+                    });
+                } else {
+                    alert('Geolocation is not supported by this browser.');
+                }
+            });
+
+            // Route calculation
+            document.getElementById('calculateRoute').addEventListener('click', function() {
+                const start = document.getElementById('startLocation').value;
+                const end = document.getElementById('endLocation').value;
+                
+                if (start && end) {
+                    // In a real implementation, you would geocode these addresses first
+                    alert('Route calculation feature requires geocoding implementation');
+                } else {
+                    alert('Please enter both start and end locations');
+                }
+            });
+        });
+
+        function performSearch() {
+            const searchParams = {
+                searchTerm: document.getElementById('searchInput').value,
+                locationType: document.getElementById('locationTypeFilter').value,
+                radius: parseInt(document.getElementById('radiusSlider').value),
+                latitude: userLocation ? userLocation[0] : null,
+                longitude: userLocation ? userLocation[1] : null
+            };
+
+            loadLocations(searchParams);
+        }
+    </script>
+}

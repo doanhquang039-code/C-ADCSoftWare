@@ -1,0 +1,448 @@
+@{
+    ViewData["Title"] = "Advanced Analytics Dashboard";
+    var revenueReport = ViewBag.RevenueReport as WEBDULICH.Models.RevenueReportData;
+    var bookingReport = ViewBag.BookingReport as WEBDULICH.Models.BookingReportData;
+    var emailStats = ViewBag.EmailStats as WEBDULICH.Models.EmailStats;
+    var loyaltyStats = ViewBag.LoyaltyStats as WEBDULICH.Models.LoyaltyStats;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-graph-up-arrow"></i> Advanced Analytics Dashboard</h2>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" onclick="refreshData()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+            <div class="btn-group">
+                <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="bi bi-calendar"></i> Time Range
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="changeTimeRange(7)">Last 7 days</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTimeRange(30)">Last 30 days</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTimeRange(90)">Last 3 months</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeTimeRange(365)">Last year</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Total Revenue</h6>
+                            <h3 class="mb-0">@revenueReport.TotalRevenue.ToString("N0") VND</h3>
+                            <small>@revenueReport.TotalBookings bookings</small>
+                        </div>
+                        <div class="fs-1 text-white-50">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-gradient-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Active Users</h6>
+                            <h3 class="mb-0">@ViewBag.TotalUsers</h3>
+                            <small>@loyaltyStats.ActiveMembers loyalty members</small>
+                        </div>
+                        <div class="fs-1 text-white-50">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-gradient-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Email Campaigns</h6>
+                            <h3 class="mb-0">@emailStats.TotalCampaigns</h3>
+                            <small>@emailStats.AverageOpenRate.ToString("F1")% avg open rate</small>
+                        </div>
+                        <div class="fs-1 text-white-50">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-gradient-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Conversion Rate</h6>
+                            <h3 class="mb-0">@((double)bookingReport.ConfirmedBookings / bookingReport.TotalBookings * 100).ToString("F1")%</h3>
+                            <small>@bookingReport.ConfirmedBookings confirmed</small>
+                        </div>
+                        <div class="fs-1 text-white-50">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <!-- Revenue Trend -->
+        <div class="col-xl-8">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Revenue & Booking Trends</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary active" onclick="showRevenue()">Revenue</button>
+                        <button class="btn btn-outline-primary" onclick="showBookings()">Bookings</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="trendChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Destinations -->
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Top Destinations</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="destinationChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Analytics Row -->
+    <div class="row g-4">
+        <!-- Booking Status Distribution -->
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Booking Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="bookingStatusChart" height="150"></canvas>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="bi bi-circle-fill text-success"></i> Confirmed</span>
+                            <strong>@bookingReport.ConfirmedBookings</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="bi bi-circle-fill text-warning"></i> Pending</span>
+                            <strong>@bookingReport.PendingBookings</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span><i class="bi bi-circle-fill text-danger"></i> Cancelled</span>
+                            <strong>@bookingReport.CancelledBookings</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loyalty Tiers -->
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-award"></i> Loyalty Tiers</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="loyaltyChart" height="150"></canvas>
+                    <div class="mt-3">
+                        @foreach (var tier in loyaltyStats.TierDistribution)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="tier-@tier.TierName.ToLower()">@tier.TierName</span>
+                                <div>
+                                    <strong>@tier.MemberCount</strong>
+                                    <small class="text-muted">(@tier.Percentage.ToString("F1")%)</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Performance -->
+        <div class="col-xl-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-envelope-check"></i> Email Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Open Rate</span>
+                            <strong>@emailStats.AverageOpenRate.ToString("F1")%</strong>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-primary" style="width: @emailStats.AverageOpenRate%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Click Rate</span>
+                            <strong>@emailStats.AverageClickRate.ToString("F1")%</strong>
+                        </div>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" style="width: @emailStats.AverageClickRate%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Unsubscribe Rate</span>
+                            <strong>@emailStats.UnsubscribeRate.ToString("F1")%</strong>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" style="width: @emailStats.UnsubscribeRate%"></div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="text-center">
+                        <h6>@emailStats.ActiveSubscribers</h6>
+                        <small class="text-muted">Active Subscribers</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-activity"></i> Recent Activity Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-2">
+                            <h4 class="text-primary">@ViewBag.TotalTours</h4>
+                            <small class="text-muted">Total Tours</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-info">@ViewBag.TotalHotels</h4>
+                            <small class="text-muted">Total Hotels</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-success">@ViewBag.TotalDestinations</h4>
+                            <small class="text-muted">Destinations</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-warning">@loyaltyStats.TotalPointsIssued.ToString("N0")</h4>
+                            <small class="text-muted">Points Issued</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-danger">@emailStats.TotalEmailsSent</h4>
+                            <small class="text-muted">Emails Sent</small>
+                        </div>
+                        <div class="col-md-2">
+                            <h4 class="text-secondary">@revenueReport.AverageOrderValue.ToString("N0")</h4>
+                            <small class="text-muted">Avg Order Value</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-gradient-success { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .bg-gradient-warning { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        
+        .tier-bronze { color: #cd7f32; font-weight: bold; }
+        .tier-silver { color: #c0c0c0; font-weight: bold; }
+        .tier-gold { color: #ffd700; font-weight: bold; }
+        .tier-platinum { color: #e5e4e2; font-weight: bold; }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let trendChart, destinationChart, bookingStatusChart, loyaltyChart;
+        let currentTimeRange = 30;
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            loadChartData();
+        });
+
+        function initializeCharts() {
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Revenue (VND)',
+                        data: [],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('vi-VN').format(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Booking Status Chart
+            const bookingCtx = document.getElementById('bookingStatusChart').getContext('2d');
+            bookingStatusChart = new Chart(bookingCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Confirmed', 'Pending', 'Cancelled'],
+                    datasets: [{
+                        data: [@bookingReport.ConfirmedBookings, @bookingReport.PendingBookings, @bookingReport.CancelledBookings],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Loyalty Chart
+            const loyaltyCtx = document.getElementById('loyaltyChart').getContext('2d');
+            loyaltyChart = new Chart(loyaltyCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", loyaltyStats.TierDistribution.Select(t => $"'{t.TierName}'")))],
+                    datasets: [{
+                        data: [@string.Join(",", loyaltyStats.TierDistribution.Select(t => t.MemberCount))],
+                        backgroundColor: ['#cd7f32', '#c0c0c0', '#ffd700', '#e5e4e2']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Destination Chart
+            const destCtx = document.getElementById('destinationChart').getContext('2d');
+            destinationChart = new Chart(destCtx, {
+                type: 'bar',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", bookingReport.PopularDestinations.Take(5).Select(d => $"'{d.DestinationName}'")))],
+                    datasets: [{
+                        label: 'Bookings',
+                        data: [@string.Join(",", bookingReport.PopularDestinations.Take(5).Select(d => d.BookingCount))],
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadChartData() {
+            // Load revenue data
+            fetch(`/Analytics/GetRevenueData?days=${currentTimeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    trendChart.data.labels = data.labels;
+                    trendChart.data.datasets[0].data = data.revenue;
+                    trendChart.update();
+                });
+        }
+
+        function changeTimeRange(days) {
+            currentTimeRange = days;
+            loadChartData();
+        }
+
+        function showRevenue() {
+            fetch(`/Analytics/GetRevenueData?days=${currentTimeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    trendChart.data.labels = data.labels;
+                    trendChart.data.datasets[0].data = data.revenue;
+                    trendChart.data.datasets[0].label = 'Revenue (VND)';
+                    trendChart.data.datasets[0].borderColor = 'rgb(75, 192, 192)';
+                    trendChart.update();
+                });
+        }
+
+        function showBookings() {
+            fetch(`/Analytics/GetRevenueData?days=${currentTimeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    trendChart.data.labels = data.labels;
+                    trendChart.data.datasets[0].data = data.bookings;
+                    trendChart.data.datasets[0].label = 'Bookings';
+                    trendChart.data.datasets[0].borderColor = 'rgb(255, 99, 132)';
+                    trendChart.update();
+                });
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+    </script>
+}

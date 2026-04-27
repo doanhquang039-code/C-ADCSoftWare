@@ -340,3 +340,4 @@ C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\5fccbf7b1626b813\obj\Debug\net8
 C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\5fccbf7b1626b813\obj\Debug\net8.0\WEBDULICH.pdb
 C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\5fccbf7b1626b813\obj\Debug\net8.0\WEBDULICH.genruntimeconfig.cache
 C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\5fccbf7b1626b813\obj\Debug\net8.0\ref\WEBDULICH.dll
+D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH\bin\Debug\net8.0\Newtonsoft.Json.dll

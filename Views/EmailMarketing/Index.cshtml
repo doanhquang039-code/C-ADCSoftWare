@@ -1,0 +1,262 @@
+@model WEBDULICH.Models.EmailStats
+@{
+    ViewData["Title"] = "Email Marketing Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-envelope"></i> Email Marketing Dashboard</h2>
+        <div class="btn-group">
+            <a asp-action="CreateCampaign" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> New Campaign
+            </a>
+            <a asp-action="Campaigns" class="btn btn-outline-primary">
+                <i class="bi bi-list"></i> All Campaigns
+            </a>
+            <a asp-action="Subscribers" class="btn btn-outline-info">
+                <i class="bi bi-people"></i> Subscribers
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-broadcast fs-1 mb-2"></i>
+                    <h3>@Model.TotalCampaigns</h3>
+                    <p class="mb-0">Total Campaigns</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill fs-1 mb-2"></i>
+                    <h3>@Model.ActiveSubscribers</h3>
+                    <p class="mb-0">Active Subscribers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-envelope-check fs-1 mb-2"></i>
+                    <h3>@Model.TotalEmailsSent</h3>
+                    <p class="mb-0">Emails Sent</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up fs-1 mb-2"></i>
+                    <h3>@Model.AverageOpenRate.ToString("F1")%</h3>
+                    <p class="mb-0">Avg Open Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Campaign Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Average Open Rate</h6>
+                            <h4 class="text-primary">@Model.AverageOpenRate.ToString("F1")%</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Average Click Rate</h6>
+                            <h4 class="text-success">@Model.AverageClickRate.ToString("F1")%</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Unsubscribe Rate</h6>
+                            <h4 class="text-danger">@Model.UnsubscribeRate.ToString("F1")%</h4>
+                        </div>
+                    </div>
+                    
+                    <canvas id="performanceChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Campaigns</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentCampaigns.Any())
+                    {
+                        @foreach (var campaign in Model.RecentCampaigns)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <strong>@campaign.CampaignName</strong>
+                                    <br><small class="text-muted">@campaign.SentDate.ToString("dd/MM/yyyy")</small>
+                                    <br><small>@campaign.Recipients recipients</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary">@campaign.OpenRate.ToString("F1")% open</span>
+                                    <br><span class="badge bg-success">@campaign.ClickRate.ToString("F1")% click</span>
+                                </div>
+                            </div>
+                            <hr>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">No campaigns yet</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a asp-action="CreateCampaign" class="btn btn-outline-primary w-100 h-100 d-flex flex-column justify-content-center">
+                                <i class="bi bi-plus-circle fs-2"></i>
+                                <span class="mt-2">Create Campaign</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="#" class="btn btn-outline-success w-100 h-100 d-flex flex-column justify-content-center" onclick="showSubscribeModal()">
+                                <i class="bi bi-person-plus fs-2"></i>
+                                <span class="mt-2">Add Subscriber</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="#" class="btn btn-outline-info w-100 h-100 d-flex flex-column justify-content-center">
+                                <i class="bi bi-file-earmark-text fs-2"></i>
+                                <span class="mt-2">Templates</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="#" class="btn btn-outline-warning w-100 h-100 d-flex flex-column justify-content-center">
+                                <i class="bi bi-gear fs-2"></i>
+                                <span class="mt-2">Settings</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Subscribe Modal -->
+<div class="modal fade" id="subscribeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Subscriber</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="subscribeForm">
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="firstName" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="lastName" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addSubscriber()">Add Subscriber</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Performance Chart
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [@Html.Raw(string.Join(",", Model.RecentCampaigns.Select(c => $"'{c.CampaignName}'")))],
+                datasets: [{
+                    label: 'Open Rate (%)',
+                    data: [@string.Join(",", Model.RecentCampaigns.Select(c => c.OpenRate))],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Click Rate (%)',
+                    data: [@string.Join(",", Model.RecentCampaigns.Select(c => c.ClickRate))],
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        function showSubscribeModal() {
+            new bootstrap.Modal(document.getElementById('subscribeModal')).show();
+        }
+
+        function addSubscriber() {
+            const form = document.getElementById('subscribeForm');
+            const formData = new FormData(form);
+            
+            fetch('@Url.Action("Subscribe")', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Subscriber added successfully!');
+                    bootstrap.Modal.getInstance(document.getElementById('subscribeModal')).hide();
+                    form.reset();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error adding subscriber');
+            });
+        }
+    </script>
+}

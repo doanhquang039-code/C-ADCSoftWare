@@ -26,6 +26,20 @@ namespace WEBDULICH.Services
         public DbSet<ReviewImage> ReviewImages { get; set; }
         public DbSet<SecurityLog> SecurityLogs { get; set; }
 
+        // New features DbSets
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<EmailCampaign> EmailCampaigns { get; set; }
+        public DbSet<EmailLog> EmailLogs { get; set; }
+        public DbSet<EmailTemplate> EmailTemplates { get; set; }
+        public DbSet<EmailSubscriber> EmailSubscribers { get; set; }
+        public DbSet<LoyaltyAccount> LoyaltyAccounts { get; set; }
+        public DbSet<PointTransaction> PointTransactions { get; set; }
+        public DbSet<LoyaltyTier> LoyaltyTiers { get; set; }
+        public DbSet<Reward> Rewards { get; set; }
+        public DbSet<RewardRedemption> RewardRedemptions { get; set; }
+        public DbSet<PointsRule> PointsRules { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Tour>().ToTable("Tour");
@@ -46,6 +60,20 @@ namespace WEBDULICH.Services
             modelBuilder.Entity<BlogPost>().ToTable("BlogPost");
             modelBuilder.Entity<ReviewImage>().ToTable("ReviewImage");
             modelBuilder.Entity<SecurityLog>().ToTable("SecurityLog");
+
+            // New features tables
+            modelBuilder.Entity<Report>().ToTable("Report");
+            modelBuilder.Entity<Location>().ToTable("Location");
+            modelBuilder.Entity<EmailCampaign>().ToTable("EmailCampaign");
+            modelBuilder.Entity<EmailLog>().ToTable("EmailLog");
+            modelBuilder.Entity<EmailTemplate>().ToTable("EmailTemplate");
+            modelBuilder.Entity<EmailSubscriber>().ToTable("EmailSubscriber");
+            modelBuilder.Entity<LoyaltyAccount>().ToTable("LoyaltyAccount");
+            modelBuilder.Entity<PointTransaction>().ToTable("PointTransaction");
+            modelBuilder.Entity<LoyaltyTier>().ToTable("LoyaltyTier");
+            modelBuilder.Entity<Reward>().ToTable("Reward");
+            modelBuilder.Entity<RewardRedemption>().ToTable("RewardRedemption");
+            modelBuilder.Entity<PointsRule>().ToTable("PointsRule");
 
             // Default values for User
             modelBuilder.Entity<User>()
@@ -118,6 +146,44 @@ namespace WEBDULICH.Services
 
             modelBuilder.Entity<SecurityLog>()
                 .HasIndex(s => s.CreatedAt);
+
+            // New features indexes
+            modelBuilder.Entity<Report>()
+                .HasIndex(r => new { r.ReportType, r.CreatedAt });
+
+            modelBuilder.Entity<Location>()
+                .HasIndex(l => new { l.LocationType, l.IsVisible });
+
+            modelBuilder.Entity<Location>()
+                .HasIndex(l => new { l.Latitude, l.Longitude });
+
+            modelBuilder.Entity<EmailCampaign>()
+                .HasIndex(c => new { c.Status, c.ScheduledDate });
+
+            modelBuilder.Entity<EmailLog>()
+                .HasIndex(l => new { l.CampaignId, l.Status });
+
+            modelBuilder.Entity<EmailLog>()
+                .HasIndex(l => l.TrackingToken)
+                .IsUnique();
+
+            modelBuilder.Entity<EmailSubscriber>()
+                .HasIndex(s => s.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<LoyaltyAccount>()
+                .HasIndex(l => l.UserId)
+                .IsUnique();
+
+            modelBuilder.Entity<PointTransaction>()
+                .HasIndex(p => new { p.LoyaltyAccountId, p.CreatedAt });
+
+            modelBuilder.Entity<RewardRedemption>()
+                .HasIndex(r => new { r.LoyaltyAccountId, r.Status });
+
+            modelBuilder.Entity<RewardRedemption>()
+                .HasIndex(r => r.RedemptionCode)
+                .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

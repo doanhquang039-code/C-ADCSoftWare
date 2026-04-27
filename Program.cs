@@ -33,6 +33,15 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 
+// Advanced features services
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IMapService, MapService>();
+builder.Services.AddScoped<IEmailMarketingService, EmailMarketingService>();
+builder.Services.AddScoped<ILoyaltyService, LoyaltyService>();
+
+// HTTP Client for external APIs
+builder.Services.AddHttpClient();
+
 // Security and Localization services
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
@@ -65,10 +74,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // Seed data
-//using (var scope = app.Services.CreateScope())
-//{
-//    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-//    await seeder.SeedAsync();
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();

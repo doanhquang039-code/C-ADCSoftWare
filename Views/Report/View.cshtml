@@ -1,0 +1,300 @@
+@model WEBDULICH.Models.Report
+@{
+    ViewData["Title"] = Model.Title;
+    var revenueData = ViewBag.RevenueData as WEBDULICH.Models.RevenueReportData;
+    var bookingData = ViewBag.BookingData as WEBDULICH.Models.BookingReportData;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-file-text"></i> @Model.Title</h2>
+            <p class="text-muted mb-0">@Model.Description</p>
+            <small class="text-muted">
+                Generated on @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm") | 
+                Period: @Model.FromDate.ToString("dd/MM/yyyy") - @Model.ToDate.ToString("dd/MM/yyyy")
+            </small>
+        </div>
+        <div class="btn-group">
+            <a asp-action="ExportPdf" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+                <i class="bi bi-file-pdf"></i> Export PDF
+            </a>
+            <a asp-action="ExportExcel" asp-route-id="@Model.Id" class="btn btn-outline-success">
+                <i class="bi bi-file-excel"></i> Export Excel
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    @if (Model.ReportType == "Revenue" && revenueData != null)
+    {
+        <!-- Revenue Report -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h3>@revenueData.TotalRevenue.ToString("N0") VND</h3>
+                        <p class="mb-0">Total Revenue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h3>@revenueData.TourRevenue.ToString("N0") VND</h3>
+                        <p class="mb-0">Tour Revenue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body text-center">
+                        <h3>@revenueData.HotelRevenue.ToString("N0") VND</h3>
+                        <p class="mb-0">Hotel Revenue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <h3>@revenueData.AverageOrderValue.ToString("N0") VND</h3>
+                        <p class="mb-0">Avg Order Value</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Daily Revenue Chart -->
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Daily Revenue Trend</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="revenueChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Tours -->
+            <div class="col-md-4">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-trophy"></i> Top Tours</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (revenueData.TopTours.Any())
+                        {
+                            @foreach (var tour in revenueData.TopTours.Take(5))
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <strong>@tour.TourName</strong>
+                                        <br><small class="text-muted">@tour.BookingCount bookings</small>
+                                    </div>
+                                    <span class="badge bg-success">@tour.Revenue.ToString("N0") VND</span>
+                                </div>
+                                <hr class="my-2">
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center">No tour data available</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Hotels -->
+        @if (revenueData.TopHotels.Any())
+        {
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-building"></i> Top Hotels by Revenue</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Hotel Name</th>
+                                            <th>Bookings</th>
+                                            <th>Revenue</th>
+                                            <th>Avg per Booking</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var hotel in revenueData.TopHotels)
+                                        {
+                                            <tr>
+                                                <td>@hotel.HotelName</td>
+                                                <td>@hotel.BookingCount</td>
+                                                <td>@hotel.Revenue.ToString("N0") VND</td>
+                                                <td>@((hotel.BookingCount > 0 ? hotel.Revenue / hotel.BookingCount : 0).ToString("N0")) VND</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    @if (Model.ReportType == "Booking" && bookingData != null)
+    {
+        <!-- Booking Report -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h3>@bookingData.TotalBookings</h3>
+                        <p class="mb-0">Total Bookings</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <h3>@bookingData.ConfirmedBookings</h3>
+                        <p class="mb-0">Confirmed</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <h3>@bookingData.PendingBookings</h3>
+                        <p class="mb-0">Pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body text-center">
+                        <h3>@bookingData.CancellationRate.ToString("F1")%</h3>
+                        <p class="mb-0">Cancellation Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Booking Status Chart -->
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Booking Status Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="bookingChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popular Destinations -->
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Popular Destinations</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (bookingData.PopularDestinations.Any())
+                        {
+                            @foreach (var dest in bookingData.PopularDestinations.Take(8))
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <strong>@dest.DestinationName</strong>
+                                        <br><small class="text-muted">@dest.BookingCount bookings</small>
+                                    </div>
+                                    <span class="badge bg-info">@dest.Revenue.ToString("N0") VND</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 5px;">
+                                    <div class="progress-bar" style="width: @((double)dest.BookingCount / bookingData.PopularDestinations.Max(d => d.BookingCount) * 100)%"></div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center">No destination data available</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        @if (Model.ReportType == "Revenue" && revenueData != null)
+        {
+            <text>
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", revenueData.DailyRevenues.Select(d => $"'{d.Date:dd/MM}'")))],
+                    datasets: [{
+                        label: 'Daily Revenue (VND)',
+                        data: [@string.Join(",", revenueData.DailyRevenues.Select(d => d.Revenue))],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('vi-VN').format(value) + ' VND';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+
+        @if (Model.ReportType == "Booking" && bookingData != null)
+        {
+            <text>
+            // Booking Chart
+            const bookingCtx = document.getElementById('bookingChart').getContext('2d');
+            new Chart(bookingCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Confirmed', 'Pending', 'Cancelled'],
+                    datasets: [{
+                        data: [@bookingData.ConfirmedBookings, @bookingData.PendingBookings, @bookingData.CancelledBookings],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+    </script>
+}

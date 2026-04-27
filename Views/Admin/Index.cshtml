@@ -163,4 +163,101 @@
             </a>
         </div>
     </div>
+
+    <!-- Advanced Features Row -->
+    <div class="row mt-4 g-3">
+        <div class="col-12">
+            <h5 class="text-muted mb-3"><i class="bi bi-stars"></i> Advanced Features</h5>
+        </div>
+        
+        <div class="col-md-3">
+            <a asp-controller="Report" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 border-primary">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-graph-up fs-1 text-primary"></i>
+                        <h6 class="mt-2">Reports & Analytics</h6>
+                        <small class="text-muted">Revenue & booking reports</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a asp-controller="Map" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 border-success">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-map fs-1 text-success"></i>
+                        <h6 class="mt-2">Interactive Map</h6>
+                        <small class="text-muted">Location management</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a asp-controller="EmailMarketing" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 border-warning">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-envelope fs-1 text-warning"></i>
+                        <h6 class="mt-2">Email Marketing</h6>
+                        <small class="text-muted">Campaigns & newsletters</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a asp-controller="Loyalty" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 border-info">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-award fs-1 text-info"></i>
+                        <h6 class="mt-2">Loyalty Program</h6>
+                        <small class="text-muted">Points & rewards</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Analytics & Insights Row -->
+    <div class="row mt-4 g-3">
+        <div class="col-12">
+            <h5 class="text-muted mb-3"><i class="bi bi-graph-up-arrow"></i> Analytics & Insights</h5>
+        </div>
+        
+        <div class="col-md-6">
+            <a asp-controller="Analytics" asp-action="Index" class="text-decoration-none">
+                <div class="card shadow border-0 h-100 bg-gradient-primary text-white">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-graph-up-arrow fs-1 mb-2"></i>
+                        <h5 class="mt-2">Advanced Analytics</h5>
+                        <small>Comprehensive business insights</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-6">
+            <a asp-controller="Report" asp-action="Generate" class="text-decoration-none">
+                <div class="card shadow border-0 h-100 bg-gradient-success text-white">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-file-earmark-bar-graph fs-1 mb-2"></i>
+                        <h5 class="mt-2">Quick Reports</h5>
+                        <small>Generate instant reports</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <style>
+        .bg-gradient-primary { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        }
+        .bg-gradient-success { 
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+        }
+    </style>
+}
