@@ -22,6 +22,13 @@ namespace WEBDULICH.Services
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
             if (user != null && !user.IsActive)
                 return null; // Tài khoản bị khóa
+            
+            // Record login
+            if (user != null)
+            {
+                await RecordLoginAsync(user.Id);
+            }
+            
             return user;
         }
 
@@ -33,6 +40,10 @@ namespace WEBDULICH.Services
             user.Role = "User";
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
+            user.MembershipTier = "Bronze";
+            user.LoyaltyPoints = 0;
+            user.LoginCount = 0;
+            
             db.Users.Add(user);
             await db.SaveChangesAsync();
             return true;
@@ -48,6 +59,7 @@ namespace WEBDULICH.Services
             existingUser.Password = user.Password;
             existingUser.Gender = user.Gender;
             existingUser.Age = user.Age;
+            existingUser.UpdatedAt = DateTime.Now;
 
             db.Users.Update(existingUser);
             await db.SaveChangesAsync();
@@ -113,10 +125,11 @@ namespace WEBDULICH.Services
             var user = await db.Users.FindAsync(userId);
             if (user == null) return false;
 
-            var validRoles = new[] { "Admin", "Staff", "User" };
+            var validRoles = new[] { "Admin", "Manager", "Hiring", "User" };
             if (!validRoles.Contains(newRole)) return false;
 
             user.Role = newRole;
+            user.UpdatedAt = DateTime.Now;
             await db.SaveChangesAsync();
             return true;
         }
@@ -127,6 +140,7 @@ namespace WEBDULICH.Services
             if (user == null) return false;
 
             user.IsActive = !user.IsActive;
+            user.UpdatedAt = DateTime.Now;
             await db.SaveChangesAsync();
             return true;
         }
@@ -144,6 +158,157 @@ namespace WEBDULICH.Services
                 TotalDestinations = await db.Destinations.CountAsync(),
                 TotalReviews = await db.Reviews.CountAsync()
             };
+        }
+
+        // New methods implementation
+        public async Task<List<User>> GetByRoleAsync(string role)
+        {
+            return await db.Users
+                .Where(u => u.Role == role && u.IsActive)
+                .OrderBy(u => u.Name)
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> GetAdminsAsync()
+        {
+            return await GetByRoleAsync("Admin");
+        }
+
+        public async Task<List<User>> GetManagersAsync()
+        {
+            return await GetByRoleAsync("Manager");
+        }
+
+        public async Task<List<User>> GetHiringStaffAsync()
+        {
+            return await GetByRoleAsync("Hiring");
+        }
+
+        public async Task<bool> UpdateProfileAsync(int userId, User updatedUser)
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.Name = updatedUser.Name;
+            user.PhoneNumber = updatedUser.PhoneNumber;
+            user.Address = updatedUser.Address;
+            user.City = updatedUser.City;
+            user.Country = updatedUser.Country;
+            user.PostalCode = updatedUser.PostalCode;
+            user.DateOfBirth = updatedUser.DateOfBirth;
+            user.IdentityNumber = updatedUser.IdentityNumber;
+            user.PassportNumber = updatedUser.PassportNumber;
+            user.Nationality = updatedUser.Nationality;
+            user.Occupation = updatedUser.Occupation;
+            user.Company = updatedUser.Company;
+            user.Notes = updatedUser.Notes;
+            user.PreferredLanguage = updatedUser.PreferredLanguage;
+            user.UpdatedAt = DateTime.Now;
+
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateLoyaltyPointsAsync(int userId, int points)
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.LoyaltyPoints += points;
+            
+            // Auto update membership tier based on points
+            user.MembershipTier = user.LoyaltyPoints switch
+            {
+                >= 10000 => "Platinum",
+                >= 5000 => "Gold",
+                >= 1000 => "Silver",
+                _ => "Bronze"
+            };
+
+            user.UpdatedAt = DateTime.Now;
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateMembershipTierAsync(int userId, string tier)
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            var validTiers = new[] { "Bronze", "Silver", "Gold", "Platinum" };
+            if (!validTiers.Contains(tier)) return false;
+
+            user.MembershipTier = tier;
+            user.UpdatedAt = DateTime.Now;
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> VerifyEmailAsync(int userId)
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.EmailVerified = true;
+            user.UpdatedAt = DateTime.Now;
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> VerifyPhoneAsync(int userId)
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.PhoneVerified = true;
+            user.UpdatedAt = DateTime.Now;
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> RecordLoginAsync(int userId)
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.LastLoginAt = DateTime.Now;
+            user.LoginCount++;
+            await db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> GetTotalUsersCountAsync()
+        {
+            return await db.Users.CountAsync();
+        }
+
+        public async Task<int> GetActiveUsersCountAsync()
+        {
+            return await db.Users.CountAsync(u => u.IsActive);
+        }
+
+        public async Task<Dictionary<string, int>> GetUsersByRoleStatsAsync()
+        {
+            return await db.Users
+                .GroupBy(u => u.Role)
+                .Select(g => new { Role = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Role, x => x.Count);
+        }
+
+        public async Task<Dictionary<string, int>> GetUsersByMembershipStatsAsync()
+        {
+            return await db.Users
+                .GroupBy(u => u.MembershipTier)
+                .Select(g => new { Tier = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Tier, x => x.Count);
+        }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            user.UpdatedAt = DateTime.Now;
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+            return true;
         }
     }
 }

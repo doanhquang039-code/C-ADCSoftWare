@@ -1,0 +1,340 @@
+@model WEBDULICH.Models.User
+@{
+    ViewData["Title"] = "Cài đặt tài khoản";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Cài đặt</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#profile" class="list-group-item list-group-item-action active" data-bs-toggle="tab">
+                        <i class="fas fa-user"></i> Thông tin cá nhân
+                    </a>
+                    <a href="#language" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                        <i class="fas fa-globe"></i> Ngôn ngữ
+                    </a>
+                    <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                        <i class="fas fa-shield-alt"></i> Bảo mật
+                    </a>
+                    <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="tab">
+                        <i class="fas fa-bell"></i> Thông báo
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Profile Tab -->
+                <div class="tab-pane fade show active" id="profile">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Thông tin cá nhân</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Họ tên</label>
+                                            <input type="text" class="form-control" name="Name" value="@Model.Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" class="form-control" value="@Model.Email" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Số điện thoại</label>
+                                            <input type="tel" class="form-control" name="PhoneNumber" value="@Model.PhoneNumber">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Ngày sinh</label>
+                                            <input type="date" class="form-control" name="DateOfBirth" value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Giới tính</label>
+                                            <select class="form-select" name="Gender">
+                                                <option value="Nam" selected="@(Model.Gender == "Nam")">Nam</option>
+                                                <option value="Nữ" selected="@(Model.Gender == "Nữ")">Nữ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Thành phố</label>
+                                            <input type="text" class="form-control" name="City" value="@Model.City">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Địa chỉ</label>
+                                    <input type="text" class="form-control" name="Address" value="@Model.Address">
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nghề nghiệp</label>
+                                            <input type="text" class="form-control" name="Occupation" value="@Model.Occupation">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Công ty</label>
+                                            <input type="text" class="form-control" name="Company" value="@Model.Company">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Cập nhật thông tin</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Language Tab -->
+                <div class="tab-pane fade" id="language">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Cài đặt ngôn ngữ</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Chọn ngôn ngữ</label>
+                                <select class="form-select" id="languageSelect">
+                                    @if (ViewBag.SupportedLanguages != null)
+                                    {
+                                        @foreach (var lang in ViewBag.SupportedLanguages as List<string>)
+                                        {
+                                            <option value="@lang" selected="@(ViewBag.CurrentLanguage == lang)">
+                                                @(lang == "vi" ? "Tiếng Việt" : "English")
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="updateLanguage()">Cập nhật ngôn ngữ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Security Tab -->
+                <div class="tab-pane fade" id="security">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Cài đặt bảo mật</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Change Password -->
+                            <div class="mb-4">
+                                <h6>Đổi mật khẩu</h6>
+                                <form id="passwordForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Mật khẩu hiện tại</label>
+                                        <input type="password" class="form-control" name="currentPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Mật khẩu mới</label>
+                                        <input type="password" class="form-control" name="newPassword" required>
+                                        <div class="form-text">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                                        <input type="password" class="form-control" name="confirmPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">Đổi mật khẩu</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Two Factor Authentication -->
+                            <div class="mb-4">
+                                <h6>Xác thực hai yếu tố</h6>
+                                <p class="text-muted">Tăng cường bảo mật tài khoản với xác thực hai yếu tố</p>
+                                <button type="button" class="btn btn-success" onclick="enableTwoFactor()">Kích hoạt 2FA</button>
+                            </div>
+                            
+                            <!-- Account Info -->
+                            <div class="mb-4">
+                                <h6>Thông tin tài khoản</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Hạng thành viên:</strong> <span class="badge bg-primary">@Model.MembershipTier</span></p>
+                                        <p><strong>Điểm tích lũy:</strong> @Model.LoyaltyPoints điểm</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Lần đăng nhập cuối:</strong> @(Model.LastLoginAt?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa có")</p>
+                                        <p><strong>Số lần đăng nhập:</strong> @Model.LoginCount</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notifications Tab -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Cài đặt thông báo</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                <label class="form-check-label" for="emailNotifications">
+                                    Nhận thông báo qua email
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="smsNotifications">
+                                <label class="form-check-label" for="smsNotifications">
+                                    Nhận thông báo qua SMS
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="promotionNotifications" checked>
+                                <label class="form-check-label" for="promotionNotifications">
+                                    Nhận thông báo khuyến mãi
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="bookingNotifications" checked>
+                                <label class="form-check-label" for="bookingNotifications">
+                                    Nhận thông báo đặt chỗ
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary">Lưu cài đặt</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Profile form submission
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/Settings/UpdateProfile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Cập nhật thông tin thành công!');
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    });
+});
+
+// Password form submission
+document.getElementById('passwordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/Settings/ChangePassword', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Đổi mật khẩu thành công!');
+            this.reset();
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    });
+});
+
+// Language update
+function updateLanguage() {
+    const language = document.getElementById('languageSelect').value;
+    
+    fetch('/Settings/UpdateLanguage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ language: language })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Cập nhật ngôn ngữ thành công!');
+            location.reload();
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    });
+}
+
+// Two Factor Authentication
+function enableTwoFactor() {
+    fetch('/Settings/EnableTwoFactor', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const code = prompt('Nhập mã xác thực (Demo: ' + data.code + '):');
+            if (code) {
+                verifyTwoFactor(code);
+            }
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    });
+}
+
+function verifyTwoFactor(code) {
+    fetch('/Settings/VerifyTwoFactor', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Kích hoạt 2FA thành công!');
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    });
+}
+</script>

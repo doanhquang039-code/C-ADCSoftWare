@@ -15,6 +15,11 @@
 
         public int? TourId { get; set; }
         public Tour Tour { get; set; }
+
+        /// <summary>
+        /// Ảnh đính kèm trong review
+        /// </summary>
+        public ICollection<ReviewImage> Images { get; set; }
     }
 
 }

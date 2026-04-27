@@ -14,6 +14,23 @@ namespace WEBDULICH.Services
         Task<bool> ToggleActiveAsync(int userId);
         Task<bool> EmailExistsAsync(string email, int? excludeUserId = null);
         Task<DashboardStats> GetDashboardStatsAsync();
+        
+        // New methods
+        Task<List<User>> GetByRoleAsync(string role);
+        Task<List<User>> GetAdminsAsync();
+        Task<List<User>> GetManagersAsync();
+        Task<List<User>> GetHiringStaffAsync();
+        Task<bool> UpdateProfileAsync(int userId, User updatedUser);
+        Task<bool> UpdateLoyaltyPointsAsync(int userId, int points);
+        Task<bool> UpdateMembershipTierAsync(int userId, string tier);
+        Task<bool> VerifyEmailAsync(int userId);
+        Task<bool> VerifyPhoneAsync(int userId);
+        Task<bool> RecordLoginAsync(int userId);
+        Task<int> GetTotalUsersCountAsync();
+        Task<int> GetActiveUsersCountAsync();
+        Task<Dictionary<string, int>> GetUsersByRoleStatsAsync();
+        Task<Dictionary<string, int>> GetUsersByMembershipStatsAsync();
+        Task<bool> UpdateUserAsync(User user);
     }
 
     public class DashboardStats

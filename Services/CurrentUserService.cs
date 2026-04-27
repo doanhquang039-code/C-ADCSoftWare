@@ -20,6 +20,11 @@ namespace WEBDULICH.Services
             return httpContextAccessor.HttpContext?.Session.GetObject<User>("userLogin");
         }
 
+        public Task<User?> GetCurrentUserAsync()
+        {
+            return Task.FromResult(GetCurrentUser());
+        }
+
         public bool IsAuthenticated()
         {
             return GetCurrentUser() != null;
@@ -45,7 +50,10 @@ namespace WEBDULICH.Services
         public bool IsStaff()
         {
             var user = GetCurrentUser();
-            return user != null && string.Equals(user.Role, "Staff", StringComparison.OrdinalIgnoreCase);
+            return user != null && (
+                string.Equals(user.Role, "Manager", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(user.Role, "Hiring", StringComparison.OrdinalIgnoreCase)
+            );
         }
 
         public bool IsStaffOrAdmin()
@@ -57,6 +65,18 @@ namespace WEBDULICH.Services
         {
             var user = GetCurrentUser();
             return user != null && string.Equals(user.Role, role, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool IsManager()
+        {
+            var user = GetCurrentUser();
+            return user != null && string.Equals(user.Role, "Manager", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool IsHiring()
+        {
+            var user = GetCurrentUser();
+            return user != null && string.Equals(user.Role, "Hiring", StringComparison.OrdinalIgnoreCase);
         }
 
         public void SignIn(User user)
