@@ -39,6 +39,12 @@ namespace WEBDULICH.Services
         public DbSet<Reward> Rewards { get; set; }
         public DbSet<RewardRedemption> RewardRedemptions { get; set; }
         public DbSet<PointsRule> PointsRules { get; set; }
+        
+        // E-Ticket DbSet
+        public DbSet<Models.Ticket> Tickets { get; set; }
+        
+        // Order Details DbSet
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,6 +80,12 @@ namespace WEBDULICH.Services
             modelBuilder.Entity<Reward>().ToTable("Reward");
             modelBuilder.Entity<RewardRedemption>().ToTable("RewardRedemption");
             modelBuilder.Entity<PointsRule>().ToTable("PointsRule");
+            
+            // E-Ticket table
+            modelBuilder.Entity<Models.Ticket>().ToTable("Ticket");
+            
+            // Order Details table
+            modelBuilder.Entity<OrderDetail>().ToTable("OrderDetail");
 
             // Default values for User
             modelBuilder.Entity<User>()
@@ -184,6 +196,17 @@ namespace WEBDULICH.Services
             modelBuilder.Entity<RewardRedemption>()
                 .HasIndex(r => r.RedemptionCode)
                 .IsUnique();
+            
+            // E-Ticket indexes
+            modelBuilder.Entity<Models.Ticket>()
+                .HasIndex(t => t.TicketCode)
+                .IsUnique();
+            
+            modelBuilder.Entity<Models.Ticket>()
+                .HasIndex(t => new { t.BookingId, t.Status });
+            
+            modelBuilder.Entity<Models.Ticket>()
+                .HasIndex(t => t.ValidUntil);
 
             base.OnModelCreating(modelBuilder);
         }

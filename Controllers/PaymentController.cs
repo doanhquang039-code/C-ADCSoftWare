@@ -1,99 +1,252 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using WEBDULICH.Helpers;
-using WEBDULICH.Models;
-using WEBDULICH.Services;
+using Microsoft.AspNetCore.Authorization;
+using WEBDULICH.Services.PaymentGateway;
 
 namespace WEBDULICH.Controllers
 {
-    [AdminOnly]
-    public class PaymentController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PaymentController : ControllerBase
     {
-        private readonly IPaymentService paymentService;
-        private readonly ApplicationDbContext db;
+        private readonly VNPayService _vnpayService;
+        private readonly MoMoService _momoService;
+        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IPaymentService paymentService, ApplicationDbContext db)
+        public PaymentController(
+            VNPayService vnpayService,
+            MoMoService momoService,
+            ILogger<PaymentController> logger)
         {
-            this.paymentService = paymentService;
-            this.db = db;
+            _vnpayService = vnpayService;
+            _momoService = momoService;
+            _logger = logger;
         }
 
-        public async Task<IActionResult> Index(string? keyword, string? paymentStatus,
-            string? sortBy, string? sortDir, int page = 1, int pageSize = 10)
+        [HttpPost("vnpay/create")]
+        [Authorize]
+        public async Task<IActionResult> CreateVNPayPayment([FromBody] PaymentRequest request)
         {
-            var result = await paymentService.GetPagedAsync(keyword, paymentStatus, sortBy, sortDir, page, pageSize);
-            return View(result);
-        }
-
-        public IActionResult Create()
-        {
-            PopulateOrders();
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(Payment payment)
-        {
-            if (!ModelState.IsValid)
+            try
             {
-                PopulateOrders(payment.OrdersId);
-                return View(payment);
+                var result = await _vnpayService.CreatePaymentAsync(request);
+                
+                if (result.Success)
+                {
+                    return Ok(new { success = true, paymentUrl = result.PaymentUrl, transactionId = result.TransactionId });
+                }
+
+                return BadRequest(new { success = false, message = result.Message });
             }
-
-            await paymentService.CreateAsync(payment);
-            return RedirectToAction(nameof(Index));
-        }
-
-        public async Task<IActionResult> Edit(int id)
-        {
-            var payment = await paymentService.GetByIdAsync(id);
-            if (payment == null) return NotFound();
-
-            PopulateOrders(payment.OrdersId);
-            return View(payment);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(Payment payment)
-        {
-            if (!ModelState.IsValid)
+            catch (Exception ex)
             {
-                PopulateOrders(payment.OrdersId);
-                return View(payment);
+                _logger.LogError(ex, "Error creating VNPay payment");
+                return StatusCode(500, new { success = false, message = "Payment creation failed" });
             }
-
-            await paymentService.UpdateAsync(payment);
-            return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet("vnpay/return")]
+        public async Task<IActionResult> VNPayReturn([FromQuery] Dictionary<string, string> queryParams)
         {
-            await paymentService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var transactionId = queryParams.GetValueOrDefault("vnp_TxnRef", "");
+                var result = await _vnpayService.VerifyPaymentAsync(transactionId, queryParams);
+                
+                if (result.IsValid && result.IsSuccess)
+                {
+                    return Redirect($"/payment/success?orderId={result.OrderId}&amount={result.Amount}");
+                }
+
+                return Redirect($"/payment/failure?message={result.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing VNPay return");
+                return Redirect("/payment/failure?message=Payment verification failed");
+            }
         }
 
-        public IActionResult OnlinePayment(int orderId)
+        [HttpPost("vnpay/ipn")]
+        public async Task<IActionResult> VNPayIPN([FromQuery] Dictionary<string, string> queryParams)
         {
-            var order = db.Orders.Include(o => o.User).Include(o => o.Tour).FirstOrDefault(o => o.Id == orderId);
-            if (order == null) return NotFound();
+            try
+            {
+                var transactionId = queryParams.GetValueOrDefault("vnp_TxnRef", "");
+                var result = await _vnpayService.VerifyPaymentAsync(transactionId, queryParams);
+                
+                if (result.IsValid && result.IsSuccess)
+                {
+                    // Update order status in database
+                    // ... your business logic here ...
+                    
+                    return Ok(new { RspCode = "00", Message = "Confirm Success" });
+                }
 
-            return View(order);
+                return Ok(new { RspCode = "97", Message = "Invalid Signature" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing VNPay IPN");
+                return Ok(new { RspCode = "99", Message = "Unknown error" });
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ConfirmPayment(int orderId, string email)
+        [HttpPost("momo/create")]
+        [Authorize]
+        public async Task<IActionResult> CreateMoMoPayment([FromBody] PaymentRequest request)
         {
-            var success = await paymentService.ConfirmPaymentAsync(orderId);
-            if (!success) return NotFound();
+            try
+            {
+                var result = await _momoService.CreatePaymentAsync(request);
+                
+                if (result.Success)
+                {
+                    return Ok(new 
+                    { 
+                        success = true, 
+                        paymentUrl = result.PaymentUrl, 
+                        transactionId = result.TransactionId
+                    });
+                }
 
-            TempData["Success"] = "Thanh toán thành công!";
-            return RedirectToAction("MyOrders", "Orders");
+                return BadRequest(new { success = false, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating MoMo payment");
+                return StatusCode(500, new { success = false, message = "Payment creation failed" });
+            }
         }
 
-        private void PopulateOrders(int? selectedOrderId = null)
+        [HttpGet("momo/return")]
+        public async Task<IActionResult> MoMoReturn([FromQuery] Dictionary<string, string> queryParams)
         {
-            ViewBag.Orders = new SelectList(db.Orders, "Id", "Id", selectedOrderId);
+            try
+            {
+                var transactionId = queryParams.GetValueOrDefault("orderId", "");
+                var result = await _momoService.VerifyPaymentAsync(transactionId, queryParams);
+                
+                if (result.IsValid && result.IsSuccess)
+                {
+                    return Redirect($"/payment/success?orderId={result.OrderId}&amount={result.Amount}");
+                }
+
+                return Redirect($"/payment/failure?message={result.Message}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing MoMo return");
+                return Redirect("/payment/failure?message=Payment verification failed");
+            }
+        }
+
+        [HttpPost("momo/ipn")]
+        public async Task<IActionResult> MoMoIPN([FromBody] Dictionary<string, string> data)
+        {
+            try
+            {
+                var transactionId = data.GetValueOrDefault("orderId", "");
+                var result = await _momoService.VerifyPaymentAsync(transactionId, data);
+                
+                if (result.IsValid && result.IsSuccess)
+                {
+                    // Update order status in database
+                    // ... your business logic here ...
+                    
+                    return Ok(new { resultCode = 0, message = "Success" });
+                }
+
+                return Ok(new { resultCode = 97, message = "Invalid Signature" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing MoMo IPN");
+                return Ok(new { resultCode = 99, message = "Unknown error" });
+            }
+        }
+
+        [HttpPost("vnpay/refund")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RefundVNPay([FromBody] RefundRequestDto request)
+        {
+            try
+            {
+                var result = await _vnpayService.RefundPaymentAsync(request.TransactionId, request.Amount);
+                
+                if (result.Success)
+                {
+                    return Ok(new { success = true, message = "Refund successful", refundId = result.RefundId });
+                }
+
+                return BadRequest(new { success = false, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing VNPay refund");
+                return StatusCode(500, new { success = false, message = "Refund failed" });
+            }
+        }
+
+        [HttpPost("momo/refund")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RefundMoMo([FromBody] RefundRequestDto request)
+        {
+            try
+            {
+                var result = await _momoService.RefundPaymentAsync(request.TransactionId, request.Amount);
+                
+                if (result.Success)
+                {
+                    return Ok(new { success = true, message = "Refund successful", refundId = result.RefundId });
+                }
+
+                return BadRequest(new { success = false, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing MoMo refund");
+                return StatusCode(500, new { success = false, message = "Refund failed" });
+            }
+        }
+
+        [HttpGet("vnpay/status/{transactionId}")]
+        [Authorize]
+        public async Task<IActionResult> GetVNPayStatus(string transactionId)
+        {
+            try
+            {
+                var result = await _vnpayService.GetPaymentStatusAsync(transactionId);
+                
+                return Ok(new { success = true, status = result.Status, data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error querying VNPay status");
+                return StatusCode(500, new { success = false, message = "Status query failed" });
+            }
+        }
+
+        [HttpGet("momo/status/{transactionId}")]
+        [Authorize]
+        public async Task<IActionResult> GetMoMoStatus(string transactionId)
+        {
+            try
+            {
+                var result = await _momoService.GetPaymentStatusAsync(transactionId);
+                
+                return Ok(new { success = true, status = result.Status, data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error querying MoMo status");
+                return StatusCode(500, new { success = false, message = "Status query failed" });
+            }
         }
     }
 }
+
+    public class RefundRequestDto
+    {
+        public string TransactionId { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+    }

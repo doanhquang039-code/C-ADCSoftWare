@@ -111,6 +111,37 @@ namespace WEBDULICH.Models
         /// Login count
         /// </summary>
         public int LoginCount { get; set; } = 0;
+        
+        // Social Auth Properties
+        /// <summary>
+        /// Google ID for social login
+        /// </summary>
+        public string? GoogleId { get; set; }
+        
+        /// <summary>
+        /// Facebook ID for social login
+        /// </summary>
+        public string? FacebookId { get; set; }
+        
+        /// <summary>
+        /// Apple ID for social login
+        /// </summary>
+        public string? AppleId { get; set; }
+        
+        /// <summary>
+        /// Profile picture URL
+        /// </summary>
+        public string? ProfilePicture { get; set; }
+        
+        /// <summary>
+        /// Full name (for display)
+        /// </summary>
+        public string FullName { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Email verified status
+        /// </summary>
+        public bool IsEmailVerified { get; set; } = false;
 
         // Navigation properties
         public ICollection<Orders> Orders { get; set; }
