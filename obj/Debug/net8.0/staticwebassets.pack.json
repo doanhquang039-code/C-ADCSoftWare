@@ -1,0 +1,413 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WEBDULICH.bundle.scp.css",
+      "PackagePath": "staticwebassets\\WEBDULICH.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\1-cau-rong-phun-lua-va-nuoc-vao-moi-thu-6-7-cn-hang-tuan-tai-da-nang.jpg",
+      "PackagePath": "staticwebassets\\ImageDemo\\1-cau-rong-phun-lua-va-nuoc-vao-moi-thu-6-7-cn-hang-tuan-tai-da-nang.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\HL1-9875-1689130357.webp",
+      "PackagePath": "staticwebassets\\ImageDemo\\HL1-9875-1689130357.webp"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\bai-reu-010121-01.jpg",
+      "PackagePath": "staticwebassets\\ImageDemo\\bai-reu-010121-01.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\bien-cua-lo-nghe-an.jpg",
+      "PackagePath": "staticwebassets\\ImageDemo\\bien-cua-lo-nghe-an.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\kham-pha-hue-mong-mo.jpg",
+      "PackagePath": "staticwebassets\\ImageDemo\\kham-pha-hue-mong-mo.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\top-18-dia-diem-du-lich-nam-dinh-noi-tieng-dep-thu-hut-du-khach.jpg",
+      "PackagePath": "staticwebassets\\ImageDemo\\top-18-dia-diem-du-lich-nam-dinh-noi-tieng-dep-thu-hut-du-khach.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDemo\\tphcm-1-1751245519173693919081.jpg",
+      "PackagePath": "staticwebassets\\ImageDemo\\tphcm-1-1751245519173693919081.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\04e97aa7-8fe6-489e-a6bb-a3929b9c2e40.png",
+      "PackagePath": "staticwebassets\\ImageDestination\\04e97aa7-8fe6-489e-a6bb-a3929b9c2e40.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\111111.jpg",
+      "PackagePath": "staticwebassets\\ImageDestination\\111111.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\2022-11-04-09-14-02-543-min.jpg",
+      "PackagePath": "staticwebassets\\ImageDestination\\2022-11-04-09-14-02-543-min.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\2289870_dji_0516_20510108.jpg",
+      "PackagePath": "staticwebassets\\ImageDestination\\2289870_dji_0516_20510108.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\231ac234-0514-40cf-85df-9dbfed856337.webp",
+      "PackagePath": "staticwebassets\\ImageDestination\\231ac234-0514-40cf-85df-9dbfed856337.webp"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\291495531_1015996837.jpg",
+      "PackagePath": "staticwebassets\\ImageDestination\\291495531_1015996837.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\2a874352-9dfc-42dc-a82c-f33a2441dd41.png",
+      "PackagePath": "staticwebassets\\ImageDestination\\2a874352-9dfc-42dc-a82c-f33a2441dd41.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\7229f0f8-d698-41fa-8035-a785008ae3bf.webp",
+      "PackagePath": "staticwebassets\\ImageDestination\\7229f0f8-d698-41fa-8035-a785008ae3bf.webp"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\748388d4-2f44-4244-af49-34f1880a3227.png",
+      "PackagePath": "staticwebassets\\ImageDestination\\748388d4-2f44-4244-af49-34f1880a3227.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\74d12c1f-38cd-41f1-bf10-f567f2c59cdf.png",
+      "PackagePath": "staticwebassets\\ImageDestination\\74d12c1f-38cd-41f1-bf10-f567f2c59cdf.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\8d6448e9-1ebe-4b41-80e7-6bf4d696b5fa.jpg",
+      "PackagePath": "staticwebassets\\ImageDestination\\8d6448e9-1ebe-4b41-80e7-6bf4d696b5fa.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\9310dfe0-b0ce-42f3-aa4f-d91da7766a83.png",
+      "PackagePath": "staticwebassets\\ImageDestination\\9310dfe0-b0ce-42f3-aa4f-d91da7766a83.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageDestination\\9efdbbcc-1cda-40a6-8981-bdcffe953775.png",
+      "PackagePath": "staticwebassets\\ImageDestination\\9efdbbcc-1cda-40a6-8981-bdcffe953775.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\04614aed-91e6-4b61-a846-4046a9da0f22.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\04614aed-91e6-4b61-a846-4046a9da0f22.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\1-1542596341150846473115.webp",
+      "PackagePath": "staticwebassets\\ImageHotel\\1-1542596341150846473115.webp"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\10c37c92-3a93-4135-9072-3588c9ac1f71.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\10c37c92-3a93-4135-9072-3588c9ac1f71.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\19c792c0-7c66-457c-834f-06ef1b066bbc.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\19c792c0-7c66-457c-834f-06ef1b066bbc.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\3-phu-16972939615421757936074-1697331156227-169733115697659792480.webp",
+      "PackagePath": "staticwebassets\\ImageHotel\\3-phu-16972939615421757936074-1697331156227-169733115697659792480.webp"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\3829-khach-san-5-sao-moi-nhat-tai-nha-trang-142951.jpg",
+      "PackagePath": "staticwebassets\\ImageHotel\\3829-khach-san-5-sao-moi-nhat-tai-nha-trang-142951.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\57a92296-956b-4331-99c4-ea820175a422.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\57a92296-956b-4331-99c4-ea820175a422.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\a751a2fb-3a25-449a-bfee-fc464d0759fd.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\a751a2fb-3a25-449a-bfee-fc464d0759fd.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\e12797c9-eced-4185-a241-9e5dec504e09.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\e12797c9-eced-4185-a241-9e5dec504e09.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageHotel\\f79d1bed-7827-4a03-9eb3-17065a357c65.png",
+      "PackagePath": "staticwebassets\\ImageHotel\\f79d1bed-7827-4a03-9eb3-17065a357c65.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageTour\\20cea75e-7b18-4c09-b38e-4c0309f810eb.png",
+      "PackagePath": "staticwebassets\\ImageTour\\20cea75e-7b18-4c09-b38e-4c0309f810eb.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageTour\\3331ea54-056b-482d-b2b6-9ee2b430da40.webp",
+      "PackagePath": "staticwebassets\\ImageTour\\3331ea54-056b-482d-b2b6-9ee2b430da40.webp"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageTour\\3d33b576-504c-4f5d-aea3-d07b11050536.jpg",
+      "PackagePath": "staticwebassets\\ImageTour\\3d33b576-504c-4f5d-aea3-d07b11050536.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageTour\\3d8249f1-3aed-4194-81ab-1dc27c052f6c.jpg",
+      "PackagePath": "staticwebassets\\ImageTour\\3d8249f1-3aed-4194-81ab-1dc27c052f6c.jpg"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageTour\\41dc6baa-6501-4532-ab95-957e78fef64c.png",
+      "PackagePath": "staticwebassets\\ImageTour\\41dc6baa-6501-4532-ab95-957e78fef64c.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\ImageTour\\46dbe25d-caf3-404e-8e82-4ce276fb010c.png",
+      "PackagePath": "staticwebassets\\ImageTour\\46dbe25d-caf3-404e-8e82-4ce276fb010c.png"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\css\\home.css",
+      "PackagePath": "staticwebassets\\css\\home.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "D:\\Users\\admoi\\source\\repos\\DoanhNoVip\\WEBDULICH\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WEBDULICH.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.WEBDULICH.props",
+      "PackagePath": "build\\WEBDULICH.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.WEBDULICH.props",
+      "PackagePath": "buildMultiTargeting\\WEBDULICH.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.WEBDULICH.props",
+      "PackagePath": "buildTransitive\\WEBDULICH.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

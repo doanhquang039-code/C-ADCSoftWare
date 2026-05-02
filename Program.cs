@@ -337,7 +337,18 @@ try
     // Ticket Service
     builder.Services.AddScoped<WEBDULICH.Services.Ticket.ITicketService, WEBDULICH.Services.Ticket.TicketService>();
 
-    Log.Information("New feature services registered (Payment, Chatbot, Analytics, Social Auth, Ticket)");
+    // Weather Service
+    builder.Services.AddHttpClient<WEBDULICH.Services.Weather.IWeatherService, WEBDULICH.Services.Weather.WeatherService>();
+    builder.Services.AddScoped<WEBDULICH.Services.Weather.IWeatherService, WEBDULICH.Services.Weather.WeatherService>();
+    
+    // Currency Service
+    builder.Services.AddHttpClient<WEBDULICH.Services.Currency.ICurrencyService, WEBDULICH.Services.Currency.CurrencyService>();
+    builder.Services.AddScoped<WEBDULICH.Services.Currency.ICurrencyService, WEBDULICH.Services.Currency.CurrencyService>();
+    
+    // Recommendation Service
+    builder.Services.AddScoped<WEBDULICH.Services.Recommendation.IRecommendationService, WEBDULICH.Services.Recommendation.RecommendationService>();
+
+    Log.Information("New feature services registered (Payment, Chatbot, Analytics, Social Auth, Ticket, Weather, Currency, Recommendation)");
 
     // ============ HTTP CLIENT ============
     builder.Services.AddHttpClient();
@@ -431,6 +442,37 @@ try
     }
 
     Log.Information("Application started successfully");
+    
+    // Display URLs after app starts
+    var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
+    lifetime.ApplicationStarted.Register(() =>
+    {
+        var addresses = app.Urls;
+        if (!addresses.Any())
+        {
+            // Fallback to configuration if Urls is empty
+            var config = app.Configuration;
+            addresses = new[] { "http://localhost:5134", "https://localhost:7011" };
+        }
+        
+        Console.WriteLine("\n" + new string('=', 80));
+        Console.WriteLine("🚀 WEBDULICH APPLICATION IS RUNNING!");
+        Console.WriteLine(new string('=', 80));
+        
+        foreach (var url in addresses)
+        {
+            Console.WriteLine($"\n🌐 Website:        {url}");
+            Console.WriteLine($"📚 API Docs:       {url}/api-docs");
+            Console.WriteLine($"📊 Hangfire:       {url}/hangfire");
+            Console.WriteLine($"❤️  Health Check:  {url}/health");
+        }
+        
+        Console.WriteLine("\n" + new string('-', 80));
+        Console.WriteLine("✨ New Features: Weather, Currency, Recommendation APIs");
+        Console.WriteLine("📖 Press Ctrl+C to shut down");
+        Console.WriteLine(new string('=', 80) + "\n");
+    });
+    
     app.Run();
 }
 catch (Exception ex)

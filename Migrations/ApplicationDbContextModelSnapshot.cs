@@ -53,6 +53,9 @@ namespace WEBDULICH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("TotalPrice")
                         .HasColumnType("int");
 
@@ -830,6 +833,45 @@ namespace WEBDULICH.Migrations
                     b.ToTable("Notification", (string)null);
                 });
 
+            modelBuilder.Entity("WEBDULICH.Models.OrderDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpecialRequests")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TourId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TravelDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("TourId");
+
+                    b.ToTable("OrderDetail", (string)null);
+                });
+
             modelBuilder.Entity("WEBDULICH.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -1221,6 +1263,75 @@ namespace WEBDULICH.Migrations
                     b.ToTable("SecurityLog", (string)null);
                 });
 
+            modelBuilder.Entity("WEBDULICH.Models.Ticket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassengerEmail")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PassengerName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PassengerPhone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("QRCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TicketCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UsedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidUntil")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketCode")
+                        .IsUnique();
+
+                    b.HasIndex("ValidUntil");
+
+                    b.HasIndex("BookingId", "Status");
+
+                    b.ToTable("Ticket", (string)null);
+                });
+
             modelBuilder.Entity("WEBDULICH.Models.Tour", b =>
                 {
                     b.Property<int>("Id")
@@ -1228,6 +1339,9 @@ namespace WEBDULICH.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -1255,6 +1369,8 @@ namespace WEBDULICH.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("DestinationId");
 
                     b.ToTable("Tour", (string)null);
@@ -1274,6 +1390,9 @@ namespace WEBDULICH.Migrations
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
+
+                    b.Property<string>("AppleId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -1302,8 +1421,18 @@ namespace WEBDULICH.Migrations
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FacebookId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Gender")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GoogleId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IdentityNumber")
@@ -1314,6 +1443,9 @@ namespace WEBDULICH.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("datetime2");
@@ -1379,6 +1511,9 @@ namespace WEBDULICH.Migrations
 
                     b.Property<string>("ProfileImage")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
@@ -1573,6 +1708,25 @@ namespace WEBDULICH.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WEBDULICH.Models.OrderDetail", b =>
+                {
+                    b.HasOne("Orders", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WEBDULICH.Models.Tour", "Tour")
+                        .WithMany()
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Tour");
+                });
+
             modelBuilder.Entity("WEBDULICH.Models.Payment", b =>
                 {
                     b.HasOne("Orders", "Orders")
@@ -1649,11 +1803,28 @@ namespace WEBDULICH.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WEBDULICH.Models.Ticket", b =>
+                {
+                    b.HasOne("Orders", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+                });
+
             modelBuilder.Entity("WEBDULICH.Models.Tour", b =>
                 {
+                    b.HasOne("WEBDULICH.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
                     b.HasOne("WEBDULICH.Models.Destination", "Destination")
                         .WithMany("Tours")
                         .HasForeignKey("DestinationId");
+
+                    b.Navigation("Category");
 
                     b.Navigation("Destination");
                 });
@@ -1671,6 +1842,8 @@ namespace WEBDULICH.Migrations
 
             modelBuilder.Entity("Orders", b =>
                 {
+                    b.Navigation("OrderDetails");
+
                     b.Navigation("Payment")
                         .IsRequired();
                 });

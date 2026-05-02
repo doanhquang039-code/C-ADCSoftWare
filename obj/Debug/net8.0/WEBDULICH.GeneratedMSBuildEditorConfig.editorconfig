@@ -17,175 +17,175 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = WEBDULICH
 build_property.RootNamespace = WEBDULICH
-build_property.ProjectDir = d:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH\
+build_property.ProjectDir = D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = d:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH
+build_property.MSBuildProjectDirectory = D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH
 build_property._RazorSourceGeneratorDebug = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Admin/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Admin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Admin/Users.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Admin/Users.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cVXNlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Analytics/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Analytics/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5hbHl0aWNzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Create.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Edit.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Category/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0ZWdvcnlcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Create.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVzdGluYXRpb25cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Edit.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVzdGluYXRpb25cRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Destination/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVzdGluYXRpb25cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/EmailMarketing/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/EmailMarketing/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1haWxNYXJrZXRpbmdcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Home/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Home/Privacy.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Create.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG90ZWxcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Edit.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG90ZWxcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Hotel/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG90ZWxcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Loyalty/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Loyalty/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG95YWx0eVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Map/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Map/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFwXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/FormHotel.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/FormHotel.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEZvcm1Ib3RlbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/FormTour.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/FormTour.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXEZvcm1Ub3VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/MyOrders.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/MyOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXE15T3JkZXJzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/PaidOrders.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/PaidOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXFBhaWRPcmRlcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/Transfer.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Orders/Transfer.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJzXFRyYW5zZmVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Payment/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Payment/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGF5bWVudFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Report/Generate.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Report/Generate.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEdlbmVyYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Report/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Report/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Report/View.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Report/View.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0XFZpZXcuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Review/Create.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Review/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV2aWV3XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Review/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Review/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV2aWV3XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Settings/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Settings/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/Error.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Create.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91clxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Edit.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91clxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Index.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Tour/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVG91clxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Create.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Details.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Edit.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Login.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/User/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/_ViewImports.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/_ViewStart.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[d:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/_Layout.cshtml]
+[D:/Users/admoi/source/repos/DoanhNoVip/WEBDULICH/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-ixnggsf2vr
