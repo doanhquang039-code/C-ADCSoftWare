@@ -46,6 +46,28 @@ namespace WEBDULICH.Services
         // Order Details DbSet
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
+        // Customer Segmentation DbSets
+        public DbSet<CustomerSegment> CustomerSegments { get; set; }
+        public DbSet<CustomerSegmentMember> CustomerSegmentMembers { get; set; }
+        public DbSet<CustomerBehavior> CustomerBehaviors { get; set; }
+
+        // Availability DbSets
+        public DbSet<Availability> Availabilities { get; set; }
+        public DbSet<AvailabilityBlock> AvailabilityBlocks { get; set; }
+
+        // Tour Package DbSets
+        public DbSet<Models.TourPackage> TourPackages { get; set; }
+        public DbSet<TourPackageItem> TourPackageItems { get; set; }
+        public DbSet<TourPackageBooking> TourPackageBookings { get; set; }
+
+        // Price Optimization DbSets
+        public DbSet<PriceHistory> PriceHistories { get; set; }
+        public DbSet<DynamicPricingRule> DynamicPricingRules { get; set; }
+
+        // Review Analytics DbSets
+        public DbSet<ReviewAnalytics> ReviewAnalytics { get; set; }
+        public DbSet<ReviewStatistics> ReviewStatistics { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Tour>().ToTable("Tour");
@@ -86,6 +108,28 @@ namespace WEBDULICH.Services
             
             // Order Details table
             modelBuilder.Entity<OrderDetail>().ToTable("OrderDetail");
+
+            // Customer Segmentation tables
+            modelBuilder.Entity<CustomerSegment>().ToTable("CustomerSegment");
+            modelBuilder.Entity<CustomerSegmentMember>().ToTable("CustomerSegmentMember");
+            modelBuilder.Entity<CustomerBehavior>().ToTable("CustomerBehavior");
+
+            // Availability tables
+            modelBuilder.Entity<Availability>().ToTable("Availability");
+            modelBuilder.Entity<AvailabilityBlock>().ToTable("AvailabilityBlock");
+
+            // Tour Package tables
+            modelBuilder.Entity<Models.TourPackage>().ToTable("TourPackage");
+            modelBuilder.Entity<TourPackageItem>().ToTable("TourPackageItem");
+            modelBuilder.Entity<TourPackageBooking>().ToTable("TourPackageBooking");
+
+            // Price Optimization tables
+            modelBuilder.Entity<PriceHistory>().ToTable("PriceHistory");
+            modelBuilder.Entity<DynamicPricingRule>().ToTable("DynamicPricingRule");
+
+            // Review Analytics tables
+            modelBuilder.Entity<ReviewAnalytics>().ToTable("ReviewAnalytics");
+            modelBuilder.Entity<ReviewStatistics>().ToTable("ReviewStatistics");
 
             // Default values for User
             modelBuilder.Entity<User>()
@@ -207,6 +251,52 @@ namespace WEBDULICH.Services
             
             modelBuilder.Entity<Models.Ticket>()
                 .HasIndex(t => t.ValidUntil);
+
+            // Customer Segmentation indexes
+            modelBuilder.Entity<CustomerSegment>()
+                .HasIndex(s => s.SegmentType);
+
+            modelBuilder.Entity<CustomerSegmentMember>()
+                .HasIndex(m => new { m.CustomerSegmentId, m.UserId });
+
+            modelBuilder.Entity<CustomerBehavior>()
+                .HasIndex(b => b.UserId)
+                .IsUnique();
+
+            // Availability indexes
+            modelBuilder.Entity<Availability>()
+                .HasIndex(a => new { a.EntityType, a.EntityId, a.Date });
+
+            modelBuilder.Entity<AvailabilityBlock>()
+                .HasIndex(b => new { b.AvailabilityId, b.Status });
+
+            // Tour Package indexes
+            modelBuilder.Entity<Models.TourPackage>()
+                .HasIndex(p => new { p.Status, p.IsPublic });
+
+            modelBuilder.Entity<TourPackageItem>()
+                .HasIndex(i => new { i.TourPackageId, i.DayNumber });
+
+            modelBuilder.Entity<TourPackageBooking>()
+                .HasIndex(b => new { b.TourPackageId, b.Status });
+
+            // Price Optimization indexes
+            modelBuilder.Entity<PriceHistory>()
+                .HasIndex(h => new { h.EntityType, h.TourId, h.HotelId });
+
+            modelBuilder.Entity<PriceHistory>()
+                .HasIndex(h => h.CreatedAt);
+
+            modelBuilder.Entity<DynamicPricingRule>()
+                .HasIndex(r => new { r.IsActive, r.Priority });
+
+            // Review Analytics indexes
+            modelBuilder.Entity<ReviewAnalytics>()
+                .HasIndex(a => a.ReviewId)
+                .IsUnique();
+
+            modelBuilder.Entity<ReviewStatistics>()
+                .HasIndex(s => new { s.EntityType, s.TourId, s.HotelId });
 
             base.OnModelCreating(modelBuilder);
         }

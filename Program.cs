@@ -348,7 +348,35 @@ try
     // Recommendation Service
     builder.Services.AddScoped<WEBDULICH.Services.Recommendation.IRecommendationService, WEBDULICH.Services.Recommendation.RecommendationService>();
 
+    // ============ ENTERPRISE FEATURE SERVICES (V3.0) ============
+    // Customer Segmentation Service
+    builder.Services.AddScoped<WEBDULICH.Services.CustomerSegmentation.ICustomerSegmentationService, WEBDULICH.Services.CustomerSegmentation.CustomerSegmentationService>();
+    
+    // Availability Service
+    builder.Services.AddScoped<WEBDULICH.Services.Availability.IAvailabilityService, WEBDULICH.Services.Availability.AvailabilityService>();
+    
+    // Tour Package Service
+    builder.Services.AddScoped<WEBDULICH.Services.TourPackage.ITourPackageService, WEBDULICH.Services.TourPackage.TourPackageService>();
+    
+    // Price Optimization Service
+    builder.Services.AddScoped<WEBDULICH.Services.PriceOptimization.IPriceOptimizationService, WEBDULICH.Services.PriceOptimization.PriceOptimizationService>();
+    
+    // Review Analytics Service
+    builder.Services.AddScoped<WEBDULICH.Services.ReviewAnalytics.IReviewAnalyticsService, WEBDULICH.Services.ReviewAnalytics.ReviewAnalyticsService>();
+    
+    // Advanced Search Service
+    builder.Services.AddScoped<WEBDULICH.Services.AdvancedSearch.IAdvancedSearchService, WEBDULICH.Services.AdvancedSearch.AdvancedSearchService>();
+
+    // ============ MAXPING FEATURE SERVICES (V4.0) ============
+    // AI Recommendation Engine
+    builder.Services.AddScoped<WEBDULICH.Services.AI.IRecommendationEngine, WEBDULICH.Services.AI.RecommendationEngine>();
+    
+    // Blockchain Service
+    builder.Services.AddSingleton<WEBDULICH.Services.Blockchain.IBlockchainService, WEBDULICH.Services.Blockchain.BlockchainService>();
+
     Log.Information("New feature services registered (Payment, Chatbot, Analytics, Social Auth, Ticket, Weather, Currency, Recommendation)");
+    Log.Information("Enterprise feature services registered (Customer Segmentation, Availability, Tour Package, Price Optimization, Review Analytics, Advanced Search)");
+    Log.Information("MAXPING feature services registered (AI Recommendation Engine, Blockchain Service)");
 
     // ============ HTTP CLIENT ============
     builder.Services.AddHttpClient();
