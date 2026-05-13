@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
-// ánh xạ cơ sở dữ liệu 
+// Ã¡nh xáº¡ cÆ¡ sá»Ÿ dá»¯ liá»‡u 
 namespace WEBDULICH.Services
 {
     public class ApplicationDbContext : DbContext
@@ -52,7 +52,7 @@ namespace WEBDULICH.Services
         public DbSet<CustomerBehavior> CustomerBehaviors { get; set; }
 
         // Availability DbSets
-        public DbSet<Availability> Availabilities { get; set; }
+        public DbSet<WEBDULICH.Models.Availability> Availabilities { get; set; }
         public DbSet<AvailabilityBlock> AvailabilityBlocks { get; set; }
 
         // Tour Package DbSets
@@ -65,7 +65,7 @@ namespace WEBDULICH.Services
         public DbSet<DynamicPricingRule> DynamicPricingRules { get; set; }
 
         // Review Analytics DbSets
-        public DbSet<ReviewAnalytics> ReviewAnalytics { get; set; }
+        public DbSet<WEBDULICH.Models.ReviewAnalytics> ReviewAnalytics { get; set; }
         public DbSet<ReviewStatistics> ReviewStatistics { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -115,7 +115,7 @@ namespace WEBDULICH.Services
             modelBuilder.Entity<CustomerBehavior>().ToTable("CustomerBehavior");
 
             // Availability tables
-            modelBuilder.Entity<Availability>().ToTable("Availability");
+            modelBuilder.Entity<WEBDULICH.Models.Availability>().ToTable("Availability");
             modelBuilder.Entity<AvailabilityBlock>().ToTable("AvailabilityBlock");
 
             // Tour Package tables
@@ -128,7 +128,7 @@ namespace WEBDULICH.Services
             modelBuilder.Entity<DynamicPricingRule>().ToTable("DynamicPricingRule");
 
             // Review Analytics tables
-            modelBuilder.Entity<ReviewAnalytics>().ToTable("ReviewAnalytics");
+            modelBuilder.Entity<WEBDULICH.Models.ReviewAnalytics>().ToTable("ReviewAnalytics");
             modelBuilder.Entity<ReviewStatistics>().ToTable("ReviewStatistics");
 
             // Default values for User
@@ -264,7 +264,7 @@ namespace WEBDULICH.Services
                 .IsUnique();
 
             // Availability indexes
-            modelBuilder.Entity<Availability>()
+            modelBuilder.Entity<WEBDULICH.Models.Availability>()
                 .HasIndex(a => new { a.EntityType, a.EntityId, a.Date });
 
             modelBuilder.Entity<AvailabilityBlock>()
@@ -291,7 +291,7 @@ namespace WEBDULICH.Services
                 .HasIndex(r => new { r.IsActive, r.Priority });
 
             // Review Analytics indexes
-            modelBuilder.Entity<ReviewAnalytics>()
+            modelBuilder.Entity<WEBDULICH.Models.ReviewAnalytics>()
                 .HasIndex(a => a.ReviewId)
                 .IsUnique();
 
@@ -302,3 +302,4 @@ namespace WEBDULICH.Services
         }
     }
 }
+

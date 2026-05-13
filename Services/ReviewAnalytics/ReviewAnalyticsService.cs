@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -11,8 +11,8 @@ namespace WEBDULICH.Services.ReviewAnalytics
         private readonly ILogger<ReviewAnalyticsService> _logger;
 
         // Simple sentiment keywords (in real app, use ML model)
-        private readonly List<string> _positiveWords = new() { "tuyệt", "tốt", "đẹp", "great", "excellent", "amazing", "wonderful", "perfect", "love", "best" };
-        private readonly List<string> _negativeWords = new() { "tệ", "xấu", "kém", "bad", "terrible", "awful", "worst", "hate", "poor", "disappointing" };
+        private readonly List<string> _positiveWords = new() { "tuyá»‡t", "tá»‘t", "Ä‘áº¹p", "great", "excellent", "amazing", "wonderful", "perfect", "love", "best" };
+        private readonly List<string> _negativeWords = new() { "tá»‡", "xáº¥u", "kÃ©m", "bad", "terrible", "awful", "worst", "hate", "poor", "disappointing" };
 
         public ReviewAnalyticsService(
             ApplicationDbContext context,
@@ -22,7 +22,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
             _logger = logger;
         }
 
-        public async Task<ReviewAnalytics> AnalyzeReviewAsync(int reviewId)
+        public async Task<WEBDULICH.Models.ReviewAnalytics> AnalyzeReviewAsync(int reviewId)
         {
             var review = await _context.Reviews.FindAsync(reviewId);
             if (review == null) return null;
@@ -36,7 +36,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
                 await _context.SaveChangesAsync();
             }
 
-            var analytics = new ReviewAnalytics
+            var analytics = new WEBDULICH.Models.ReviewAnalytics
             {
                 ReviewId = reviewId,
                 AnalyzedAt = DateTime.Now
@@ -87,14 +87,14 @@ namespace WEBDULICH.Services.ReviewAnalytics
             return analytics;
         }
 
-        public async Task<ReviewAnalytics> GetReviewAnalyticsAsync(int reviewId)
+        public async Task<WEBDULICH.Models.ReviewAnalytics> GetReviewAnalyticsAsync(int reviewId)
         {
             return await _context.ReviewAnalytics
                 .Include(a => a.Review)
                 .FirstOrDefaultAsync(a => a.ReviewId == reviewId);
         }
 
-        public async Task<List<ReviewAnalytics>> GetAllReviewAnalyticsAsync(string entityType, int entityId)
+        public async Task<List<WEBDULICH.Models.ReviewAnalytics>> GetAllReviewAnalyticsAsync(string entityType, int entityId)
         {
             var reviews = await GetEntityReviewsAsync(entityType, entityId);
             var reviewIds = reviews.Select(r => r.Id).ToList();
@@ -198,13 +198,13 @@ namespace WEBDULICH.Services.ReviewAnalytics
             }
 
             stats.TotalReviews = reviews.Count;
-            stats.AverageRating = reviews.Any() ? (decimal)reviews.Average(r => r.Rating) : 0;
+            stats.AverageRating = reviews.Any() ? (decimal)reviews.Average(r => r.NumericRating) : 0;
 
-            stats.FiveStarCount = reviews.Count(r => r.Rating == 5);
-            stats.FourStarCount = reviews.Count(r => r.Rating == 4);
-            stats.ThreeStarCount = reviews.Count(r => r.Rating == 3);
-            stats.TwoStarCount = reviews.Count(r => r.Rating == 2);
-            stats.OneStarCount = reviews.Count(r => r.Rating == 1);
+            stats.FiveStarCount = reviews.Count(r => r.NumericRating == 5);
+            stats.FourStarCount = reviews.Count(r => r.NumericRating == 4);
+            stats.ThreeStarCount = reviews.Count(r => r.NumericRating == 3);
+            stats.TwoStarCount = reviews.Count(r => r.NumericRating == 2);
+            stats.OneStarCount = reviews.Count(r => r.NumericRating == 1);
 
             if (analytics.Any())
             {
@@ -232,7 +232,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
                 stats.AspectScores = JsonSerializer.Serialize(aspectScores);
             }
 
-            stats.RecommendationRate = reviews.Any() ? (decimal)reviews.Count(r => r.Rating >= 4) / reviews.Count * 100 : 0;
+            stats.RecommendationRate = reviews.Any() ? (decimal)reviews.Count(r => r.NumericRating >= 4) / reviews.Count * 100 : 0;
             stats.LastUpdated = DateTime.Now;
 
             await _context.SaveChangesAsync();
@@ -387,7 +387,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
                 {
                     Month = $"{g.Key.Year}-{g.Key.Month:D2}",
                     Count = g.Count(),
-                    AverageRating = g.Average(r => r.Rating)
+                    AverageRating = g.Average(r => r.NumericRating)
                 })
                 .OrderBy(x => x.Month)
                 .ToList();
@@ -396,7 +396,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
             {
                 ["trends"] = monthlyTrends,
                 ["totalReviews"] = reviews.Count,
-                ["averageRating"] = reviews.Any() ? reviews.Average(r => r.Rating) : 0
+                ["averageRating"] = reviews.Any() ? reviews.Average(r => r.NumericRating) : 0
             };
         }
 
@@ -506,7 +506,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
             if (entityType == "Tour")
                 return await _context.Reviews.Where(r => r.TourId == entityId).ToListAsync();
             else if (entityType == "Hotel")
-                return await _context.Reviews.Where(r => r.HotelId == entityId).ToListAsync();
+                return new List<Review>();
             return new List<Review>();
         }
 
@@ -548,12 +548,12 @@ namespace WEBDULICH.Services.ReviewAnalytics
             var topics = new List<string>();
             text = text.ToLower();
 
-            if (text.Contains("service") || text.Contains("dịch vụ")) topics.Add("Service");
-            if (text.Contains("food") || text.Contains("đồ ăn")) topics.Add("Food");
-            if (text.Contains("location") || text.Contains("vị trí")) topics.Add("Location");
-            if (text.Contains("price") || text.Contains("giá")) topics.Add("Price");
-            if (text.Contains("clean") || text.Contains("sạch sẽ")) topics.Add("Cleanliness");
-            if (text.Contains("staff") || text.Contains("nhân viên")) topics.Add("Staff");
+            if (text.Contains("service") || text.Contains("dá»‹ch vá»¥")) topics.Add("Service");
+            if (text.Contains("food") || text.Contains("Ä‘á»“ Äƒn")) topics.Add("Food");
+            if (text.Contains("location") || text.Contains("vá»‹ trÃ­")) topics.Add("Location");
+            if (text.Contains("price") || text.Contains("giÃ¡")) topics.Add("Price");
+            if (text.Contains("clean") || text.Contains("sáº¡ch sáº½")) topics.Add("Cleanliness");
+            if (text.Contains("staff") || text.Contains("nhÃ¢n viÃªn")) topics.Add("Staff");
 
             return topics;
         }
@@ -564,10 +564,10 @@ namespace WEBDULICH.Services.ReviewAnalytics
             text = text.ToLower();
 
             // Simple aspect scoring
-            aspects["service"] = text.Contains("good service") || text.Contains("dịch vụ tốt") ? 4.5m : 3.0m;
+            aspects["service"] = text.Contains("good service") || text.Contains("dá»‹ch vá»¥ tá»‘t") ? 4.5m : 3.0m;
             aspects["food"] = text.Contains("delicious") || text.Contains("ngon") ? 4.5m : 3.0m;
-            aspects["location"] = text.Contains("convenient") || text.Contains("thuận tiện") ? 4.5m : 3.0m;
-            aspects["price"] = text.Contains("reasonable") || text.Contains("hợp lý") ? 4.5m : 3.0m;
+            aspects["location"] = text.Contains("convenient") || text.Contains("thuáº­n tiá»‡n") ? 4.5m : 3.0m;
+            aspects["price"] = text.Contains("reasonable") || text.Contains("há»£p lÃ½") ? 4.5m : 3.0m;
 
             return aspects;
         }
@@ -577,11 +577,11 @@ namespace WEBDULICH.Services.ReviewAnalytics
             var emotions = new List<string>();
             text = text.ToLower();
 
-            if (text.Contains("love") || text.Contains("yêu")) emotions.Add("Love");
+            if (text.Contains("love") || text.Contains("yÃªu")) emotions.Add("Love");
             if (text.Contains("happy") || text.Contains("vui")) emotions.Add("Happy");
-            if (text.Contains("angry") || text.Contains("tức")) emotions.Add("Angry");
-            if (text.Contains("sad") || text.Contains("buồn")) emotions.Add("Sad");
-            if (text.Contains("excited") || text.Contains("phấn khích")) emotions.Add("Excited");
+            if (text.Contains("angry") || text.Contains("tá»©c")) emotions.Add("Angry");
+            if (text.Contains("sad") || text.Contains("buá»“n")) emotions.Add("Sad");
+            if (text.Contains("excited") || text.Contains("pháº¥n khÃ­ch")) emotions.Add("Excited");
 
             return emotions;
         }
@@ -611,7 +611,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
         {
             // Simple fake detection
             bool isFake = review.Comment.Length < 20 || 
-                         (review.Rating == 5 && review.Comment.Length < 30);
+                         (review.NumericRating == 5 && review.Comment.Length < 30);
 
             return (isFake, isFake ? 0.6m : 0.3m);
         }
@@ -626,7 +626,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
             else if (review.Comment.Length > 20) score += 10;
 
             // Rating consistency
-            if (review.Rating >= 3 && review.Rating <= 4) score += 20;
+            if (review.NumericRating >= 3 && review.NumericRating <= 4) score += 20;
 
             // Recency
             var daysSince = (DateTime.Now - review.CreatedAt).Days;
@@ -637,3 +637,7 @@ namespace WEBDULICH.Services.ReviewAnalytics
         }
     }
 }
+
+
+
+

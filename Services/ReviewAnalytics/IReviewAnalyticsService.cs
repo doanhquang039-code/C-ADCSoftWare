@@ -1,13 +1,13 @@
-using WEBDULICH.Models;
+﻿using WEBDULICH.Models;
 
 namespace WEBDULICH.Services.ReviewAnalytics
 {
     public interface IReviewAnalyticsService
     {
         // Review Analysis
-        Task<ReviewAnalytics> AnalyzeReviewAsync(int reviewId);
-        Task<ReviewAnalytics> GetReviewAnalyticsAsync(int reviewId);
-        Task<List<ReviewAnalytics>> GetAllReviewAnalyticsAsync(string entityType, int entityId);
+        Task<WEBDULICH.Models.ReviewAnalytics> AnalyzeReviewAsync(int reviewId);
+        Task<WEBDULICH.Models.ReviewAnalytics> GetReviewAnalyticsAsync(int reviewId);
+        Task<List<WEBDULICH.Models.ReviewAnalytics>> GetAllReviewAnalyticsAsync(string entityType, int entityId);
 
         // Sentiment Analysis
         Task<Dictionary<string, object>> GetSentimentSummaryAsync(string entityType, int entityId);
@@ -44,3 +44,4 @@ namespace WEBDULICH.Services.ReviewAnalytics
         Task<Dictionary<string, object>> GetOverallReviewStatisticsAsync();
     }
 }
+

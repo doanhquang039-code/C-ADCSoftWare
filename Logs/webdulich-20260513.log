@@ -1,0 +1,19 @@
+[2026-05-13 10:39:35.678 +07:00 INF] Starting WEBDULICH application
+[2026-05-13 10:39:37.063 +07:00 INF] Redis caching configured
+[2026-05-13 10:39:37.070 +07:00 INF] Hangfire configured
+[2026-05-13 10:39:37.072 +07:00 INF] JWT Authentication configured
+[2026-05-13 10:39:37.074 +07:00 INF] Rate limiting configured
+[2026-05-13 10:39:37.075 +07:00 INF] Response compression configured
+[2026-05-13 10:39:37.085 +07:00 INF] SignalR configured
+[2026-05-13 10:39:37.874 +07:00 INF] AutoMapper configured
+[2026-05-13 10:39:37.875 +07:00 INF] FluentValidation configured
+[2026-05-13 10:39:37.907 +07:00 INF] MediatR configured
+[2026-05-13 10:39:38.213 +07:00 INF] Swagger configured
+[2026-05-13 10:39:38.215 +07:00 INF] RabbitMQ configured
+[2026-05-13 10:39:38.232 +07:00 INF] Health checks configured
+[2026-05-13 10:39:38.236 +07:00 INF] New feature services registered (Payment, Chatbot, Analytics, Social Auth, Ticket, Weather, Currency, Recommendation)
+[2026-05-13 10:39:38.237 +07:00 INF] Enterprise feature services registered (Customer Segmentation, Availability, Tour Package, Price Optimization, Review Analytics, Advanced Search)
+[2026-05-13 10:39:38.238 +07:00 INF] MAXPING feature services registered (AI Recommendation Engine, Blockchain Service)
+[2026-05-13 10:39:38.239 +07:00 INF] All services registered
+[2026-05-13 10:39:38.770 +07:00 INF] Start installing Hangfire SQL objects...
+[2026-05-13 10:39:40.082 +07:00 INF] Hangfire SQL objects installed.

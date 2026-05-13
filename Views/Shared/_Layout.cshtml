@@ -1,4 +1,4 @@
-@using WEBDULICH.Models
+﻿@using WEBDULICH.Models
 @inject WEBDULICH.Services.ICurrentUserService CurrentUserService
 
 @{
@@ -39,6 +39,9 @@
                             <a class="nav-link text-dark" asp-controller="Tour" asp-action="Index">Tour</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="AITripPlanner" asp-action="Index"><i class="bi bi-stars"></i> AI Planner</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Hotel" asp-action="Index">Hotel</a>
                         </li>
                         <li class="nav-item">
@@ -71,28 +74,28 @@
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    👋 Xin chào, @user.Name
+                                    ðŸ‘‹ Xin chÃ o, @user.Name
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="Details" asp-route-id="@user.Id">Trang cá nhân</a></li>
+                                    <li><a class="dropdown-item" asp-controller="User" asp-action="Details" asp-route-id="@user.Id">Trang cÃ¡ nhÃ¢n</a></li>
                                     <li>
                                         <a class="dropdown-item"
                                            asp-controller="User"
                                            asp-action="Edit"
                                            asp-route-id="@user.Id">
-                                            Chỉnh sửa cá nhân
+                                            Chá»‰nh sá»­a cÃ¡ nhÃ¢n
                                         </a>
                                     </li>
                                     @if (isAdmin)
                                     {
-                                        <li><span class="dropdown-item-text text-primary fw-semibold">Tài khoản quản trị</span></li>
+                                        <li><span class="dropdown-item-text text-primary fw-semibold">TÃ i khoáº£n quáº£n trá»‹</span></li>
                                     }
-                                    <li><a class="dropdown-item text-danger" asp-controller="User" asp-action="Logout">Đăng xuất</a></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="User" asp-action="Logout">ÄÄƒng xuáº¥t</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item position-relative">
                                 <a href="/Orders/MyOrders" class="nav-link">
-                                    🛒
+                                    ðŸ›’
                                     <span id="orderCountBadge" class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
                                         0
                                     </span>
@@ -102,10 +105,10 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="User" asp-action="Login">Đăng nhập</a>
+                                <a class="nav-link" asp-controller="User" asp-action="Login">ÄÄƒng nháº­p</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="User" asp-action="Create">Đăng ký</a>
+                                <a class="nav-link" asp-controller="User" asp-action="Create">ÄÄƒng kÃ½</a>
                             </li>
                         }
                     </ul>
@@ -150,3 +153,5 @@
         updateOrderCount();
     });
 </script>
+
+

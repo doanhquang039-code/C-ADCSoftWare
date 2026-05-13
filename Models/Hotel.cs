@@ -22,7 +22,16 @@ namespace WEBDULICH.Models
         public Tour Tour { get; set; }
         public int Quantity { get; set; }
 
+        public decimal PricePerNight => Price;
+
+        public int Stars => Rating;
+
+        public string Description => Name;
+
+        public string Location => Address;
+
        
     }
 
 }
+

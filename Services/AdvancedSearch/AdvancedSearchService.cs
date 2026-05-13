@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 using System.Text.Json;
 
@@ -138,7 +138,7 @@ namespace WEBDULICH.Services.AdvancedSearch
                 query = query.Where(t => t.DestinationId == Convert.ToInt32(filters["destinationId"]));
 
             if (filters.ContainsKey("duration") && filters["duration"] != null)
-                query = query.Where(t => t.Duration == filters["duration"].ToString());
+                query = query.Where(t => t.Duration == Convert.ToInt32(filters["duration"]));
 
             if (filters.ContainsKey("available") && filters["available"] != null)
                 query = query.Where(t => t.Available == Convert.ToBoolean(filters["available"]));
@@ -170,7 +170,7 @@ namespace WEBDULICH.Services.AdvancedSearch
                 var tours = await SearchToursAsync(query);
                 return new Dictionary<string, object>
                 {
-                    ["priceRanges"] = GetPriceRanges(tours.Select(t => t.Price).ToList()),
+                    ["priceRanges"] = GetPriceRanges(tours.Select(t => (decimal)t.Price).ToList()),
                     ["categories"] = tours.GroupBy(t => t.Category?.Name).Select(g => new { name = g.Key, count = g.Count() }).ToList(),
                     ["destinations"] = tours.GroupBy(t => t.Destination?.Name).Select(g => new { name = g.Key, count = g.Count() }).ToList(),
                     ["ratings"] = tours.GroupBy(t => Math.Floor(t.Rating)).Select(g => new { rating = g.Key, count = g.Count() }).ToList()
@@ -183,7 +183,7 @@ namespace WEBDULICH.Services.AdvancedSearch
                 {
                     ["priceRanges"] = GetPriceRanges(hotels.Select(h => h.PricePerNight).ToList()),
                     ["stars"] = hotels.GroupBy(h => h.Stars).Select(g => new { stars = g.Key, count = g.Count() }).ToList(),
-                    ["ratings"] = hotels.GroupBy(h => Math.Floor(h.Rating)).Select(g => new { rating = g.Key, count = g.Count() }).ToList()
+                    ["ratings"] = hotels.GroupBy(h => Math.Floor((decimal)h.Rating)).Select(g => new { rating = g.Key, count = g.Count() }).ToList()
                 };
             }
 
@@ -421,3 +421,4 @@ namespace WEBDULICH.Services.AdvancedSearch
         }
     }
 }
+

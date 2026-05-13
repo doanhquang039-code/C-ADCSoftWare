@@ -8,7 +8,11 @@
 
         public string Comment { get; set; }
 
-        public DateTime ReviewDate { get; set; }  
+        public DateTime ReviewDate { get; set; }
+
+        public DateTime CreatedAt => ReviewDate;
+
+        public decimal NumericRating => decimal.TryParse(Rating, out var value) ? value : 0;
 
         public int? UserId { get; set; }
         public User User { get; set; }
@@ -23,3 +27,4 @@
     }
 
 }
+

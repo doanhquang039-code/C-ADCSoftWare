@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 using WEBDULICH.Services;
 using WEBDULICH.Hubs;
@@ -327,6 +327,7 @@ try
     
     // AI Chatbot Service
     builder.Services.AddScoped<WEBDULICH.Services.AI.IChatbotService, WEBDULICH.Services.AI.ChatbotService>();
+    builder.Services.AddScoped<WEBDULICH.Services.AI.ITripPlannerService, WEBDULICH.Services.AI.TripPlannerService>();
     
     // Analytics Service
     builder.Services.AddScoped<WEBDULICH.Services.Analytics.IAnalyticsService, WEBDULICH.Services.Analytics.AnalyticsService>();
@@ -484,20 +485,20 @@ try
         }
         
         Console.WriteLine("\n" + new string('=', 80));
-        Console.WriteLine("🚀 WEBDULICH APPLICATION IS RUNNING!");
+        Console.WriteLine("ðŸš€ WEBDULICH APPLICATION IS RUNNING!");
         Console.WriteLine(new string('=', 80));
         
         foreach (var url in addresses)
         {
-            Console.WriteLine($"\n🌐 Website:        {url}");
-            Console.WriteLine($"📚 API Docs:       {url}/api-docs");
-            Console.WriteLine($"📊 Hangfire:       {url}/hangfire");
-            Console.WriteLine($"❤️  Health Check:  {url}/health");
+            Console.WriteLine($"\nðŸŒ Website:        {url}");
+            Console.WriteLine($"ðŸ“š API Docs:       {url}/api-docs");
+            Console.WriteLine($"ðŸ“Š Hangfire:       {url}/hangfire");
+            Console.WriteLine($"â¤ï¸  Health Check:  {url}/health");
         }
         
         Console.WriteLine("\n" + new string('-', 80));
-        Console.WriteLine("✨ New Features: Weather, Currency, Recommendation APIs");
-        Console.WriteLine("📖 Press Ctrl+C to shut down");
+        Console.WriteLine("âœ¨ New Features: Weather, Currency, Recommendation APIs");
+        Console.WriteLine("ðŸ“– Press Ctrl+C to shut down");
         Console.WriteLine(new string('=', 80) + "\n");
     });
     
@@ -522,3 +523,4 @@ public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
         return true;
     }
 }
+

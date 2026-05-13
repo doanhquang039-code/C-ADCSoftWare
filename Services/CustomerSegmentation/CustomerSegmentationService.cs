@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 using System.Text.Json;
 
@@ -301,7 +301,7 @@ namespace WEBDULICH.Services.CustomerSegmentation
                 : 0;
 
             behavior.AverageReviewRating = reviews.Any()
-                ? (decimal)reviews.Average(r => r.Rating)
+                ? (decimal)reviews.Average(r => r.NumericRating)
                 : 0;
 
             // Calculate scores
@@ -474,3 +474,4 @@ namespace WEBDULICH.Services.CustomerSegmentation
         }
     }
 }
+

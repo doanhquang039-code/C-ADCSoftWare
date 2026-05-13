@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 using System.Text.Json;
 
@@ -368,7 +368,7 @@ namespace WEBDULICH.Services.PriceOptimization
             if (entityType == "Tour")
             {
                 var tours = await _context.Tours.Where(t => t.Price > 0).ToListAsync();
-                return tours.Any() ? tours.Average(t => t.Price) : 0;
+                return tours.Any() ? (decimal)tours.Average(t => t.Price) : 0;
             }
             else if (entityType == "Hotel")
             {
@@ -499,3 +499,4 @@ namespace WEBDULICH.Services.PriceOptimization
         }
     }
 }
+

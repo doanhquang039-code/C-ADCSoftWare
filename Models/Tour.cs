@@ -26,7 +26,17 @@ namespace WEBDULICH.Models
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public int Quantity { get; set; } 
+        public int Quantity { get; set; }
+
+        public decimal Rating => Reviews != null && Reviews.Any(r => decimal.TryParse(r.Rating, out _))
+            ? Reviews.Where(r => decimal.TryParse(r.Rating, out _)).Average(r => decimal.Parse(r.Rating))
+            : 0;
+
+        public bool Available => Quantity > 0;
+
+        public int MaxGroupSize => Quantity > 0 ? Quantity : 10;
+
+        public string Location => Destination?.Location ?? string.Empty;
 
         public ICollection<Orders> Orders { get; set; }
         public ICollection<Review> Reviews { get; set; }
@@ -34,3 +44,4 @@ namespace WEBDULICH.Models
     }
 
 }
+

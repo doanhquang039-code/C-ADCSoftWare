@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WEBDULICH.Models;
 using System.Text.Json;
 
@@ -6,7 +6,7 @@ namespace WEBDULICH.Services.AI
 {
     /// <summary>
     /// AI-Powered Recommendation Engine
-    /// Hệ thống gợi ý thông minh sử dụng Collaborative Filtering và Content-Based Filtering
+    /// Há»‡ thá»‘ng gá»£i Ã½ thÃ´ng minh sá»­ dá»¥ng Collaborative Filtering vÃ  Content-Based Filtering
     /// </summary>
     public interface IRecommendationEngine
     {
@@ -80,7 +80,7 @@ namespace WEBDULICH.Services.AI
             // Analyze hotel preferences
             if (userBookings.Any())
             {
-                preferences["avgPrice"] = userBookings.Average(b => b.Hotel?.PricePerNight ?? 0);
+                preferences["avgPrice"] = (double)userBookings.Average(b => b.Hotel?.Price ?? 0);
                 preferences["preferredStars"] = userBookings.Average(b => b.Hotel?.Stars ?? 0);
             }
 
@@ -148,11 +148,11 @@ namespace WEBDULICH.Services.AI
 
             // Price similarity
             var priceDiff = Math.Abs(tour1.Price - tour2.Price);
-            var priceScore = 1 - (priceDiff / Math.Max(tour1.Price, tour2.Price));
+            var priceScore = Math.Max(tour1.Price, tour2.Price) > 0 ? 1 - ((double)priceDiff / Math.Max(tour1.Price, tour2.Price)) : 0;
             score += priceScore * 0.2;
 
             // Rating similarity
-            var ratingDiff = Math.Abs(tour1.Rating - tour2.Rating);
+            var ratingDiff = Math.Abs((double)(tour1.Rating - tour2.Rating));
             score += (1 - ratingDiff / 5) * 0.1;
 
             return score;
@@ -168,8 +168,8 @@ namespace WEBDULICH.Services.AI
             if (bookings.Any())
             {
                 // Price preference
-                preferences["avgPrice"] = bookings.Average(b => b.TotalPrice);
-                preferences["maxPrice"] = bookings.Max(b => b.TotalPrice);
+                preferences["avgPrice"] = (double)bookings.Average(b => b.TotalPrice);
+                preferences["maxPrice"] = (double)bookings.Max(b => b.TotalPrice);
 
                 // Category preferences
                 var categoryGroups = bookings
@@ -180,7 +180,7 @@ namespace WEBDULICH.Services.AI
 
                 if (categoryGroups.Any())
                 {
-                    preferences["preferredCategoryId"] = categoryGroups.First().Key;
+                    preferences["preferredCategoryId"] = categoryGroups.First().Key ?? 0;
                 }
 
                 // Destination preferences
@@ -198,7 +198,7 @@ namespace WEBDULICH.Services.AI
 
             if (reviews.Any())
             {
-                preferences["avgRatingGiven"] = reviews.Average(r => r.Rating);
+                preferences["avgRatingGiven"] = (double)reviews.Average(r => r.NumericRating);
             }
 
             return preferences;
@@ -381,3 +381,4 @@ namespace WEBDULICH.Services.AI
         }
     }
 }
+
