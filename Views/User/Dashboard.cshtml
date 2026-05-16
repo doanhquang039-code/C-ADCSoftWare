@@ -1,0 +1,114 @@
+@model WEBDULICH.Models.User
+@{
+    ViewData["Title"] = "Trang cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar Profile -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 text-center p-4">
+                <div class="mb-3">
+                    <img src="@(string.IsNullOrEmpty(Model.ProfileImage) ? "https://ui-avatars.com/api/?name=" + Model.Name + "&background=random" : Model.ProfileImage)" 
+                         alt="Profile" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                </div>
+                <h4 class="fw-bold mb-1">@Model.Name</h4>
+                <p class="text-muted mb-2">@Model.Email</p>
+                <span class="badge bg-primary mb-3">Thành viên @Model.MembershipTier</span>
+                
+                <div class="d-flex justify-content-around text-center mb-4">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">@Model.LoyaltyPoints</h5>
+                        <small class="text-muted">Điểm thưởng</small>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">@Model.LoginCount</h5>
+                        <small class="text-muted">Lượt đăng nhập</small>
+                    </div>
+                </div>
+
+                <a asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary w-100 mb-2">
+                    <i class="bi bi-pencil-square"></i> Cập nhật thông tin
+                </a>
+            </div>
+            
+            <div class="card shadow-sm border-0 mt-4 p-4">
+                <h5 class="fw-bold mb-3">Đổi mật khẩu</h5>
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success py-2">@TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger py-2">@TempData["Error"]</div>
+                }
+                <form asp-action="ChangePassword" asp-controller="User" method="post">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Mật khẩu hiện tại</label>
+                        <input type="password" name="oldPassword" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Mật khẩu mới</label>
+                        <input type="password" name="newPassword" class="form-control" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Xác nhận đổi</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Tổng quan hoạt động</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-sm-4 mb-3">
+                            <div class="p-4 border rounded bg-light">
+                                <i class="bi bi-bag-check fs-1 text-success mb-2"></i>
+                                <h4 class="fw-bold mb-0">@(Model.Orders?.Count ?? 0)</h4>
+                                <span class="text-muted small">Đơn hàng</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <div class="p-4 border rounded bg-light">
+                                <i class="bi bi-heart fs-1 text-danger mb-2"></i>
+                                <h4 class="fw-bold mb-0">@(Model.Wishlists?.Count ?? 0)</h4>
+                                <span class="text-muted small">Đã thích</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <div class="p-4 border rounded bg-light">
+                                <i class="bi bi-star fs-1 text-warning mb-2"></i>
+                                <h4 class="fw-bold mb-0">@(Model.Reviews?.Count ?? 0)</h4>
+                                <span class="text-muted small">Đánh giá</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mb-3 mt-4">Thông tin cá nhân</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-telephone me-2"></i>Số điện thoại</span>
+                            <span class="fw-medium">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-geo-alt me-2"></i>Địa chỉ</span>
+                            <span class="fw-medium">@(string.IsNullOrEmpty(Model.Address) ? "Chưa cập nhật" : Model.Address)</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-calendar me-2"></i>Ngày sinh</span>
+                            <span class="fw-medium">@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="bi bi-clock-history me-2"></i>Ngày tham gia</span>
+                            <span class="fw-medium">@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

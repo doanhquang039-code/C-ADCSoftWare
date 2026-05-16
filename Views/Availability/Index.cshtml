@@ -1,0 +1,409 @@
+@{
+    ViewData["Title"] = "Real-time Availability Calendar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-0 text-primary"><i class="bi bi-calendar3 me-2"></i>Lịch Quản lý Tình trạng</h2>
+                <p class="text-muted mb-0">Theo dõi số chỗ còn trống, khóa lịch và dự báo nhu cầu (Real-time)</p>
+            </div>
+            <div>
+                <span class="badge bg-danger p-2"><i class="bi bi-lightning-fill"></i> High Demand</span>
+                <span class="badge bg-success p-2 ms-2">Available</span>
+                <span class="badge bg-warning text-dark p-2 ms-2">Limited</span>
+                <span class="badge bg-secondary p-2 ms-2">Full / Blocked</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body bg-light">
+                    <form id="filterForm" class="row g-3 align-items-end">
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Loại dịch vụ</label>
+                            <select id="entityType" class="form-select">
+                                <option value="Tour">Tour</option>
+                                <option value="Hotel">Hotel</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Mã dịch vụ (ID)</label>
+                            <input type="number" id="entityId" class="form-control" value="1" min="1">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Tháng</label>
+                            <select id="month" class="form-select">
+                                @for(int i = 1; i <= 12; i++)
+                                {
+                                    if(i == DateTime.Now.Month)
+                                    {
+                                        <option value="@i" selected>Tháng @i</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">Tháng @i</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">Năm</label>
+                            <input type="number" id="year" class="form-control" value="@DateTime.Now.Year">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i> Tải Lịch
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0">
+                <div class="card-body p-0">
+                    <div id="calendar-header" class="d-flex justify-content-between align-items-center bg-primary text-white p-3">
+                        <button type="button" class="btn btn-outline-light btn-sm" id="prevMonth"><i class="bi bi-chevron-left"></i> Tháng trước</button>
+                        <h4 id="calendar-title" class="mb-0 fw-bold">Tháng @DateTime.Now.Month / @DateTime.Now.Year</h4>
+                        <button type="button" class="btn btn-outline-light btn-sm" id="nextMonth">Tháng sau <i class="bi bi-chevron-right"></i></button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered mb-0 calendar-table">
+                            <thead class="bg-light text-center">
+                                <tr>
+                                    <th style="width: 14.28%">Thứ 2</th>
+                                    <th style="width: 14.28%">Thứ 3</th>
+                                    <th style="width: 14.28%">Thứ 4</th>
+                                    <th style="width: 14.28%">Thứ 5</th>
+                                    <th style="width: 14.28%">Thứ 6</th>
+                                    <th style="width: 14.28%" class="text-danger">Thứ 7</th>
+                                    <th style="width: 14.28%" class="text-danger">Chủ Nhật</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendar-body">
+                                <!-- Calendar Grid Rendered via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Loading Overlay -->
+                <div id="loading-overlay" class="position-absolute top-0 start-0 w-100 h-100 d-none justify-content-center align-items-center" style="background: rgba(255,255,255,0.8); z-index: 10;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Day Actions -->
+<div class="modal fade" id="dayActionModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-bold" id="modalDateTitle">Chi tiết Ngày</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row text-center mb-3">
+              <div class="col-4">
+                  <h3 id="modalTotal" class="text-primary mb-0">0</h3>
+                  <small class="text-muted">Tổng chỗ</small>
+              </div>
+              <div class="col-4">
+                  <h3 id="modalBooked" class="text-warning mb-0">0</h3>
+                  <small class="text-muted">Đã đặt</small>
+              </div>
+              <div class="col-4">
+                  <h3 id="modalAvailable" class="text-success mb-0">0</h3>
+                  <small class="text-muted">Còn trống</small>
+              </div>
+          </div>
+          <hr>
+          <div class="mb-3">
+              <label class="form-label fw-bold text-danger">Khóa lịch (Block)</label>
+              <p class="small text-muted mb-2">Chặn không cho khách hàng đặt vào ngày này.</p>
+              <button type="button" class="btn btn-outline-danger w-100" id="btnBlockDay">
+                  <i class="bi bi-lock-fill"></i> Khóa toàn bộ số chỗ còn trống
+              </button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Styles {
+    <style>
+        .calendar-table th, .calendar-table td {
+            height: 120px;
+            vertical-align: top;
+        }
+        .day-cell {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .day-cell:hover {
+            background-color: #f8f9fa;
+            box-shadow: inset 0 0 0 2px #0d6efd;
+        }
+        .day-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #6c757d;
+        }
+        .day-cell.other-month {
+            background-color: #f8f9fa;
+            opacity: 0.5;
+        }
+        .capacity-badge {
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 5px;
+            width: 100%;
+        }
+        .status-available { background-color: #d1e7dd; color: #0f5132; }
+        .status-limited { background-color: #fff3cd; color: #664d03; }
+        .status-full { background-color: #f8d7da; color: #842029; }
+        
+        .demand-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: #dc3545;
+            font-size: 1.2rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentYear = parseInt(document.getElementById('year').value);
+            let currentMonth = parseInt(document.getElementById('month').value);
+            let currentDayData = null;
+            let currentSelectedDate = null;
+            
+            const dayModal = new bootstrap.Modal(document.getElementById('dayActionModal'));
+
+            // Load initial calendar
+            loadCalendar(currentYear, currentMonth);
+
+            // Form Submit
+            document.getElementById('filterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                currentYear = parseInt(document.getElementById('year').value);
+                currentMonth = parseInt(document.getElementById('month').value);
+                loadCalendar(currentYear, currentMonth);
+            });
+
+            // Prev/Next Month
+            document.getElementById('prevMonth').addEventListener('click', function() {
+                currentMonth--;
+                if(currentMonth < 1) { currentMonth = 12; currentYear--; }
+                updateFilterUIAndLoad();
+            });
+
+            document.getElementById('nextMonth').addEventListener('click', function() {
+                currentMonth++;
+                if(currentMonth > 12) { currentMonth = 1; currentYear++; }
+                updateFilterUIAndLoad();
+            });
+            
+            // Block Day Button
+            document.getElementById('btnBlockDay').addEventListener('click', async function() {
+                if(!currentDayData) return;
+                if(confirm(`Bạn có chắc muốn khóa ${currentDayData.availableCapacity} chỗ còn trống trong ngày ${currentSelectedDate}?`)) {
+                    try {
+                        const entityType = document.getElementById('entityType').value;
+                        const entityId = document.getElementById('entityId').value;
+                        
+                        const res = await fetch('/api/availability/block', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                availabilityId: currentDayData.id,
+                                quantity: currentDayData.availableCapacity,
+                                expiresAt: new Date(new Date().getTime() + 24 * 60 * 60 * 1000) // Block 24h as demo
+                            })
+                        });
+                        const data = await res.json();
+                        if(data.success) {
+                            alert('Đã khóa thành công!');
+                            dayModal.hide();
+                            loadCalendar(currentYear, currentMonth);
+                        } else {
+                            alert('Lỗi: ' + data.message);
+                        }
+                    } catch (err) {
+                        alert('Lỗi kết nối mạng.');
+                    }
+                }
+            });
+
+            function updateFilterUIAndLoad() {
+                document.getElementById('month').value = currentMonth;
+                document.getElementById('year').value = currentYear;
+                loadCalendar(currentYear, currentMonth);
+            }
+
+            async function loadCalendar(year, month) {
+                const entityType = document.getElementById('entityType').value;
+                const entityId = document.getElementById('entityId').value;
+                
+                document.getElementById('calendar-title').innerText = `Tháng ${month} / ${year}`;
+                const overlay = document.getElementById('loading-overlay');
+                overlay.classList.remove('d-none');
+                overlay.classList.add('d-flex');
+
+                try {
+                    const res = await fetch(`/api/availability/calendar?entityType=${entityType}&entityId=${entityId}&year=${year}&month=${month}`);
+                    const json = await res.json();
+                    
+                    if(json.success) {
+                        renderCalendarGrid(year, month, json.data);
+                    } else {
+                        document.getElementById('calendar-body').innerHTML = `<tr><td colspan="7" class="text-center text-danger">Lỗi tải dữ liệu: ${json.message}</td></tr>`;
+                    }
+                } catch (error) {
+                    console.error("Error fetching calendar:", error);
+                    document.getElementById('calendar-body').innerHTML = `<tr><td colspan="7" class="text-center text-danger">Không thể kết nối đến máy chủ.</td></tr>`;
+                } finally {
+                    overlay.classList.add('d-none');
+                    overlay.classList.remove('d-flex');
+                }
+            }
+
+            function renderCalendarGrid(year, month, availabilityData) {
+                const tbody = document.getElementById('calendar-body');
+                tbody.innerHTML = '';
+
+                // First day of month
+                const firstDay = new Date(year, month - 1, 1);
+                const lastDay = new Date(year, month, 0);
+                
+                // Get day of week (0 = Sun, 1 = Mon ... 6 = Sat). Convert to Mon=0 ... Sun=6
+                let startingDay = firstDay.getDay() - 1;
+                if(startingDay < 0) startingDay = 6; 
+
+                const daysInMonth = lastDay.getDate();
+                
+                let date = 1;
+                for (let i = 0; i < 6; i++) {
+                    // Create row
+                    let row = document.createElement("tr");
+
+                    for (let j = 0; j < 7; j++) {
+                        let cell = document.createElement("td");
+                        
+                        if (i === 0 && j < startingDay) {
+                            // Previous month empty cells
+                            cell.classList.add("other-month");
+                            cell.innerHTML = "";
+                        }
+                        else if (date > daysInMonth) {
+                            // Next month empty cells
+                            cell.classList.add("other-month");
+                            cell.innerHTML = "";
+                        }
+                        else {
+                            // Valid date
+                            cell.classList.add("day-cell");
+                            
+                            // Format date key exactly as ISO format returned by API, or match date parts
+                            // API returns Dictionary<DateTime, Availability>.
+                            // The keys in JSON are usually strings like "2024-05-01T00:00:00"
+                            const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}T00:00:00`;
+                            
+                            // Try to find data for this date
+                            let dayData = null;
+                            if(availabilityData) {
+                                // JSON keys might have timezone info so we check startsWith
+                                const keys = Object.keys(availabilityData);
+                                const exactKey = keys.find(k => k.startsWith(dateStr.split('T')[0]));
+                                if(exactKey) {
+                                    dayData = availabilityData[exactKey];
+                                }
+                            }
+
+                            // Render HTML
+                            let html = `<div class="day-number">${date}</div>`;
+                            
+                            if (dayData) {
+                                // Demand Icon
+                                if(dayData.demandLevel === "High" || dayData.demandLevel === "VeryHigh") {
+                                    html += `<i class="bi bi-lightning-fill demand-icon" title="Nhu cầu cao!"></i>`;
+                                }
+
+                                // Status Class
+                                let statusClass = 'status-available';
+                                let statusText = 'Còn trống';
+                                if (dayData.status === "Limited") {
+                                    statusClass = 'status-limited';
+                                    statusText = 'Sắp hết';
+                                } else if (dayData.status === "Full" || dayData.status === "Closed") {
+                                    statusClass = 'status-full';
+                                    statusText = dayData.status === "Closed" ? 'Đã khóa' : 'Đã hết';
+                                }
+
+                                html += `<div class="capacity-badge ${statusClass}">
+                                    <strong>${dayData.availableCapacity}</strong>/${dayData.totalCapacity} chỗ
+                                </div>`;
+                                
+                                html += `<div class="mt-1 small text-muted text-center">${statusText}</div>`;
+                                
+                                // Event Listener
+                                const captureData = dayData;
+                                const captureDate = `${date}/${month}/${year}`;
+                                cell.onclick = function() {
+                                    showDayModal(captureDate, captureData);
+                                };
+                            } else {
+                                html += `<div class="capacity-badge bg-secondary text-white mt-1">Chưa có DL</div>`;
+                            }
+
+                            cell.innerHTML = html;
+                            date++;
+                        }
+                        row.appendChild(cell);
+                    }
+                    tbody.appendChild(row);
+                    if(date > daysInMonth) break;
+                }
+            }
+
+            function showDayModal(dateStr, data) {
+                currentDayData = data;
+                currentSelectedDate = dateStr;
+                document.getElementById('modalDateTitle').innerText = `Tình trạng - ${dateStr}`;
+                document.getElementById('modalTotal').innerText = data.totalCapacity;
+                document.getElementById('modalBooked').innerText = data.bookedCapacity;
+                document.getElementById('modalAvailable').innerText = data.availableCapacity;
+                
+                const btnBlock = document.getElementById('btnBlockDay');
+                if (data.availableCapacity <= 0) {
+                    btnBlock.disabled = true;
+                    btnBlock.innerHTML = `<i class="bi bi-lock-fill"></i> Đã hết chỗ để khóa`;
+                } else {
+                    btnBlock.disabled = false;
+                    btnBlock.innerHTML = `<i class="bi bi-lock-fill"></i> Khóa ${data.availableCapacity} chỗ còn trống`;
+                }
+
+                dayModal.show();
+            }
+        });
+    </script>
+}

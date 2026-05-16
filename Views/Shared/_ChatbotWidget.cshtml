@@ -1,0 +1,196 @@
+<div id="chatbot-widget-container" class="position-fixed" style="bottom: 20px; right: 20px; z-index: 1050;">
+    
+    <!-- Chat Window -->
+    <div id="chatbot-window" class="card shadow border-0 d-none" style="width: 350px; height: 500px; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
+        <!-- Header -->
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-robot fs-4 me-2"></i>
+                <h6 class="mb-0 fw-bold">Trợ lý ảo AI</h6>
+            </div>
+            <button type="button" class="btn-close btn-close-white" id="close-chat-btn" aria-label="Close"></button>
+        </div>
+        
+        <!-- Chat Body -->
+        <div id="chatbot-body" class="card-body bg-light" style="flex: 1; overflow-y: auto; padding: 15px;">
+            <div class="chat-message bot-message mb-3">
+                <div class="message-content bg-white border shadow-sm p-2 rounded-3 d-inline-block" style="max-width: 85%;">
+                    <small>👋 Chào bạn! Tôi là Trợ lý AI của WEBDULICH. Tôi có thể giúp gì cho bạn hôm nay?</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading Indicator -->
+        <div id="chatbot-typing" class="d-none px-3 pb-2 bg-light">
+            <small class="text-muted fst-italic">AI đang gõ...</small>
+        </div>
+
+        <!-- Footer / Input -->
+        <div class="card-footer bg-white border-top p-2">
+            <form id="chatbot-form" class="d-flex align-items-center">
+                <input type="text" id="chatbot-input" class="form-control rounded-pill border-0 bg-light" placeholder="Nhập tin nhắn..." autocomplete="off" required>
+                <button type="submit" class="btn btn-primary rounded-circle ms-2 shadow-sm d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Floating Bubble Button -->
+    <button id="chatbot-bubble" class="btn btn-primary rounded-circle shadow-lg d-flex justify-content-center align-items-center float-end" style="width: 60px; height: 60px;">
+        <i class="bi bi-chat-dots-fill fs-2"></i>
+    </button>
+</div>
+
+<style>
+    #chatbot-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    #chatbot-body::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+    }
+    #chatbot-body::-webkit-scrollbar-thumb {
+        background: #c1c1c1; 
+        border-radius: 10px;
+    }
+    
+    .chat-message {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .bot-message {
+        align-items: flex-start;
+    }
+    
+    .bot-message .message-content {
+        border-bottom-left-radius: 0 !important;
+        color: #333;
+    }
+    
+    .user-message {
+        align-items: flex-end;
+    }
+    
+    .user-message .message-content {
+        background-color: #0d6efd !important;
+        color: white;
+        border-bottom-right-radius: 0 !important;
+    }
+    
+    .chat-timestamp {
+        font-size: 0.7rem;
+        color: #999;
+        margin-top: 2px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bubbleBtn = document.getElementById('chatbot-bubble');
+        const closeBtn = document.getElementById('close-chat-btn');
+        const chatWindow = document.getElementById('chatbot-window');
+        const chatForm = document.getElementById('chatbot-form');
+        const chatInput = document.getElementById('chatbot-input');
+        const chatBody = document.getElementById('chatbot-body');
+        const typingIndicator = document.getElementById('chatbot-typing');
+        
+        let conversationId = sessionStorage.getItem('ai_conversation_id') || generateUUID();
+        sessionStorage.setItem('ai_conversation_id', conversationId);
+
+        // Toggle Chat Window
+        bubbleBtn.addEventListener('click', () => {
+            chatWindow.classList.remove('d-none');
+            bubbleBtn.classList.add('d-none');
+            chatInput.focus();
+            scrollToBottom();
+        });
+
+        closeBtn.addEventListener('click', () => {
+            chatWindow.classList.add('d-none');
+            bubbleBtn.classList.remove('d-none');
+        });
+
+        // Submit Message
+        chatForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const messageText = chatInput.value.trim();
+            if(!messageText) return;
+
+            // Render User Message
+            appendMessage(messageText, 'user');
+            chatInput.value = '';
+            
+            // Show typing indicator
+            typingIndicator.classList.remove('d-none');
+            scrollToBottom();
+
+            try {
+                // Determine UserId if available from some meta tag or variable, else anonymous
+                // WEBDULICH usually has user info. We'll send empty if not available
+                const userId = '@(User?.Identity?.Name ?? "anonymous")';
+                
+                const response = await fetch('/api/chatbot/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: messageText,
+                        userId: userId,
+                        conversationId: conversationId
+                    })
+                });
+                
+                const json = await response.json();
+                typingIndicator.classList.add('d-none');
+
+                if(json.success && json.data) {
+                    // API returns data: { text: "...", suggestions: [...] } or just string
+                    let botResponse = typeof json.data === 'string' ? json.data : (json.data.response || json.data.text || "Xin lỗi, tôi không hiểu.");
+                    appendMessage(botResponse, 'bot');
+                } else {
+                    appendMessage("Rất tiếc, đã có lỗi xảy ra. Vui lòng thử lại sau.", 'bot');
+                }
+                
+            } catch (error) {
+                console.error("Chatbot Error:", error);
+                typingIndicator.classList.add('d-none');
+                appendMessage("Mất kết nối với máy chủ AI. Vui lòng thử lại.", 'bot');
+            }
+        });
+
+        function appendMessage(text, sender) {
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const isUser = sender === 'user';
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${isUser ? 'user-message' : 'bot-message'} mb-3`;
+            
+            msgDiv.innerHTML = `
+                <div class="message-content shadow-sm p-2 rounded-3 d-inline-block" style="max-width: 85%;">
+                    <small>${escapeHTML(text).replace(/\n/g, '<br>')}</small>
+                </div>
+                <div class="chat-timestamp px-1">${timeStr}</div>
+            `;
+            
+            chatBody.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.innerText = str;
+            return div.innerHTML;
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+    });
+</script>

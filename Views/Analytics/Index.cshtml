@@ -403,9 +403,10 @@
 
         function loadChartData() {
             // Load revenue data
-            fetch(`/Analytics/GetRevenueData?days=${currentTimeRange}`)
+            fetch(`/api/analytics/revenue?days=${currentTimeRange}`)
                 .then(response => response.json())
-                .then(data => {
+                .then(json => {
+                    const data = json.data;
                     trendChart.data.labels = data.labels;
                     trendChart.data.datasets[0].data = data.revenue;
                     trendChart.update();
@@ -418,9 +419,10 @@
         }
 
         function showRevenue() {
-            fetch(`/Analytics/GetRevenueData?days=${currentTimeRange}`)
+            fetch(`/api/analytics/revenue?days=${currentTimeRange}`)
                 .then(response => response.json())
-                .then(data => {
+                .then(json => {
+                    const data = json.data;
                     trendChart.data.labels = data.labels;
                     trendChart.data.datasets[0].data = data.revenue;
                     trendChart.data.datasets[0].label = 'Revenue (VND)';
@@ -430,9 +432,10 @@
         }
 
         function showBookings() {
-            fetch(`/Analytics/GetRevenueData?days=${currentTimeRange}`)
+            fetch(`/api/analytics/revenue?days=${currentTimeRange}`)
                 .then(response => response.json())
-                .then(data => {
+                .then(json => {
+                    const data = json.data;
                     trendChart.data.labels = data.labels;
                     trendChart.data.datasets[0].data = data.bookings;
                     trendChart.data.datasets[0].label = 'Bookings';

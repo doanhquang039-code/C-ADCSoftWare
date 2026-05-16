@@ -6,10 +6,12 @@ namespace WEBDULICH.Services
     public class UserService : IUserService
     {
         private readonly ApplicationDbContext db;
+        private readonly ISecurityService _securityService;
 
-        public UserService(ApplicationDbContext db)
+        public UserService(ApplicationDbContext db, ISecurityService securityService)
         {
             this.db = db;
+            _securityService = securityService;
         }
 
         public async Task<User?> GetByIdAsync(int id)
@@ -19,9 +21,32 @@ namespace WEBDULICH.Services
 
         public async Task<User?> AuthenticateAsync(string email, string password)
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
-            if (user != null && !user.IsActive)
-                return null; // Tài khoản bị khóa
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return null;
+
+            if (!user.IsActive) return null;
+
+            bool isPasswordCorrect = false;
+
+            // Xử lý cả password dạng hash và plain-text (cho tài khoản cũ chưa mã hóa)
+            if (user.Password.Contains(":"))
+            {
+                isPasswordCorrect = _securityService.VerifyPassword(password, user.Password);
+            }
+            else
+            {
+                // Mật khẩu dạng plain-text
+                isPasswordCorrect = (user.Password == password);
+                
+                // Cập nhật lại mật khẩu thành dạng mã hóa
+                if (isPasswordCorrect)
+                {
+                    user.Password = _securityService.HashPassword(password);
+                    await db.SaveChangesAsync();
+                }
+            }
+
+            if (!isPasswordCorrect) return null;
             
             // Record login
             if (user != null)
@@ -38,6 +63,7 @@ namespace WEBDULICH.Services
                 return false;
 
             user.Role = "User";
+            user.Password = _securityService.HashPassword(user.Password); // Mã hóa password khi đăng ký
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
             user.MembershipTier = "Bronze";
@@ -56,7 +82,13 @@ namespace WEBDULICH.Services
 
             existingUser.Name = user.Name;
             existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
+            
+            // Chỉ mã hóa nếu người dùng có nhập password mới
+            if (!string.IsNullOrEmpty(user.Password) && user.Password != existingUser.Password)
+            {
+                existingUser.Password = _securityService.HashPassword(user.Password);
+            }
+
             existingUser.Gender = user.Gender;
             existingUser.Age = user.Age;
             existingUser.UpdatedAt = DateTime.Now;

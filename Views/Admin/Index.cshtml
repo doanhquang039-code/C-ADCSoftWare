@@ -164,6 +164,61 @@
         </div>
     </div>
 
+    <!-- Enterprise V3.0 Features -->
+    <div class="row mt-4 g-3">
+        <div class="col-12">
+            <h5 class="text-muted mb-3"><i class="bi bi-briefcase-fill"></i> Enterprise V3.0 Features</h5>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="/admin/customer-segments" class="text-decoration-none">
+                <div class="card shadow border-0 h-100 bg-gradient-segment text-white hover-zoom">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-people fs-1 mb-2"></i>
+                        <h5 class="mt-2">Customer Segments</h5>
+                        <small>AI-driven customer segmentation</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="/admin/price-optimization" class="text-decoration-none">
+                <div class="card shadow border-0 h-100 bg-gradient-price text-white hover-zoom">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-currency-dollar fs-1 mb-2"></i>
+                        <h5 class="mt-2">Dynamic Pricing</h5>
+                        <small>AI price optimization rules</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="/admin/review-analytics" class="text-decoration-none">
+                <div class="card shadow border-0 h-100 bg-gradient-review text-white hover-zoom">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-star-half fs-1 mb-2"></i>
+                        <h5 class="mt-2">Review Analytics</h5>
+                        <small>Sentiment & spam detection</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="/admin/availability-calendar" class="text-decoration-none">
+                <div class="card shadow border-0 h-100 bg-gradient-calendar text-white hover-zoom">
+                    <div class="card-body text-center py-4">
+                        <i class="bi bi-calendar3 fs-1 mb-2"></i>
+                        <h5 class="mt-2">Availability Calendar</h5>
+                        <small>Real-time booking capacity</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
     <!-- Advanced Features Row -->
     <div class="row mt-4 g-3">
         <div class="col-12">
@@ -226,7 +281,7 @@
         </div>
         
         <div class="col-md-6">
-            <a asp-controller="Analytics" asp-action="Index" class="text-decoration-none">
+            <a href="/admin/analytics" class="text-decoration-none">
                 <div class="card shadow border-0 h-100 bg-gradient-primary text-white">
                     <div class="card-body text-center py-4">
                         <i class="bi bi-graph-up-arrow fs-1 mb-2"></i>
@@ -253,11 +308,13 @@
 
 @section Styles {
     <style>
-        .bg-gradient-primary { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-        }
-        .bg-gradient-success { 
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
-        }
+        .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .bg-gradient-success { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .bg-gradient-segment { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .bg-gradient-price { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .bg-gradient-review { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+        .bg-gradient-calendar { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
+        .hover-zoom { transition: transform 0.2s; }
+        .hover-zoom:hover { transform: scale(1.05); }
     </style>
 }

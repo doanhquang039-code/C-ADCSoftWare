@@ -1,0 +1,54 @@
+@using WEBDULICH.Models
+@model IEnumerable<TourPackage>
+
+@{
+    ViewData["Title"] = "Gói Tour Nổi Bật";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Khám Phá Gói Tour Đặc Biệt</h1>
+        <p class="lead text-muted">Hoặc tự tay thiết kế chuyến đi trong mơ của bạn</p>
+        <a href="/tour-packages/builder" class="btn btn-lg btn-success mt-3 shadow-sm rounded-pill px-4">
+            <i class="fas fa-magic me-2"></i>Tự Build Tour Của Bạn
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var package in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <!-- Fallback image logic if needed -->
+                        <img src="~/images/default-tour.jpg" class="card-img-top" alt="Tour image" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">@package.Status</span>
+                            <h5 class="card-title fw-bold">@package.Name</h5>
+                            <p class="card-text text-muted small">@package.Description</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <small class="text-muted d-block">Giá Tối Ưu</small>
+                                    <span class="fs-5 fw-bold text-danger">@package.FinalPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</span>
+                                </div>
+                                <a href="/tour-packages/@package.Id" class="btn btn-outline-primary rounded-pill px-3">
+                                    Chi Tiết
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <img src="~/images/empty-state.png" alt="No data" class="img-fluid mb-3" style="max-width: 200px; opacity: 0.5" />
+                <h4 class="text-muted">Chưa có gói tour nào nổi bật.</h4>
+            </div>
+        }
+    </div>
+</div>

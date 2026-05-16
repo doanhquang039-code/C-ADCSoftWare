@@ -1,9 +1,10 @@
-﻿@using WEBDULICH.Models
+@using WEBDULICH.Models
 @inject WEBDULICH.Services.ICurrentUserService CurrentUserService
 
 @{
     var user = CurrentUserService.GetCurrentUser();
     var isAdmin = CurrentUserService.IsAdmin();
+    var isManager = CurrentUserService.IsManager();
 }
 
 <!DOCTYPE html>
@@ -39,6 +40,11 @@
                             <a class="nav-link text-dark" asp-controller="Tour" asp-action="Index">Tour</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-success fw-bold" href="/tour-packages">
+                                <i class="bi bi-box-seam"></i> Gói Tour
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="AITripPlanner" asp-action="Index"><i class="bi bi-stars"></i> AI Planner</a>
                         </li>
                         <li class="nav-item">
@@ -50,6 +56,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Review" asp-action="Index">Review</a>
                         </li>
+                        @if (isManager)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" href="/manager">
+                                    <i class="bi bi-briefcase"></i> Manager Dashboard
+                                </a>
+                            </li>
+                        }
+                        
                         @if (isAdmin)
                         {
                             <li class="nav-item">
@@ -60,6 +75,36 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Orders" asp-action="PaidOrders">Paid Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" href="/admin/customer-segments">
+                                    <i class="bi bi-people"></i> Khách Hàng (Segments)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-bold" href="/admin/price-optimization">
+                                    <i class="bi bi-currency-dollar"></i> Giá Tối Ưu (AI)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" href="/admin/customer-segments">
+                                    <i class="bi bi-people"></i> Khách Hàng (Segments)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-bold" href="/admin/price-optimization">
+                                    <i class="bi bi-currency-dollar"></i> Giá Tối Ưu (AI)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-success fw-bold" href="/admin/review-analytics">
+                                    <i class="bi bi-star-half"></i> Phân Tích Đánh Giá (AI)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-info fw-bold" href="/admin/availability-calendar">
+                                    <i class="bi bi-calendar3"></i> Lịch Tình Trạng
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="Index">
@@ -77,20 +122,23 @@
                                     ðŸ‘‹ Xin chÃ o, @user.Name
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="Details" asp-route-id="@user.Id">Trang cÃ¡ nhÃ¢n</a></li>
                                     <li>
-                                        <a class="dropdown-item"
-                                           asp-controller="User"
-                                           asp-action="Edit"
-                                           asp-route-id="@user.Id">
-                                            Chá»‰nh sá»­a cÃ¡ nhÃ¢n
+                                        <a class="dropdown-item fw-bold" asp-controller="User" asp-action="Dashboard">
+                                            <i class="bi bi-person-circle"></i> Trang cá nhân
                                         </a>
                                     </li>
                                     @if (isAdmin)
                                     {
-                                        <li><span class="dropdown-item-text text-primary fw-semibold">TÃ i khoáº£n quáº£n trá»‹</span></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger fw-semibold" href="/Admin"><i class="bi bi-speedometer2"></i> Admin Panel</a></li>
                                     }
-                                    <li><a class="dropdown-item text-danger" asp-controller="User" asp-action="Logout">ÄÄƒng xuáº¥t</a></li>
+                                    @if (isManager)
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-primary fw-semibold" href="/Manager"><i class="bi bi-briefcase"></i> Manager Dashboard</a></li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="User" asp-action="Logout">Đăng xuất</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item position-relative">
@@ -133,6 +181,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- AI Chatbot Widget -->
+    @await Html.PartialAsync("_ChatbotWidget")
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

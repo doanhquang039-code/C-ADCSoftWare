@@ -7,11 +7,13 @@ public class UserController : Controller
 {
     private readonly IUserService userService;
     private readonly ICurrentUserService currentUserService;
+    private readonly ISecurityService _securityService;
 
-    public UserController(IUserService userService, ICurrentUserService currentUserService)
+    public UserController(IUserService userService, ICurrentUserService currentUserService, ISecurityService securityService)
     {
         this.userService = userService;
         this.currentUserService = currentUserService;
+        _securityService = securityService;
     }
 
     public IActionResult Create()
@@ -104,5 +106,50 @@ public class UserController : Controller
         if (user == null) return NotFound();
 
         return View(user);
+    }
+
+    [AuthenticatedOnly]
+    public async Task<IActionResult> Dashboard()
+    {
+        var currentUser = currentUserService.GetCurrentUser();
+        if (currentUser == null) return RedirectToAction(nameof(Login));
+
+        var user = await userService.GetByIdAsync(currentUser.Id);
+        return View(user);
+    }
+
+    [AuthenticatedOnly]
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+    {
+        var currentUser = currentUserService.GetCurrentUser();
+        if (currentUser == null) return RedirectToAction(nameof(Login));
+
+        var user = await userService.GetByIdAsync(currentUser.Id);
+        if (user == null) return NotFound();
+
+        // Kiểm tra mật khẩu cũ
+        bool isCorrect = false;
+        if (user.Password.Contains(":"))
+        {
+            isCorrect = _securityService.VerifyPassword(oldPassword, user.Password);
+        }
+        else
+        {
+            isCorrect = (user.Password == oldPassword);
+        }
+
+        if (!isCorrect)
+        {
+            TempData["Error"] = "Mật khẩu cũ không chính xác!";
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+        // Cập nhật mật khẩu mới
+        user.Password = _securityService.HashPassword(newPassword);
+        await userService.UpdateAsync(user);
+
+        TempData["Success"] = "Đổi mật khẩu thành công!";
+        return RedirectToAction(nameof(Dashboard));
     }
 }

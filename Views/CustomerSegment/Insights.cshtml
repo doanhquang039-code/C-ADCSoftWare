@@ -1,0 +1,131 @@
+@using WEBDULICH.Models
+@model Dictionary<string, object>
+
+@{
+    var segment = ViewBag.Segment as CustomerSegment;
+    var recommendations = ViewBag.Recommendations as List<string>;
+    ViewData["Title"] = $"Phân Tích: {segment?.Name}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="/admin/customer-segments" class="btn btn-outline-secondary mb-2">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại
+            </a>
+            <h2 class="mb-0">@segment?.Name <span class="badge bg-primary fs-6 ms-2">Insights</span></h2>
+            <p class="text-muted mt-1 mb-0">@segment?.Description</p>
+        </div>
+        <button class="btn btn-info text-white" onclick="window.print()">
+            <i class="fas fa-print me-2"></i>In Báo Cáo
+        </button>
+    </div>
+
+    <div class="row">
+        <!-- Key Metrics -->
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card bg-primary text-white h-100 shadow">
+                <div class="card-body">
+                    <h6 class="card-title text-white-50">Tổng Khách Hàng</h6>
+                    <h2 class="fw-bold mb-0">
+                        @(Model.ContainsKey("TotalMembers") ? Model["TotalMembers"] : "0")
+                    </h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card bg-success text-white h-100 shadow">
+                <div class="card-body">
+                    <h6 class="card-title text-white-50">Giá Trị Trung Bình (LTV)</h6>
+                    <h2 class="fw-bold mb-0">
+                        @{
+                            if (Model.ContainsKey("AverageLTV") && Model["AverageLTV"] is decimal avgLTV)
+                            {
+                                @avgLTV.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                            }
+                            else
+                            {
+                                @("0 ₫")
+                            }
+                        }
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card bg-warning text-dark h-100 shadow">
+                <div class="card-body">
+                    <h6 class="card-title text-dark-50">Nguy Cơ Churn Trung Bình</h6>
+                    <h2 class="fw-bold mb-0">
+                        @(Model.ContainsKey("AverageChurnRisk") ? string.Format("{0:P1}", Model["AverageChurnRisk"]) : "0%")
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-4">
+            <div class="card bg-info text-white h-100 shadow">
+                <div class="card-body">
+                    <h6 class="card-title text-white-50">Tần Suất Đặt Tour (Năm)</h6>
+                    <h2 class="fw-bold mb-0">
+                        @(Model.ContainsKey("AverageBookingFrequency") ? Model["AverageBookingFrequency"] : "0")
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0 text-primary"><i class="fas fa-chart-pie me-2"></i>Chi Tiết Phân Tích (Raw Data)</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <tbody>
+                            @foreach(var item in Model)
+                            {
+                                if (item.Key != "TotalMembers" && item.Key != "AverageLTV" && item.Key != "AverageChurnRisk" && item.Key != "AverageBookingFrequency")
+                                {
+                                    <tr>
+                                        <th class="w-50">@item.Key</th>
+                                        <td>@item.Value</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100 border-start border-4 border-success">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0 text-success"><i class="fas fa-lightbulb me-2"></i>Đề Xuất Marketing</h5>
+                </div>
+                <div class="card-body">
+                    @if (recommendations != null && recommendations.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var rec in recommendations)
+                            {
+                                <li class="list-group-item px-0 pb-3 pt-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i> @rec
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có đề xuất nào cho phân khúc này.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

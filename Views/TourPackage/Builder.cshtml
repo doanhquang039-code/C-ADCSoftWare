@@ -1,0 +1,173 @@
+@{
+    ViewData["Title"] = "Xây Dựng Gói Tour";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-bold text-primary">Tự Tay Build Tour Cho Riêng Bạn</h2>
+            <p class="text-muted">Chỉ với 3 bước đơn giản để tạo nên chuyến đi hoàn hảo.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Builder Form -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <form id="tourBuilderForm">
+                        <!-- Step 1: Basic Info -->
+                        <h5 class="text-success fw-bold mb-3"><i class="bi bi-1-circle-fill me-2"></i>Thông tin chung</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Tên chuyến đi</label>
+                            <input type="text" id="packageName" class="form-control" placeholder="Ví dụ: Trăng Mật Phú Quốc" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Mô tả ngắn</label>
+                            <textarea id="packageDescription" class="form-control" rows="2" placeholder="Cùng nhau khám phá đảo ngọc..."></textarea>
+                        </div>
+
+                        <!-- Step 2: Select Items -->
+                        <h5 class="text-success fw-bold mb-3"><i class="bi bi-2-circle-fill me-2"></i>Chọn Dịch Vụ</h5>
+                        
+                        <div class="card bg-light border-0 mb-3">
+                            <div class="card-body">
+                                <label class="form-label fw-bold">Chọn Khách Sạn</label>
+                                <select id="hotelSelect" class="form-select mb-2">
+                                    <option value="">-- Chọn khách sạn --</option>
+                                    <option value="1" data-price="1500000">Vinpearl Resort (1,500,000 đ/đêm)</option>
+                                    <option value="2" data-price="800000">Seashells Hotel (800,000 đ/đêm)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="card bg-light border-0 mb-4">
+                            <div class="card-body">
+                                <label class="form-label fw-bold">Chọn Tour & Hoạt Động</label>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input item-checkbox" type="checkbox" value="1" data-type="Tour" data-price="500000" id="tour1">
+                                    <label class="form-check-label" for="tour1">Tour 4 đảo (500,000 đ)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input item-checkbox" type="checkbox" value="2" data-type="Tour" data-price="800000" id="tour2">
+                                    <label class="form-check-label" for="tour2">Vé VinWonders & Safari (800,000 đ)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary w-100 py-2 rounded-pill fw-bold" onclick="calculatePrice()">
+                            Tự Động Tính Giá Tối Ưu
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Widget -->
+        <div class="col-md-4">
+            <div class="card shadow border-success rounded-4 sticky-top" style="top: 20px;">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-receipt me-2"></i>Tổng Quan Chi Phí</h5>
+                </div>
+                <div class="card-body">
+                    <div id="priceSummary" class="text-center py-4">
+                        <p class="text-muted mb-1">Chưa có dữ liệu tính toán</p>
+                        <h3 class="fw-bold text-muted">0 ₫</h3>
+                    </div>
+                    
+                    <div id="optimizedSummary" class="d-none text-center py-3">
+                        <small class="text-muted text-decoration-line-through d-block mb-1" id="originalPrice">0 ₫</small>
+                        <h2 class="fw-bold text-danger mb-1" id="finalPrice">0 ₫</h2>
+                        <span class="badge bg-warning text-dark"><i class="fas fa-bolt"></i> Đã Tối Ưu Bằng AI</span>
+                    </div>
+
+                    <hr>
+                    <button type="button" class="btn btn-success w-100 disabled" id="btnSavePackage" onclick="savePackage()">
+                        <i class="fas fa-save me-2"></i>Lưu Gói Tour
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentTotalPrice = 0;
+        let selectedItems = [];
+
+        function calculatePrice() {
+            const name = document.getElementById('packageName').value;
+            if(!name) {
+                alert("Vui lòng nhập tên gói tour!");
+                return;
+            }
+
+            // Gắn mock calculation
+            let total = 0;
+            selectedItems = [];
+
+            const hotel = document.getElementById('hotelSelect');
+            if(hotel.value) {
+                const opt = hotel.options[hotel.selectedIndex];
+                total += parseFloat(opt.dataset.price);
+                selectedItems.push({ entityType: 'Hotel', entityId: hotel.value });
+            }
+
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                total += parseFloat(cb.dataset.price);
+                selectedItems.push({ entityType: cb.dataset.type, entityId: cb.value });
+            });
+
+            if (total === 0) {
+                alert("Vui lòng chọn ít nhất 1 dịch vụ!");
+                return;
+            }
+
+            // Mock AI optimization (discount 10-15%)
+            document.body.style.cursor = 'wait';
+            
+            setTimeout(() => {
+                document.getElementById('priceSummary').classList.add('d-none');
+                document.getElementById('optimizedSummary').classList.remove('d-none');
+                
+                document.getElementById('originalPrice').innerText = total.toLocaleString('vi-VN') + " đ";
+                
+                // Discount 15%
+                currentTotalPrice = total * 0.85;
+                document.getElementById('finalPrice').innerText = currentTotalPrice.toLocaleString('vi-VN') + " đ";
+                
+                document.getElementById('btnSavePackage').classList.remove('disabled');
+                document.body.style.cursor = 'default';
+            }, 1000);
+        }
+
+        function savePackage() {
+            const data = {
+                name: document.getElementById('packageName').value,
+                description: document.getElementById('packageDescription').value,
+                totalPrice: currentTotalPrice,
+                // userId: Lấy từ claim/session
+                userId: 1, 
+                items: selectedItems
+            };
+
+            fetch('/api/TourPackage/build', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) {
+                    alert("Đã lưu gói tour thành công!");
+                    window.location.href = "/tour-packages";
+                } else {
+                    alert("Lỗi: " + res.message);
+                }
+            })
+            .catch(err => alert("Lỗi hệ thống!"));
+        }
+    </script>
+}

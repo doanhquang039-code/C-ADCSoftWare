@@ -1,0 +1,72 @@
+@using WEBDULICH.Models
+@model TourPackage
+
+@{
+    ViewData["Title"] = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="/tour-packages">Gói Tour</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="fw-bold text-primary mb-3">@Model.Name</h1>
+            <p class="lead text-muted">@Model.Description</p>
+            
+            <div class="card border-0 shadow-sm rounded-4 mb-4 mt-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold border-bottom pb-2 mb-3">Các Dịch Vụ Bao Gồm</h5>
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.Items)
+                            {
+                                <li class="list-group-item px-0 py-3 d-flex align-items-center">
+                                    <div class="badge bg-primary rounded-circle p-2 me-3">
+                                        <i class="fas @(item.ItemType == "Hotel" ? "fa-hotel" : "fa-map-marked-alt")"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">@item.ItemType (ID: @(item.TourId ?? item.HotelId))</h6>
+                                        <small class="text-muted">Giá: @item.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</small>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Gói tour này chưa có dịch vụ nào.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow border-0 rounded-4 sticky-top" style="top: 20px;">
+                <div class="card-body p-4 text-center">
+                    <span class="badge bg-success mb-2">Giá Đã Tối Ưu Tốt Nhất</span>
+                    <h2 class="fw-bold text-danger mb-4">@Model.FinalPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</h2>
+                    
+                    <button class="btn btn-primary btn-lg w-100 rounded-pill mb-3 fw-bold shadow-sm">
+                        <i class="fas fa-shopping-cart me-2"></i> Đặt Ngay
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary w-100 rounded-pill">
+                        <i class="fas fa-headset me-2"></i> Tư Vấn Thêm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
