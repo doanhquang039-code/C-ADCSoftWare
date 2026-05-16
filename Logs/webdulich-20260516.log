@@ -1,0 +1,86 @@
+[2026-05-16 17:53:53.505 +07:00 INF] Starting WEBDULICH application
+[2026-05-16 17:53:54.692 +07:00 INF] Redis caching configured
+[2026-05-16 17:53:54.702 +07:00 INF] Hangfire configured
+[2026-05-16 17:53:54.705 +07:00 INF] JWT Authentication configured
+[2026-05-16 17:53:54.708 +07:00 INF] Rate limiting configured
+[2026-05-16 17:53:54.709 +07:00 INF] Response compression configured
+[2026-05-16 17:53:54.716 +07:00 INF] SignalR configured
+[2026-05-16 17:53:55.561 +07:00 INF] AutoMapper configured
+[2026-05-16 17:53:55.562 +07:00 INF] FluentValidation configured
+[2026-05-16 17:53:55.582 +07:00 INF] MediatR configured
+[2026-05-16 17:53:55.952 +07:00 INF] Swagger configured
+[2026-05-16 17:53:55.953 +07:00 INF] RabbitMQ configured
+[2026-05-16 17:53:55.961 +07:00 INF] Health checks configured
+[2026-05-16 17:53:55.964 +07:00 INF] New feature services registered (Payment, Chatbot, Analytics, Social Auth, Ticket, Weather, Currency, Recommendation)
+[2026-05-16 17:53:55.965 +07:00 INF] Enterprise feature services registered (Customer Segmentation, Availability, Tour Package, Price Optimization, Review Analytics, Advanced Search)
+[2026-05-16 17:53:55.965 +07:00 INF] MAXPING feature services registered (AI Recommendation Engine, Blockchain Service)
+[2026-05-16 17:53:55.966 +07:00 INF] All services registered
+[2026-05-16 17:53:56.445 +07:00 INF] Start installing Hangfire SQL objects...
+[2026-05-16 17:53:57.849 +07:00 INF] Hangfire SQL objects installed.
+[2026-05-16 17:53:59.433 +07:00 ERR] An error occurred while seeding the database
+System.InvalidOperationException: No backing field could be found for property 'Availability.EntityId' and the property does not have a setter.
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelValidator.<ValidateFieldMapping>g__Validate|24_0(ITypeBase typeBase)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelValidator.ValidateFieldMapping(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.RelationalModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal.SqlServerModelValidator.Validate(IModel model, IDiagnosticsLogger`1 logger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelRuntimeInitializer.Initialize(IModel model, Boolean designTime, IDiagnosticsLogger`1 validationLogger)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelSource.CreateModel(DbContext context, ModelCreationDependencies modelCreationDependencies, Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Infrastructure.ModelSource.GetModel(DbContext context, ModelCreationDependencies modelCreationDependencies, Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Internal.DbContextServices.CreateModel(Boolean designTime)
+   at Microsoft.EntityFrameworkCore.Internal.DbContextServices.get_Model()
+   at Microsoft.EntityFrameworkCore.Infrastructure.EntityFrameworkServicesBuilder.<>c.<TryAddCoreServices>b__8_4(IServiceProvider p)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSiteMain(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitCache(ServiceCallSite callSite, RuntimeResolverContext context, ServiceProviderEngineScope serviceProviderEngine, RuntimeResolverLock lockType)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitScopeCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.DynamicServiceProviderEngine.<>c__DisplayClass2_0.<RealizeService>b__0(ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.EntityFrameworkCore.DbContext.get_DbContextDependencies()
+   at Microsoft.EntityFrameworkCore.DbContext.get_ContextServices()
+   at Microsoft.EntityFrameworkCore.DbContext.get_Model()
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.get_EntityType()
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.CheckState()
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.get_EntityQueryable()
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.System.Linq.IQueryable.get_Provider()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ExecuteAsync[TSource,TResult](MethodInfo operatorMethodInfo, IQueryable`1 source, Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ExecuteAsync[TSource,TResult](MethodInfo operatorMethodInfo, IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at WEBDULICH.Services.DataSeeder.SeedAsync() in D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH\Services\DataSeeder.cs:line 18
+   at Program.<Main>$(String[] args) in D:\Users\admoi\source\repos\DoanhNoVip\WEBDULICH\Program.cs:line 465
+[2026-05-16 17:53:59.464 +07:00 INF] Application started successfully
+[2026-05-16 17:53:59.625 +07:00 INF] Starting Hangfire Server using job storage: 'SQL Server: localhost@WEBDULICH_Hangfire'
+[2026-05-16 17:53:59.626 +07:00 INF] Using the following options for SQL Server job storage: Queue poll interval: 00:00:00.
+[2026-05-16 17:53:59.627 +07:00 INF] Using the following options for Hangfire Server:
+    Worker count: 5
+    Listening queues: 'default', 'critical', 'background'
+    Shutdown timeout: 00:00:15
+    Schedule polling interval: 00:00:15
+[2026-05-16 17:53:59.794 +07:00 INF] Server desktop-4qka5d5:12020:eb5c594a successfully announced in 157.0932 ms
+[2026-05-16 17:53:59.797 +07:00 INF] Server desktop-4qka5d5:12020:eb5c594a is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, SqlServerHeartbeatProcess, Worker, DelayedJobScheduler, RecurringJobScheduler...
+[2026-05-16 17:53:59.803 +07:00 INF] Server desktop-4qka5d5:12020:eb5c594a all the dispatchers started
+[2026-05-16 17:53:59.811 +07:00 INF] 1 servers were removed due to timeout

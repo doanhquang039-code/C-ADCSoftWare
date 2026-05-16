@@ -1,0 +1,362 @@
+@{
+    ViewData["Title"] = "AI Travel Agent";
+}
+
+@section Styles {
+    <style>
+        .agent-shell {
+            display: grid;
+            grid-template-columns: minmax(280px, 380px) 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .agent-panel, .agent-result, .agent-card {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .agent-panel, .agent-result {
+            padding: 20px;
+        }
+
+        .agent-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .agent-subtitle, .agent-meta {
+            color: #5f6b7a;
+        }
+
+        .agent-answer {
+            background: #111827;
+            color: #e5e7eb;
+            border-radius: 8px;
+            padding: 18px;
+            white-space: pre-wrap;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .agent-card {
+            padding: 14px;
+        }
+
+        .severity-HIGH { color: #dc3545; }
+        .severity-MEDIUM { color: #fd7e14; }
+        .severity-LOW { color: #198754; }
+
+        .score-ring {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: conic-gradient(#0d6efd var(--score), #e9ecef 0);
+        }
+
+        .score-inner {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: #0d6efd;
+        }
+
+        .agent-empty {
+            min-height: 420px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            border: 1px dashed #adb5bd;
+            border-radius: 8px;
+            color: #5f6b7a;
+            padding: 24px;
+        }
+
+        @@media (max-width: 992px) {
+            .agent-shell, .agent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<div class="mb-4">
+    <div class="agent-title">AI Travel Agent</div>
+    <div class="agent-subtitle">Tim tour, chan doan ngan sach va lap lich trinh tu dong bang du lieu tour/khach san trong WEBDULICH.</div>
+</div>
+
+<div class="agent-shell">
+    <form class="agent-panel" id="agentForm">
+        <div class="mb-3">
+            <label class="form-label" for="mode">Che do</label>
+            <select class="form-select" id="mode">
+                <option value="agent">Agent tu dong</option>
+                <option value="search">Tim tour/khach san</option>
+                <option value="plan">Lap lich trinh</option>
+                <option value="diagnose">Chan doan ngan sach</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="query">Yeu cau</label>
+            <textarea class="form-control" id="query" rows="4" placeholder="Vi du: Tim tour Da Nang 3 ngay cho 2 nguoi, ngan sach 12 trieu"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="destination">Diem den</label>
+            <input class="form-control" id="destination" placeholder="Da Nang, Phu Quoc, Ha Long">
+        </div>
+        <div class="row g-3">
+            <div class="col-6">
+                <label class="form-label" for="days">So ngay</label>
+                <input class="form-control" id="days" type="number" min="1" max="14" value="3">
+            </div>
+            <div class="col-6">
+                <label class="form-label" for="budget">Ngan sach</label>
+                <input class="form-control" id="budget" type="number" min="0" step="100000" value="12000000">
+            </div>
+            <div class="col-6">
+                <label class="form-label" for="adults">Nguoi lon</label>
+                <input class="form-control" id="adults" type="number" min="1" max="30" value="2">
+            </div>
+            <div class="col-6">
+                <label class="form-label" for="children">Tre em</label>
+                <input class="form-control" id="children" type="number" min="0" max="30" value="0">
+            </div>
+        </div>
+        <div class="mt-3">
+            <label class="form-label" for="travelStyle">Phong cach</label>
+            <select class="form-select" id="travelStyle">
+                <option value="balanced">Can bang</option>
+                <option value="saving">Tiet kiem</option>
+                <option value="premium">Cao cap</option>
+                <option value="adventure">Kham pha</option>
+            </select>
+        </div>
+        <button class="btn btn-primary w-100 mt-4" type="submit" id="runBtn">
+            <i class="bi bi-cpu"></i> Chay AI Agent
+        </button>
+    </form>
+
+    <section class="agent-result">
+        <div id="emptyState" class="agent-empty">
+            <div>
+                <div class="h5">Nhap yeu cau de AI Travel Agent xu ly</div>
+                <div>Ket qua se gom fit score, chan doan, tour/khach san phu hop va lich trinh neu can.</div>
+            </div>
+        </div>
+
+        <div id="resultState" class="d-none">
+            <div class="d-flex flex-wrap justify-content-between gap-3 align-items-center mb-3">
+                <div>
+                    <h2 class="h4 mb-1">Ket qua Agent</h2>
+                    <div class="agent-meta" id="agentMode">rule-based-travel-agent</div>
+                </div>
+                <div class="score-ring" id="scoreRing" style="--score: 0%">
+                    <div class="score-inner"><span id="fitScore">0</span>/100</div>
+                </div>
+            </div>
+
+            <div class="agent-answer mb-4" id="answer"></div>
+
+            <div class="agent-grid mb-4">
+                <div class="agent-card">
+                    <div class="fw-bold mb-2">Chan doan</div>
+                    <div class="d-grid gap-2" id="findings"></div>
+                </div>
+                <div class="agent-card">
+                    <div class="fw-bold mb-2">Hanh dong tiep theo</div>
+                    <ul class="mb-0" id="nextActions"></ul>
+                </div>
+            </div>
+
+            <h3 class="h5">Tour / khach san phu hop</h3>
+            <div class="agent-grid mb-4" id="searchResults"></div>
+
+            <div id="tripPlanWrap" class="d-none">
+                <h3 class="h5">Lich trinh AI</h3>
+                <div class="agent-card mb-3">
+                    <div class="fw-bold" id="planSummary"></div>
+                    <div class="agent-meta" id="planBudget"></div>
+                </div>
+                <div class="d-grid gap-2" id="planDays"></div>
+            </div>
+
+            <div class="agent-card mt-4">
+                <div class="fw-bold mb-2">Models & Tools</div>
+                <div class="small agent-meta" id="modelsUsed"></div>
+                <div class="small agent-meta mt-1" id="toolsUsed"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+        const form = document.getElementById("agentForm");
+        const runBtn = document.getElementById("runBtn");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            runBtn.disabled = true;
+            runBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Dang chay...';
+            try {
+                const payload = {
+                    mode: value("mode"),
+                    query: value("query"),
+                    destination: value("destination"),
+                    days: numberValue("days"),
+                    budget: numberValue("budget"),
+                    adults: numberValue("adults"),
+                    children: numberValue("children"),
+                    travelStyle: value("travelStyle")
+                };
+
+                const response = await fetch("/api/ai-travel-agent/run", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const body = await response.json();
+                renderAgent(body.data || body.Data);
+            } catch (error) {
+                renderError(error.message || "Khong chay duoc AI Travel Agent.");
+            } finally {
+                runBtn.disabled = false;
+                runBtn.innerHTML = '<i class="bi bi-cpu"></i> Chay AI Agent';
+            }
+        });
+
+        function renderAgent(data) {
+            document.getElementById("emptyState").classList.add("d-none");
+            document.getElementById("resultState").classList.remove("d-none");
+            const fitScore = data.fitScore ?? data.FitScore ?? 0;
+            document.getElementById("scoreRing").style.setProperty("--score", `${fitScore}%`);
+            document.getElementById("fitScore").textContent = fitScore;
+            document.getElementById("agentMode").textContent = `${data.mode ?? data.Mode} | ${data.intent ?? data.Intent}`;
+            document.getElementById("answer").textContent = data.answer ?? data.Answer ?? "";
+            renderFindings(data.findings ?? data.Findings ?? []);
+            renderActions(data.nextActions ?? data.NextActions ?? []);
+            renderSearch(data.searchResults ?? data.SearchResults ?? []);
+            renderTripPlan(data.tripPlan ?? data.TripPlan);
+            document.getElementById("modelsUsed").textContent = `Models: ${(data.modelsUsed ?? data.ModelsUsed ?? []).join(", ")}`;
+            document.getElementById("toolsUsed").textContent = `Tools: ${(data.toolsUsed ?? data.ToolsUsed ?? []).join(", ")}`;
+        }
+
+        function renderFindings(items) {
+            const wrap = document.getElementById("findings");
+            wrap.innerHTML = "";
+            if (!items.length) {
+                wrap.innerHTML = '<div class="agent-meta">Chua co chan doan.</div>';
+                return;
+            }
+            items.forEach(item => {
+                const severity = item.severity ?? item.Severity ?? "LOW";
+                wrap.insertAdjacentHTML("beforeend", `
+                    <div>
+                        <span class="fw-bold severity-${escapeHtml(severity)}">${escapeHtml(severity)}</span>
+                        <span class="agent-meta">${escapeHtml(item.code ?? item.Code ?? "")}</span>
+                        <div>${escapeHtml(item.message ?? item.Message ?? "")}</div>
+                        <div class="small agent-meta">${escapeHtml(item.evidence ?? item.Evidence ?? "")}</div>
+                    </div>
+                `);
+            });
+        }
+
+        function renderActions(items) {
+            const wrap = document.getElementById("nextActions");
+            wrap.innerHTML = "";
+            if (!items.length) {
+                wrap.innerHTML = '<li class="agent-meta">Chua co hanh dong.</li>';
+                return;
+            }
+            items.forEach(item => wrap.insertAdjacentHTML("beforeend", `<li>${escapeHtml(item)}</li>`));
+        }
+
+        function renderSearch(items) {
+            const wrap = document.getElementById("searchResults");
+            wrap.innerHTML = "";
+            if (!items.length) {
+                wrap.innerHTML = '<div class="agent-card agent-meta">Khong co ket qua phu hop.</div>';
+                return;
+            }
+            items.forEach(item => {
+                const url = item.url ?? item.Url ?? "#";
+                wrap.insertAdjacentHTML("beforeend", `
+                    <div class="agent-card">
+                        <div class="fw-bold">${escapeHtml(item.title ?? item.Title ?? "")}</div>
+                        <div class="agent-meta">${escapeHtml(item.type ?? item.Type ?? "")} | ${escapeHtml(item.subtitle ?? item.Subtitle ?? "")}</div>
+                        <div class="mt-2">${formatMoney(item.price ?? item.Price ?? 0)} VND | Rating ${item.rating ?? item.Rating ?? 0}</div>
+                        <div class="small mt-2">${escapeHtml(item.reason ?? item.Reason ?? "")}</div>
+                        <a class="btn btn-sm btn-outline-primary mt-3" href="${escapeHtml(url)}">Xem chi tiet</a>
+                    </div>
+                `);
+            });
+        }
+
+        function renderTripPlan(plan) {
+            const wrap = document.getElementById("tripPlanWrap");
+            const daysWrap = document.getElementById("planDays");
+            if (!plan) {
+                wrap.classList.add("d-none");
+                return;
+            }
+            wrap.classList.remove("d-none");
+            document.getElementById("planSummary").textContent = plan.summary ?? plan.Summary ?? "";
+            document.getElementById("planBudget").textContent = `${formatMoney(plan.estimatedBudget ?? plan.EstimatedBudget ?? 0)} VND - ${plan.budgetStatus ?? plan.BudgetStatus ?? ""}`;
+            daysWrap.innerHTML = "";
+            (plan.days ?? plan.Days ?? []).forEach(day => {
+                const activities = day.activities ?? day.Activities ?? [];
+                daysWrap.insertAdjacentHTML("beforeend", `
+                    <div class="agent-card">
+                        <div class="fw-bold">${escapeHtml(day.title ?? day.Title ?? "")}</div>
+                        <ul class="mb-0 mt-2">${activities.map(a => `<li>${escapeHtml(a)}</li>`).join("")}</ul>
+                    </div>
+                `);
+            });
+        }
+
+        function renderError(message) {
+            document.getElementById("emptyState").classList.add("d-none");
+            document.getElementById("resultState").classList.remove("d-none");
+            document.getElementById("answer").textContent = message;
+            document.getElementById("agentMode").textContent = "error";
+        }
+
+        function value(id) {
+            return document.getElementById(id).value.trim();
+        }
+
+        function numberValue(id) {
+            return Number(document.getElementById(id).value || 0);
+        }
+
+        function formatMoney(value) {
+            return Number(value || 0).toLocaleString("vi-VN");
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+    </script>
+}

@@ -14,6 +14,7 @@ namespace WEBDULICH.Controllers
         private readonly IEmailMarketingService _emailMarketingService;
         private readonly ILoyaltyService _loyaltyService;
         private readonly IAnalyticsService _analyticsService;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<AnalyticsUIController> _logger;
 
         public AnalyticsUIController(
@@ -21,12 +22,14 @@ namespace WEBDULICH.Controllers
             IEmailMarketingService emailMarketingService,
             ILoyaltyService loyaltyService,
             IAnalyticsService analyticsService,
+            ApplicationDbContext context,
             ILogger<AnalyticsUIController> logger)
         {
             _reportService = reportService;
             _emailMarketingService = emailMarketingService;
             _loyaltyService = loyaltyService;
             _analyticsService = analyticsService;
+            _context = context;
             _logger = logger;
         }
 
@@ -51,10 +54,10 @@ namespace WEBDULICH.Controllers
                 ViewBag.EmailStats = emailStats;
                 ViewBag.LoyaltyStats = loyaltyStats;
 
-                ViewBag.TotalUsers = metrics.TotalActiveUsers;
-                ViewBag.TotalTours = metrics.TotalTours;
-                ViewBag.TotalHotels = metrics.TotalHotels;
-                ViewBag.TotalDestinations = metrics.TotalDestinations;
+                ViewBag.TotalUsers = metrics.TotalCustomers;
+                ViewBag.TotalTours = _context.Tours.Count();
+                ViewBag.TotalHotels = _context.Hotels.Count();
+                ViewBag.TotalDestinations = _context.Destinations.Count();
 
                 return View("~/Views/Analytics/Index.cshtml");
             }

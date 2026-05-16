@@ -328,6 +328,7 @@ try
     // AI Chatbot Service
     builder.Services.AddScoped<WEBDULICH.Services.AI.IChatbotService, WEBDULICH.Services.AI.ChatbotService>();
     builder.Services.AddScoped<WEBDULICH.Services.AI.ITripPlannerService, WEBDULICH.Services.AI.TripPlannerService>();
+    builder.Services.AddScoped<WEBDULICH.Services.AI.ITravelAgentService, WEBDULICH.Services.AI.TravelAgentService>();
     
     // Analytics Service
     builder.Services.AddScoped<WEBDULICH.Services.Analytics.IAnalyticsService, WEBDULICH.Services.Analytics.AnalyticsService>();
