@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.DataProtection;
 using System.IO.Compression;
 using Microsoft.OpenApi.Models;
 using HealthChecks.UI.Client;
@@ -52,6 +53,16 @@ try
 
     builder.Services.AddHttpContextAccessor();
 
+    var configuredDataProtectionKeysPath = builder.Configuration["DataProtection:KeysPath"];
+    var dataProtectionKeysPath = string.IsNullOrWhiteSpace(configuredDataProtectionKeysPath)
+        ? Path.Combine(builder.Environment.ContentRootPath, "App_Data", "DataProtectionKeys")
+        : Path.GetFullPath(configuredDataProtectionKeysPath, builder.Environment.ContentRootPath);
+    Directory.CreateDirectory(dataProtectionKeysPath);
+
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysPath))
+        .SetApplicationName("WEBDULICH");
+
     // Configure Admin Access
     builder.Services.Configure<AdminAccessOptions>(
         builder.Configuration.GetSection(AdminAccessOptions.SectionName));
@@ -75,38 +86,61 @@ try
 
         Log.Information("Redis caching configured");
     }
+    else
+    {
+        builder.Services.AddDistributedMemoryCache();
+        Log.Information("Redis connection not configured; distributed memory cache configured");
+    }
 
     // ============ DATABASE CONFIGURATION ============
+    var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrWhiteSpace(defaultConnection))
+    {
+        throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required.");
+    }
+
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseSqlServer(defaultConnection));
 
     // ============ HANGFIRE CONFIGURATION ============
-    builder.Services.AddHangfire(configuration => configuration
-        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-        .UseSimpleAssemblyNameTypeSerializer()
-        .UseRecommendedSerializerSettings()
-        .UseSqlServerStorage(builder.Configuration.GetConnectionString("Hangfire"),
-            new SqlServerStorageOptions
-            {
-                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                QueuePollInterval = TimeSpan.Zero,
-                UseRecommendedIsolationLevel = true,
-                DisableGlobalLocks = true
-            }));
-
-    builder.Services.AddHangfireServer(options =>
+    var hangfireEnabled = builder.Configuration.GetValue("Hangfire:Enabled", true);
+    if (hangfireEnabled)
     {
-        options.WorkerCount = builder.Configuration.GetValue<int>("Hangfire:WorkerCount", 5);
-        options.Queues = builder.Configuration.GetSection("Hangfire:Queues").Get<string[]>() 
-            ?? new[] { "default", "critical", "background" };
-    });
+        builder.Services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(builder.Configuration.GetConnectionString("Hangfire"),
+                new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
 
-    Log.Information("Hangfire configured");
+        builder.Services.AddHangfireServer(options =>
+        {
+            options.WorkerCount = builder.Configuration.GetValue<int>("Hangfire:WorkerCount", 5);
+            options.Queues = builder.Configuration.GetSection("Hangfire:Queues").Get<string[]>()
+                ?? new[] { "default", "critical", "background" };
+        });
+
+        Log.Information("Hangfire configured");
+    }
+    else
+    {
+        Log.Information("Hangfire disabled by configuration");
+    }
 
     // ============ JWT AUTHENTICATION ============
     var jwtSettings = builder.Configuration.GetSection("JWT");
     var secretKey = jwtSettings["SecretKey"];
+    if (string.IsNullOrWhiteSpace(secretKey))
+    {
+        throw new InvalidOperationException("JWT:SecretKey is required.");
+    }
 
     builder.Services.AddAuthentication(options =>
     {
@@ -280,7 +314,7 @@ try
     // ============ HEALTH CHECKS ============
     var healthChecksBuilder = builder.Services.AddHealthChecks()
         .AddSqlServer(
-            builder.Configuration.GetConnectionString("DefaultConnection"),
+            defaultConnection,
             name: "database",
             tags: new[] { "db", "sql", "sqlserver" });
 
@@ -442,10 +476,13 @@ try
     });
 
     // Hangfire Dashboard
-    app.UseHangfireDashboard(builder.Configuration["Hangfire:DashboardPath"] ?? "/hangfire", new DashboardOptions
+    if (hangfireEnabled)
     {
-        Authorization = new[] { new HangfireAuthorizationFilter() }
-    });
+        app.UseHangfireDashboard(builder.Configuration["Hangfire:DashboardPath"] ?? "/hangfire", new DashboardOptions
+        {
+            Authorization = new[] { new HangfireAuthorizationFilter() }
+        });
+    }
 
     // SignalR Hubs
     app.MapHub<NotificationHub>("/hubs/notification");
@@ -457,18 +494,26 @@ try
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
     // Seed data
-    using (var scope = app.Services.CreateScope())
+    var seedDataEnabled = builder.Configuration.GetValue("DataSeeding:Enabled", true);
+    if (seedDataEnabled)
     {
-        try
+        using (var scope = app.Services.CreateScope())
         {
-            var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-            await seeder.SeedAsync();
-            Log.Information("Data seeding completed");
+            try
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+                await seeder.SeedAsync();
+                Log.Information("Data seeding completed");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while seeding the database");
+            }
         }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred while seeding the database");
-        }
+    }
+    else
+    {
+        Log.Information("Data seeding disabled by configuration");
     }
 
     Log.Information("Application started successfully");
@@ -493,7 +538,10 @@ try
         {
             Console.WriteLine($"\nðŸŒ Website:        {url}");
             Console.WriteLine($"ðŸ“š API Docs:       {url}/api-docs");
-            Console.WriteLine($"ðŸ“Š Hangfire:       {url}/hangfire");
+            if (hangfireEnabled)
+            {
+                Console.WriteLine($"ðŸ“Š Hangfire:       {url}/hangfire");
+            }
             Console.WriteLine($"â¤ï¸  Health Check:  {url}/health");
         }
         

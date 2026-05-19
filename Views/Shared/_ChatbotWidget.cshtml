@@ -1,43 +1,37 @@
 <div id="chatbot-widget-container" class="position-fixed" style="bottom: 20px; right: 20px; z-index: 1050;">
-    
-    <!-- Chat Window -->
-    <div id="chatbot-window" class="card shadow border-0 d-none" style="width: 350px; height: 500px; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
-        <!-- Header -->
+    <div id="chatbot-window" class="card shadow border-0 d-none" style="width: min(350px, calc(100vw - 32px)); height: min(500px, calc(100vh - 120px)); display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; margin-bottom: 15px;">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
             <div class="d-flex align-items-center">
                 <i class="bi bi-robot fs-4 me-2"></i>
-                <h6 class="mb-0 fw-bold">Trợ lý ảo AI</h6>
+                <h6 class="mb-0 fw-bold">Tr&#7907; l&#253; &#7843;o AI</h6>
             </div>
-            <button type="button" class="btn-close btn-close-white" id="close-chat-btn" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" id="close-chat-btn" aria-label="Dong"></button>
         </div>
-        
-        <!-- Chat Body -->
+
         <div id="chatbot-body" class="card-body bg-light" style="flex: 1; overflow-y: auto; padding: 15px;">
             <div class="chat-message bot-message mb-3">
                 <div class="message-content bg-white border shadow-sm p-2 rounded-3 d-inline-block" style="max-width: 85%;">
-                    <small>👋 Chào bạn! Tôi là Trợ lý AI của WEBDULICH. Tôi có thể giúp gì cho bạn hôm nay?</small>
+                    <small>Ch&#224;o b&#7841;n! T&#244;i l&#224; Tr&#7907; l&#253; AI c&#7911;a WEBDULICH. T&#244;i c&#243; th&#7875; gi&#250;p g&#236; cho b&#7841;n h&#244;m nay?</small>
                 </div>
             </div>
         </div>
-        
-        <!-- Loading Indicator -->
+
         <div id="chatbot-typing" class="d-none px-3 pb-2 bg-light">
-            <small class="text-muted fst-italic">AI đang gõ...</small>
+            <small class="text-muted fst-italic">AI dang go...</small>
         </div>
 
-        <!-- Footer / Input -->
         <div class="card-footer bg-white border-top p-2">
+            <div id="chatbot-suggestions" class="d-flex flex-wrap gap-1 mb-2"></div>
             <form id="chatbot-form" class="d-flex align-items-center">
-                <input type="text" id="chatbot-input" class="form-control rounded-pill border-0 bg-light" placeholder="Nhập tin nhắn..." autocomplete="off" required>
-                <button type="submit" class="btn btn-primary rounded-circle ms-2 shadow-sm d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                <input type="text" id="chatbot-input" class="form-control rounded-pill border-0 bg-light" placeholder="Nhap tin nhan..." autocomplete="off" required>
+                <button type="submit" class="btn btn-primary rounded-circle ms-2 shadow-sm d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;" aria-label="Gui">
                     <i class="bi bi-send-fill"></i>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Floating Bubble Button -->
-    <button id="chatbot-bubble" class="btn btn-primary rounded-circle shadow-lg d-flex justify-content-center align-items-center float-end" style="width: 60px; height: 60px;">
+    <button id="chatbot-bubble" class="btn btn-primary rounded-circle shadow-lg d-flex justify-content-center align-items-center float-end" style="width: 60px; height: 60px;" aria-label="Mo chat">
         <i class="bi bi-chat-dots-fill fs-2"></i>
     </button>
 </div>
@@ -46,42 +40,55 @@
     #chatbot-body::-webkit-scrollbar {
         width: 6px;
     }
+
     #chatbot-body::-webkit-scrollbar-track {
-        background: #f1f1f1; 
+        background: #f1f1f1;
     }
+
     #chatbot-body::-webkit-scrollbar-thumb {
-        background: #c1c1c1; 
+        background: #c1c1c1;
         border-radius: 10px;
     }
-    
+
     .chat-message {
         display: flex;
         flex-direction: column;
     }
-    
+
     .bot-message {
         align-items: flex-start;
     }
-    
+
     .bot-message .message-content {
         border-bottom-left-radius: 0 !important;
         color: #333;
     }
-    
+
     .user-message {
         align-items: flex-end;
     }
-    
+
     .user-message .message-content {
         background-color: #0d6efd !important;
         color: white;
         border-bottom-right-radius: 0 !important;
     }
-    
+
     .chat-timestamp {
         font-size: 0.7rem;
         color: #999;
         margin-top: 2px;
+    }
+
+    #chatbot-suggestions:empty {
+        display: none !important;
+    }
+
+    .chat-suggestion {
+        font-size: 0.78rem;
+        max-width: 100%;
+        white-space: normal;
+        text-align: left;
     }
 </style>
 
@@ -94,11 +101,12 @@
         const chatInput = document.getElementById('chatbot-input');
         const chatBody = document.getElementById('chatbot-body');
         const typingIndicator = document.getElementById('chatbot-typing');
-        
+        const suggestions = document.getElementById('chatbot-suggestions');
+
         let conversationId = sessionStorage.getItem('ai_conversation_id') || generateUUID();
         sessionStorage.setItem('ai_conversation_id', conversationId);
+        loadInitialSuggestions();
 
-        // Toggle Chat Window
         bubbleBtn.addEventListener('click', () => {
             chatWindow.classList.remove('d-none');
             bubbleBtn.classList.add('d-none');
@@ -111,25 +119,46 @@
             bubbleBtn.classList.remove('d-none');
         });
 
-        // Submit Message
         chatForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            const messageText = chatInput.value.trim();
-            if(!messageText) return;
+            await sendMessage(chatInput.value.trim());
+        });
 
-            // Render User Message
+        suggestions.addEventListener('click', async function(e) {
+            const button = e.target.closest('button[data-value]');
+            if (!button) {
+                return;
+            }
+
+            await sendMessage(button.dataset.value);
+        });
+
+        async function loadInitialSuggestions() {
+            try {
+                const response = await fetch('/api/chatbot/suggestions');
+                const json = await response.json();
+
+                if (json.success && json.data) {
+                    renderSuggestions(json.data);
+                }
+            } catch (error) {
+                renderSuggestions(['Tim tour', 'Dat tour', 'Lien he ho tro']);
+            }
+        }
+
+        async function sendMessage(messageText) {
+            if (!messageText) {
+                return;
+            }
+
             appendMessage(messageText, 'user');
             chatInput.value = '';
-            
-            // Show typing indicator
+            suggestions.innerHTML = '';
             typingIndicator.classList.remove('d-none');
             scrollToBottom();
 
             try {
-                // Determine UserId if available from some meta tag or variable, else anonymous
-                // WEBDULICH usually has user info. We'll send empty if not available
                 const userId = '@(User?.Identity?.Name ?? "anonymous")';
-                
                 const response = await fetch('/api/chatbot/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -139,41 +168,70 @@
                         conversationId: conversationId
                     })
                 });
-                
+
                 const json = await response.json();
                 typingIndicator.classList.add('d-none');
 
-                if(json.success && json.data) {
-                    // API returns data: { text: "...", suggestions: [...] } or just string
-                    let botResponse = typeof json.data === 'string' ? json.data : (json.data.response || json.data.text || "Xin lỗi, tôi không hiểu.");
-                    appendMessage(botResponse, 'bot');
+                if (json.success && json.data) {
+                    const data = json.data;
+                    conversationId = data.conversationId || data.ConversationId || conversationId;
+                    sessionStorage.setItem('ai_conversation_id', conversationId);
+
+                    appendMessage(data.message || data.Message || 'Xin loi, toi chua co cau tra loi phu hop.', 'bot');
+                    renderSuggestions(data.quickReplies || data.QuickReplies || data.suggestedActions || data.SuggestedActions || []);
                 } else {
-                    appendMessage("Rất tiếc, đã có lỗi xảy ra. Vui lòng thử lại sau.", 'bot');
+                    appendMessage('Rat tiec, da co loi xay ra. Vui long thu lai sau.', 'bot');
                 }
-                
             } catch (error) {
-                console.error("Chatbot Error:", error);
+                console.error('Chatbot Error:', error);
                 typingIndicator.classList.add('d-none');
-                appendMessage("Mất kết nối với máy chủ AI. Vui lòng thử lại.", 'bot');
+                appendMessage('Mat ket noi voi may chu AI. Vui long thu lai.', 'bot');
             }
-        });
+        }
 
         function appendMessage(text, sender) {
-            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const isUser = sender === 'user';
-            
+
             const msgDiv = document.createElement('div');
             msgDiv.className = `chat-message ${isUser ? 'user-message' : 'bot-message'} mb-3`;
-            
-            msgDiv.innerHTML = `
-                <div class="message-content shadow-sm p-2 rounded-3 d-inline-block" style="max-width: 85%;">
-                    <small>${escapeHTML(text).replace(/\n/g, '<br>')}</small>
-                </div>
-                <div class="chat-timestamp px-1">${timeStr}</div>
-            `;
-            
+
+            const content = document.createElement('div');
+            content.className = 'message-content shadow-sm p-2 rounded-3 d-inline-block';
+            content.style.maxWidth = '85%';
+
+            const small = document.createElement('small');
+            small.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
+            content.appendChild(small);
+
+            const timestamp = document.createElement('div');
+            timestamp.className = 'chat-timestamp px-1';
+            timestamp.textContent = timeStr;
+
+            msgDiv.appendChild(content);
+            msgDiv.appendChild(timestamp);
             chatBody.appendChild(msgDiv);
             scrollToBottom();
+        }
+
+        function renderSuggestions(items) {
+            suggestions.innerHTML = '';
+
+            items.slice(0, 4).forEach(item => {
+                const text = typeof item === 'string' ? item : (item.text || item.Text || item.value || item.Value);
+                const value = typeof item === 'string' ? item : (item.value || item.Value || text);
+
+                if (!text || !value) {
+                    return;
+                }
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'btn btn-sm btn-outline-primary rounded-pill chat-suggestion';
+                button.dataset.value = value;
+                button.textContent = text;
+                suggestions.appendChild(button);
+            });
         }
 
         function scrollToBottom() {
@@ -188,7 +246,8 @@
 
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         }

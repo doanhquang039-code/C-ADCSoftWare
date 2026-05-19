@@ -91,14 +91,37 @@ namespace WEBDULICH.Controllers
             }
         }
 
-        [HttpPost("feedback")]
-        public async Task<IActionResult> SubmitFeedback([FromBody] ChatFeedbackRequest request)
+        [HttpGet("suggestions")]
+        public async Task<IActionResult> GetSuggestions()
         {
             try
             {
-                // Store feedback in database
-                _logger.LogInformation($"Chatbot feedback: ConversationId={request.ConversationId}, Rating={request.Rating}, Comment={request.Comment}");
-                
+                var suggestions = await _chatbotService.GetSuggestedQuestionsAsync();
+                return Ok(new { success = true, data = suggestions });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving chatbot suggestions");
+                return StatusCode(500, new { success = false, message = "Failed to retrieve suggestions" });
+            }
+        }
+
+        [HttpPost("feedback")]
+        public IActionResult SubmitFeedback([FromBody] ChatFeedbackRequest request)
+        {
+            try
+            {
+                if (request.Rating < 1 || request.Rating > 5)
+                {
+                    return BadRequest(new { success = false, message = "Rating must be between 1 and 5" });
+                }
+
+                _logger.LogInformation(
+                    "Chatbot feedback: ConversationId={ConversationId}, Rating={Rating}, Comment={Comment}",
+                    request.ConversationId,
+                    request.Rating,
+                    request.Comment);
+
                 return Ok(new { success = true, message = "Feedback received" });
             }
             catch (Exception ex)

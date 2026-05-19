@@ -265,7 +265,7 @@ namespace WEBDULICH.Services
 
             // Availability indexes
             modelBuilder.Entity<WEBDULICH.Models.Availability>()
-                .HasIndex(a => new { a.EntityType, a.EntityId, a.Date });
+                .HasIndex(a => new { a.EntityType, a.TourId, a.HotelId, a.Date });
 
             modelBuilder.Entity<AvailabilityBlock>()
                 .HasIndex(b => new { b.AvailabilityId, b.Status });
